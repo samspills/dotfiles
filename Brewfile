@@ -14,8 +14,6 @@ brew "asciiquarium"
 brew "aspell"
 # Tool for generating GNU Standards-compliant Makefiles
 brew "automake"
-# IRC to other chat networks gateway
-brew "bitlbee", restart_service: true
 # GNU File, Shell, and Text utilities
 brew "coreutils"
 # Configurable talking characters in ASCII art
@@ -24,8 +22,6 @@ brew "cowsay"
 brew "dbus"
 # Device firmware update based USB programmer for Atmel chips
 brew "dfu-programmer"
-# Pack, ship and run any application as a lightweight container
-brew "docker", link: false
 # Banner-like program prints strings as ASCII art
 brew "figlet"
 # Command-line fuzzy finder written in Go
