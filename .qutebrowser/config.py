@@ -12,6 +12,10 @@ c.auto_save.session = True
 
 # Enable JavaScript.
 # Type: Bool
+config.set('content.javascript.enabled', True, 'qute://*/')
+
+# Enable JavaScript.
+# Type: Bool
 config.set('content.javascript.enabled', True, 'file://*')
 
 # Enable JavaScript.
@@ -21,6 +25,15 @@ config.set('content.javascript.enabled', True, 'chrome://*/*')
 # Enable JavaScript.
 # Type: Bool
 config.set('content.javascript.enabled', True, 'qute://*/*')
+
+# Editor (and arguments) to use for the `open-editor` command. The
+# following placeholders are defined: * `{file}`: Filename of the file
+# to be edited. * `{line}`: Line in which the caret is found in the
+# text. * `{column}`: Column in which the caret is found in the text. *
+# `{line0}`: Same as `{line}`, but starting from index 0. * `{column0}`:
+# Same as `{column}`, but starting from index 0.
+# Type: ShellCommand
+c.editor.command = ['ec', '{file}', '-c', 'normal {line}G{column0}l']
 
 # Position of the tab bar.
 # Type: Position
