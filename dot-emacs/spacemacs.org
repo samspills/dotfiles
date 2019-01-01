@@ -412,6 +412,9 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
    (add-to-list 'org-capture-templates
                 `("P" "Personal Event" entry (file "~/Documents/life/sam-cal.org")
                   "* %^{Description} \n %^T \n %^{Notes}"))
+  (add-to-list 'org-capture-templates
+                `("J" "Personal Journal" entry (file+olp+datetree "~/Documents/life/journal.org")
+                  "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
                 `("f" "Future Note" entry (file+olp+datetree "~/Documents/life/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
