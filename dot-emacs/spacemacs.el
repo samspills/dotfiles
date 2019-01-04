@@ -66,6 +66,7 @@
 (spacemacs/set-leader-keys "SPC" 'avy-goto-char-timer) ;; SPC-SPC then start typing a word
 
 (setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
 
 (setq electric-indent-mode -1)
 (add-hook 'after-change-major-mode-hook (lambda() (electric-indent-mode -1)))
@@ -111,7 +112,7 @@
 
 (server-start)
 
-(defvar sam/org-dir "~/Documents/life/")
+(defvar sam/org-dir "~/Dropbox/life")
 (use-package org
   :mode ("\\.org\\|org_archive\\'" . org-mode)
   :general
@@ -183,40 +184,40 @@
 
 (defun org-journal (&optional arg)
   (interactive "P")
-  (find-file "~/Documents/life/journal.org"))
+  (find-file "~/Dropbox/life/journal.org"))
 (defun org-rubikloud (&optional arg)
   (interactive "P")
-  (find-file "~/Documents/life/rubikloud.org"))
+  (find-file "~/Dropbox/life/rubikloud/rubikloud.org"))
 
 (use-package org-capture
   :ensure nil
   :config
   (add-to-list 'org-capture-templates
-                `("t" "Work Task" entry (file+headline "~/Documents/life/rubikloud.org" "Projects")
+                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Projects")
                   "* TODO %^{prompt} :inbox: \n%?"))
    (add-to-list 'org-capture-templates
-                `("i" "Interruption" entry (file+olp+datetree "~/Documents/life/rubikloud.org")
+                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
                   "* %^{prompt}\n%U\n%?" :clock-in t :clock-resume t))
    (add-to-list 'org-capture-templates
-                `("n" "Task Note" entry (file+olp+datetree "~/Documents/life/rubikloud.org")
+                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
                   "* %^{prompt} %^G \n%T\n%K\n%?"))
    (add-to-list 'org-capture-templates
-                `("r" "Reference" entry (file+headline "~/Documents/life/rubikloud.org" "Reference")
+                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Reference")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("j" "Journal" entry (file+olp+datetree "~/Documents/life/rubikloud.org")
+                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
                 `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
                   "* TODO %?"))
    (add-to-list 'org-capture-templates
-                `("P" "Personal Event" entry (file "~/Documents/life/sam-cal.org")
+                `("P" "Personal Event" entry (file "~/Dropbox/life/sam-cal.org")
                   "* %^{Description} \n %^T \n %^{Notes}"))
   (add-to-list 'org-capture-templates
-                `("J" "Personal Journal" entry (file+olp+datetree "~/Documents/life/journal.org")
+                `("J" "Personal Journal" entry (file+olp+datetree "~/Dropbox/life/journal.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("f" "Future Note" entry (file+olp+datetree "~/Documents/life/rubikloud.org")
+                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 
 (use-package org-mac-link
@@ -296,7 +297,7 @@ This is for promping for refile targets when doing captures."
   (org-gcal-client-id (auth-source-pass-get "client" "org/org-gcal.el"))
   (org-gcal-client-secret (auth-source-pass-get 'secret "org/org-gcal.el"))
   :config
-  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Documents/life/rubikloud_cal.org"))
+  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud/rubikloud_cal.org"))
         ))
 
 (use-package org-clocking
@@ -380,7 +381,7 @@ This is for promping for refile targets when doing captures."
      ("In Review" . "WAITING")
      ("On Hold (Blocked)" . "HOLD")
      ("Done" . "DONE")))
-  (org-jira-working-dir "~/Documents/life")
+  (org-jira-working-dir "~/Dropbox/life")
   :config
   (defvar sam/org-jira-org-action-ids-alist
       '(("DS"
