@@ -15,8 +15,12 @@ much inspired by [[https://github.com/zzamboni/dot-emacs/blob/master/init.org#cu
 This section contains configs for the config/startup process of spacemacs.
 *** Setup use-package
 #+BEGIN_SRC emacs-lisp
-(setq package-archives '(("MELPA Stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+(setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
+                                          ("org" . "orgmode.org/elpa/")
+                                          ("gnu" . "elpa.gnu.org/packages/")))
+(setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
+                          ("org" . "orgmode.org/elpa/")
+                          ("gnu" . "elpa.gnu.org/packages/")))
 (package-refresh-contents)
 
 (unless (package-installed-p 'use-package)
