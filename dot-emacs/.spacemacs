@@ -364,10 +364,3 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (package-initialize)
   (org-babel-load-file "~/dotfiles/dot-emacs/spacemacs.org"))
-
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
-(load custom-file))

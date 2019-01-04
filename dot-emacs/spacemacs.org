@@ -126,10 +126,6 @@ which I change by hand for added flexibility.
 
 #+BEGIN_SRC emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
-#+END_SRC
-
-I added the following code to the =dotspacemacs/emacs-custom-settings= function in my =.spacemacs= file.
-#+BEGIN_SRC emacs-lisp :tangle no
 (load custom-file)
 #+END_SRC
 
