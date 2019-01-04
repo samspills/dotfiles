@@ -3,8 +3,12 @@
 ;; https://github.com/samspills/dotfiles/blob/master/dot-emacs/spacemacs.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+(setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
+                                          ("org" . "orgmode.org/elpa/")
+                                          ("gnu" . "elpa.gnu.org/packages/")))
+(setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
+                          ("org" . "orgmode.org/elpa/")
+                          ("gnu" . "elpa.gnu.org/packages/")))
 (package-refresh-contents)
 
 (unless (package-installed-p 'use-package)
