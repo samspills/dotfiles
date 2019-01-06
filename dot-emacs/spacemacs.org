@@ -911,10 +911,10 @@ the previously linked blog post.
 #+END_SRC
 *** Projectile
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :custom
-  (projectile-project-search-path '("~/rubikloud"))
-)
+;; (use-package projectile
+;;   :custom
+;;   (projectile-project-search-path '("~/rubikloud"))
+;; )
 #+END_SRC
 *** Tramp
 I was having a lot of issues with tramp + zsh on my remote machine, this was
