@@ -24,6 +24,7 @@ qutebrowser
 emacs26
 xclip
 fonts-powerline
+nautilus-dropbox
 #+end_src
 
 I have a short bash script to handle the installation:
