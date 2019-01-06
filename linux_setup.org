@@ -1,0 +1,51 @@
+* Linux Machine Config
+I am attempting to setup a linux machine using an entirely literate config,
+manage through org-mode files. My goal is to have several org files, with code
+that is tangled to the appropriate locations.
+
+This is still very much a work in progress.
+
+** Package Installation
+In order to get my literate config files onto a new machine and run them, I'll
+need git and emacs at least. So I figure why not handle package installs before
+we get into the org-mode stuff.
+
+I keep the packages I want to install in =packages.txt=:
+
+#+begin_src shell :tangle "~/packages.txt"
+pass
+git
+curl
+tmux
+zsh
+htop
+silversearcher-ag
+qutebrowser
+emacs26
+xclip
+fonts-powerline
+#+end_src
+
+I have a short bash script to handle the installation:
+#+begin_src shell :tangle "~/ubuntu_setup.sh"
+ #!/bin/bash
+
+sudo add-apt-repository ppa:kelleyk/emacs
+
+sudo apt-get update -y && sudo apt-get upgrade -y
+sudo apt-get install -y $(cat ~/packages.txt | awk '{print $1}')
+sudo apt autoremove -y
+
+curl -L git.io/antigen > antigen.zsh
+
+setxkbmap -option ctrl:nocaps
+chsh -s $(which zsh)
+#+end_src
+
+** Git Config
+Set up my user name and email address for git.
+#+begin_src yaml :tangle "~/.gitconfig"
+[user]
+  email = srpillsworth@gmail.com
+  name = Sam Pillsworth
+#+end_src
