@@ -41,7 +41,6 @@ curl -L git.io/antigen > antigen.zsh
 setxkbmap -option ctrl:nocaps
 chsh -s $(which zsh)
 #+end_src
-
 ** Git Config
 Set up my user name and email address for git.
 #+begin_src yaml :tangle "~/.gitconfig"
@@ -49,3 +48,8 @@ Set up my user name and email address for git.
   email = srpillsworth@gmail.com
   name = Sam Pillsworth
 #+end_src
+
+* Plans
+** TODO better lock screen
+** TODO still getting some unknown characters in terminal
+** TODO window management
