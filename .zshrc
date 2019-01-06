@@ -57,6 +57,8 @@ export EDITOR=ec
 alias l='ls -lhFu'
 alias tmux="tmux -2 -u"
 alias zshconfig="ec ~/.zshrc"
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
 
 bindkey -v
 KEYTIMEOUT=1
