@@ -371,6 +371,13 @@ readable.
 #+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-init
 (add-hook 'org-mode-hook 'sam/org-mode-auto-fill)
 #+END_SRC
+
+I like to use a different set of bullets than the default set in the spacemacs
+org layer. A gallery of unicode symbols to use as bullets can be found in
+[[http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters][the appendix here]].
+#+begin_src emacs-lisp :noweb-ref org-mode-config
+(setq org-bullets-bullet-list '("■" "◆" "▲" "▶" "●"))
+#+end_src
 **** Experimental
 We choose a nice font for the document title and the section headings. The first
 one found in the system from the list below is used, and the same font is used
@@ -614,6 +621,12 @@ because I keep my agenda up on a second monitor at work anyway.
           )
     )
 #+END_SRC
+
+I also find it very helpful to be able to see the org clock in the spacemacs
+modeline.
+#+begin_src emacs-lisp :noweb-ref org-mode-config
+(setq spaceline-org-clock-p t)
+#+end_src
 **** Ids
 I like to use links between org headings. The default way that org will handle
 heading links is just the outline map to the heading of interest. These links
