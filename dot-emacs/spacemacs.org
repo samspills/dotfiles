@@ -287,7 +287,7 @@ bookmarks?
   (find-file "~/Dropbox/life/journal.org"))
 (defun org-rubikloud (&optional arg)
   (interactive "P")
-  (find-file "~/Dropbox/life/rubikloud/rubikloud.org"))
+  (find-file "~/Dropbox/life/rubikloud.org"))
 #+END_SRC
 *** Beautifying Org mode
 I write a lot of documentation in org-mode, and it's a nicer experience if I
@@ -392,19 +392,19 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
   :ensure nil
   :config
   (add-to-list 'org-capture-templates
-                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Projects")
+                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud.org" "Projects")
                   "* TODO %^{prompt} :inbox: \n%?"))
    (add-to-list 'org-capture-templates
-                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?" :clock-in t :clock-resume t))
    (add-to-list 'org-capture-templates
-                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} %^G \n%T\n%K\n%?"))
    (add-to-list 'org-capture-templates
-                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Reference")
+                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud.org" "Reference")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
                 `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
@@ -416,7 +416,7 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
                 `("J" "Personal Journal" entry (file+olp+datetree "~/Dropbox/life/journal.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 #+END_SRC
 
@@ -530,7 +530,7 @@ I want my work events to be pulled in from google calendar and shown in my org-a
   (org-gcal-client-id (auth-source-pass-get "client" "org/org-gcal.el"))
   (org-gcal-client-secret (auth-source-pass-get 'secret "org/org-gcal.el"))
   :config
-  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud/rubikloud_cal.org"))
+  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud_cal.org"))
         ))
 #+END_SRC
 **** Clocking
