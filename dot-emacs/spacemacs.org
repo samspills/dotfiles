@@ -270,7 +270,7 @@ I add my most used org functions under my personal keymap so that they're always
          "oc" 'org-capture
          "os" 'org-attach-screenshot
          "od" 'org-agenda-daily-dashboard
-         "ol" 'org-store-link
+         "ol" 'org-id-store-link
          "or" 'org-rubikloud
          "oj" 'org-journal
          "op" 'org-pomodoro
