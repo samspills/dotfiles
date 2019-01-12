@@ -852,13 +852,6 @@ enable it globally.
   :hook
   (after-init . global-flycheck-mode))
 #+END_SRC
-*** Git
-Trying out =git-gutter=
-#+BEGIN_SRC emacs-lisp
-(use-package git-gutter
-  :config
-  (global-git-gutter-mode 't))
-#+END_SRC
 *** Lsp-Mode
 Note that this section is even more under development than everything else around it.
 
