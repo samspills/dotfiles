@@ -15,24 +15,24 @@ much inspired by [[https://github.com/zzamboni/dot-emacs/blob/master/init.org#cu
 This section contains configs for the config/startup process of spacemacs.
 *** Setup use-package
 #+BEGIN_SRC emacs-lisp
-(setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
-                                          ("org" . "orgmode.org/elpa/")
-                                          ("gnu" . "elpa.gnu.org/packages/")))
-(setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
-                          ("org" . "orgmode.org/elpa/")
-                          ("gnu" . "elpa.gnu.org/packages/")))
-(package-refresh-contents)
+  ;; (setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
+  ;;                                           ("org" . "orgmode.org/elpa/")
+  ;;                                           ("gnu" . "elpa.gnu.org/packages/")))
+  ;; (setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
+  ;;                           ("org" . "orgmode.org/elpa/")
+  ;;                           ("gnu" . "elpa.gnu.org/packages/")))
+  (package-refresh-contents)
 
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
 
-(eval-when-compile
-  (require 'use-package))
+  (eval-when-compile
+    (require 'use-package))
 
-(use-package general
-  :ensure t
-  :defer nil
-  :config (general-evil-setup t))
+  (use-package general
+    :ensure t
+    :defer nil
+    :config (general-evil-setup t))
 
 #+END_SRC
 
@@ -209,15 +209,16 @@ code that ends up outside this declaration.
 (use-package org
   :mode ("\\.org\\|org_archive\\'" . org-mode)
   :general
- <<org-mode-keybindings>>
+  <<org-mode-keybindings>>
   :custom
   <<org-mode-custom-vars>>
   :custom-face
-  <<org-mode-faces>>
-  :hook
-  <<org-mode-hooks>>
+  <<org-mode-custom-faces>>
+  :init
+  <<org-mode-init>>
   :config
-  <<org-mode-config>>)
+  <<org-mode-config>>
+)
 #+end_src
 
 *** General Org Configuration
@@ -317,15 +318,27 @@ Spacemacs automatically sets up =hl-todo= in all programming and text buffers.
 According to [[https://github.com/tarsius/hl-todo/blob/master/hl-todo.el#L69-L71][this comment]] in the package, the mode shouldn't be getting
 activated but it is anyway. So, I add a hook to turn it off in buffers with
 org-mode.
-#+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-hooks
-(org-mode . (lambda () (hl-todo-mode -1)))
+
+#+begin_src emacs-lisp
+(defun sam/no-hl-todo-in-org ()
+  (hl-todo-mode -1))
+#+end_src
+
+#+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-init
+(add-hook 'org-mode-hook 'sam/no-hl-todo-in-org)
 #+END_SRC
 
 I like to keep my org-files very tightly wrapped. I think it makes them more
 readable.
-#+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-hooks
-(org-mode . (lambda () (set-fill-column 80)))
-(org-mode . turn-on-auto-fill)
+
+#+begin_src emacs-lisp
+(defun sam/org-mode-auto-fill ()
+  (set-fill-column 80)
+  (turn-on-auto-fill))
+#+end_src
+
+#+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-init
+(add-hook 'org-mode-hook 'sam/org-mode-auto-fill)
 #+END_SRC
 **** Experimental
 We choose a nice font for the document title and the section headings. The first
@@ -600,7 +613,7 @@ for prototyping or research work. I've been experimenting with switching away
 from jupyter to source code blocks using a shared ipython session. There was
 some problem with this that I don't remember, which led to the following
 settings.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package ob-ipython
       ;; XXX org-capture: Capture abort: (json-readtable-error 47)
       ;; 作者假设 jupyter 正常运行，不好
@@ -636,12 +649,12 @@ it to configure both =ob-plantuml= and =plantuml-mode=.
 Configure the languages for which to load org-babel support.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-(org-babel-do-load-languages 'org-babel-load-languages
-                               '((emacs-lisp . t)
-                                 (python . t)
-                                 (ipython . t)
-                                 (shell . t)
-                                 (plantuml . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages
+  ;;                              '((emacs-lisp . t)
+  ;;                                (python . t)
+  ;;                                (ipython . t)
+  ;;                                (shell . t)
+  ;;                                (plantuml . t)))
 #+end_src
 
 This is potentially dangerous: it suppresses the query before executing code
@@ -655,28 +668,38 @@ written myself, and feel confident in the behaviour of.
 Automatically show inline images, useful when executing code that produces them,
 such as PlantUML or Graphviz.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-  (org-babel-after-execute . org-redisplay-inline-images)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-init
+(add-hook 'org-babel-after-execute 'org-redisplay-inline-images)
 #+end_src
 
 This little snippet has revolutionized my literate programming workflow. It
 automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means
 the resulting files will be automatically kept up to date.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                   'run-at-end 'only-in-org-mode)))
+#+begin_src emacs-lisp
+(defun sam/org-auto-babel-tangle ()
+  (add-hook 'after-save-hook 'org-babel-tangle)
+  (add-hook 'run-at-end 'only-in-org-mode))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-init
+(add-hook 'org-mode-hook 'sam/org-auto-babel-tangle)
 #+end_src
 
 I add hooks to measure and report how long the tangling took.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-  (org-babel-pre-tangle  . (lambda ()
-                             (setq sam/pre-tangle-time (current-time))))
-  (org-babel-post-tangle . (lambda ()
-                             (message "org-babel-tangle took %s"
-                                             (format "%.2f seconds"
-                                                     (float-time (time-since sam/pre-tangle-time))))))
+#+begin_src emacs-lisp
+(defun sam/babel-pre-tangle ()
+  (setq sam/pre-tangle-time (current-time)))
+(defun sam/babel-post-tangle ()
+  (message "org-babel-tangle took %s"
+           (format "%.2f seconds"
+                   (float-time (time-since sam/pre-tangle-time)))))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-init
+(add-hook 'org-babel-pre-tangle-hook 'sam/babel-pre-tangle)
+(add-hook 'org-babel-post-tangle-hook 'sam/babel-post-tangle)
 #+end_src
 
 *** Org-jira
@@ -692,8 +715,8 @@ to get it all working is under the [[Linking Jira with local TODO states]] headi
   <<org-jira-custom-vars>>
   :config
   <<org-jira-config>>
-  :hook
-  (org-after-todo-state-change . sam/org-jira-todo-hook))
+  :init
+  (add-hook 'org-after-todo-state-change-hook 'sam/org-jira-todo-hook))
 #+END_SRC
 **** Keybindings
 #+BEGIN_SRC emacs-lisp
@@ -854,7 +877,7 @@ First we need to setup =lsp-mode= and enable logging by setting =lsp-print-io= t
 To handle the configuration of =lsp-mode= for talking with the MS language server,
 I'm using [[https://github.com/andrew-christianson/lsp-python-ms][lsp-python-ms]]. It's just a packaged version of the code described in
 the previously linked blog post.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package lsp-python-ms
   :hook (python-mode . lsp-python-enable)
   :config
