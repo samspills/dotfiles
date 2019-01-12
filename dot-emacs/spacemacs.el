@@ -3,12 +3,12 @@
 ;; https://github.com/samspills/dotfiles/blob/master/dot-emacs/spacemacs.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
-(setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
-                                          ("org" . "orgmode.org/elpa/")
-                                          ("gnu" . "elpa.gnu.org/packages/")))
-(setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
-                          ("org" . "orgmode.org/elpa/")
-                          ("gnu" . "elpa.gnu.org/packages/")))
+;; (setq configuration-layer-elpa-archives '(("melpa stable" . "stable.melpa.org/packages/")
+;;                                           ("org" . "orgmode.org/elpa/")
+;;                                           ("gnu" . "elpa.gnu.org/packages/")))
+;; (setq package-archives '( ("melpa stable" . "stable.melpa.org/packages/")
+;;                           ("org" . "orgmode.org/elpa/")
+;;                           ("gnu" . "elpa.gnu.org/packages/")))
 (package-refresh-contents)
 
 (unless (package-installed-p 'use-package)
@@ -116,17 +116,17 @@
 (use-package org
   :mode ("\\.org\\|org_archive\\'" . org-mode)
   :general
- (:prefix dotspacemacs-leader-key
-  :states 'normal
-          "oc" 'org-capture
-          "os" 'org-attach-screenshot
-          "od" 'org-agenda-daily-dashboard
-          "ol" 'org-store-link
-          "or" 'org-rubikloud
-          "oj" 'org-journal
-          "op" 'org-pomodoro
-          "oi" 'org-clock-in
-          "oo" 'org-clock-out)
+  (:prefix dotspacemacs-leader-key
+   :states 'normal
+           "oc" 'org-capture
+           "os" 'org-attach-screenshot
+           "od" 'org-agenda-daily-dashboard
+           "ol" 'org-id-store-link
+           "or" 'org-rubikloud
+           "oj" 'org-journal
+           "op" 'org-pomodoro
+           "oi" 'org-clock-in
+           "oo" 'org-clock-out)
   :custom
   (org-startup-indented t)
   (org-startup-folded t)
@@ -146,19 +146,13 @@
   (org-confirm-babel-evaluate nil)
   :custom-face
   
-  :hook
-  (org-mode . (lambda () (hl-todo-mode -1)))
-  (org-mode . (lambda () (set-fill-column 80)))
-  (org-mode . turn-on-auto-fill)
-  (org-babel-after-execute . org-redisplay-inline-images)
-  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                   'run-at-end 'only-in-org-mode)))
-  (org-babel-pre-tangle  . (lambda ()
-                             (setq sam/pre-tangle-time (current-time))))
-  (org-babel-post-tangle . (lambda ()
-                             (message "org-babel-tangle took %s"
-                                             (format "%.2f seconds"
-                                                     (float-time (time-since sam/pre-tangle-time))))))
+  :init
+  (add-hook 'org-mode-hook 'sam/no-hl-todo-in-org)
+  (add-hook 'org-mode-hook 'sam/org-mode-auto-fill)
+  (add-hook 'org-babel-after-execute 'org-redisplay-inline-images)
+  (add-hook 'org-mode-hook 'sam/org-auto-babel-tangle)
+  (add-hook 'org-babel-pre-tangle-hook 'sam/babel-pre-tangle)
+  (add-hook 'org-babel-post-tangle-hook 'sam/babel-post-tangle)
   :config
   (setq org-todo-keyword-faces
         '(
@@ -172,40 +166,52 @@
           ("CANCELLED" :foreground "#2d9574" :weight bold)
           ("MEETING" :foreground "#5d4d7a" :weight bold)
           ))
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "▶" "●"))
   (setq org-todo-keywords
         (quote ((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "DEADLINE(D)" "|" "DONE(d!)")
                 (sequence "HOLD(h!)" "WAITING(w@/!)" "|" "CANCELLED(c@/!)" "MEETING(m)"))))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((emacs-lisp . t)
-                                   (python . t)
-                                   (ipython . t)
-                                   (shell . t)
-                                   (plantuml . t))))
+  (setq spaceline-org-clock-p t)
+  ;; (org-babel-do-load-languages 'org-babel-load-languages
+  ;;                              '((emacs-lisp . t)
+  ;;                                (python . t)
+  ;;                                (ipython . t)
+  ;;                                (shell . t)
+  ;;                                (plantuml . t)))
+)
 
 (defun org-journal (&optional arg)
   (interactive "P")
   (find-file "~/Dropbox/life/journal.org"))
 (defun org-rubikloud (&optional arg)
   (interactive "P")
-  (find-file "~/Dropbox/life/rubikloud/rubikloud.org"))
+  (find-file "~/Dropbox/life/rubikloud.org"))
+
+(defun sam/no-hl-todo-in-org ()
+  (hl-todo-mode -1))
+
+(defun sam/org-mode-auto-fill ()
+  (set-fill-column 80)
+  (turn-on-auto-fill))
+
+(setq org-bullets-bullet-list '("■" "◆" "▲" "▶" "●"))
 
 (use-package org-capture
   :ensure nil
   :config
   (add-to-list 'org-capture-templates
-                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Projects")
+                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud.org" "Projects")
                   "* TODO %^{prompt} :inbox: \n%?"))
    (add-to-list 'org-capture-templates
-                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?" :clock-in t :clock-resume t))
    (add-to-list 'org-capture-templates
-                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} %^G \n%T\n%K\n%?"))
    (add-to-list 'org-capture-templates
-                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud/rubikloud.org" "Reference")
+                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud.org" "Reference")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
                 `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
@@ -217,7 +223,7 @@
                 `("J" "Personal Journal" entry (file+olp+datetree "~/Dropbox/life/journal.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
-                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud/rubikloud.org")
+                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 
 (use-package org-mac-link
@@ -297,7 +303,7 @@ This is for promping for refile targets when doing captures."
   (org-gcal-client-id (auth-source-pass-get "client" "org/org-gcal.el"))
   (org-gcal-client-secret (auth-source-pass-get 'secret "org/org-gcal.el"))
   :config
-  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud/rubikloud_cal.org"))
+  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud_cal.org"))
         ))
 
 (use-package org-clocking
@@ -325,21 +331,13 @@ This is for promping for refile targets when doing captures."
           )
     )
 
+(setq spaceline-org-clock-p t)
+
 (use-package org-id
   :ensure nil
   :custom
   (org-id-link-to-org-use-id t)
 )
-
-(use-package ob-ipython
-    ;; XXX org-capture: Capture abort: (json-readtable-error 47)
-    ;; 作者假设 jupyter 正常运行，不好
-    :disabled
-    :homepage https://github.com/gregsexton/ob-ipython
-    :ensure t
-    ;; :config
-    ;; (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-    :defer t)
 
 (require 'subr-x)
 (setq homebrew-plantuml-jar-path
@@ -354,6 +352,17 @@ This is for promping for refile targets when doing captures."
   :after org
   :custom
   (org-plantuml-jar-path homebrew-plantuml-jar-path))
+
+(defun sam/org-auto-babel-tangle ()
+  (add-hook 'after-save-hook 'org-babel-tangle)
+  (add-hook 'run-at-end 'only-in-org-mode))
+
+(defun sam/babel-pre-tangle ()
+  (setq sam/pre-tangle-time (current-time)))
+(defun sam/babel-post-tangle ()
+  (message "org-babel-tangle took %s"
+           (format "%.2f seconds"
+                   (float-time (time-since sam/pre-tangle-time)))))
 
 (use-package org-jira
   :general
@@ -424,8 +433,8 @@ This is for promping for refile targets when doing captures."
          (message status)
          (message action)
          (org-jira-progress-issue-action action))))
-  :hook
-  (org-after-todo-state-change . sam/org-jira-todo-hook))
+  :init
+  (add-hook 'org-after-todo-state-change-hook 'sam/org-jira-todo-hook))
 
 (spacemacs/declare-prefix "J" "jira")
 
@@ -441,27 +450,16 @@ This is for promping for refile targets when doing captures."
   :hook
   (after-init . global-flycheck-mode))
 
-(use-package git-gutter
-  :config
-  (global-git-gutter-mode 't))
-
 (use-package lsp-mode
   :custom
   (lsp-print-io t)
   :config
   (require 'lsp-clients))
 
-(use-package lsp-python-ms
-  :hook (python-mode . lsp-python-enable)
-  :config
-  ;; for dev build of language server
-  (setq lsp-python-ms-dir
-        (expand-file-name "/usr/local/etc/python-language-server/output/bin/Release/")))
-
-(use-package projectile
-  :custom
-  (projectile-project-search-path '("~/rubikloud"))
-)
+;; (use-package projectile
+;;   :custom
+;;   (projectile-project-search-path '("~/rubikloud"))
+;; )
 
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 (setq tramp-default-method "ssh")
