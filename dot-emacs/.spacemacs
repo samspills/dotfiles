@@ -44,49 +44,43 @@ values."
      better-defaults
      emacs-lisp
      git
-     (org :variables
+    (org :variables
           org-want-todo-bindings t)
-     (shell :variables
-            shell-default-shell 'eshell)
-     syntax-checking
-     ;; (lsp :variables
-     ;;      lsp-message-project-root-warning t
-     ;;      lsp-ui-doc-enable t
-     ;;      lsp-ui-doc-enable-eldoc t
-     ;;  )
-     plantuml
-     (python :variables
-             python-test-runner 'pytest
-             python-fill-column 100
-             ;; python-backend 'lsp
-             )
-     sql
-     themes-megapack
-     csv
-     javascript
-     ipython-notebook
-     weechat
-     )
+    (shell :variables
+           shell-default-shell 'eshell)
+    syntax-checking
+    ;; (lsp :variables
+    ;;      lsp-message-project-root-warning t
+    ;;      lsp-ui-doc-enable t
+    ;;      lsp-ui-doc-enable-eldoc t
+    ;;  )
+    plantuml
+    (python :variables
+            python-test-runner 'pytest
+            python-fill-column 100
+            ;; python-backend 'lsp
+            )
+    sql
+    csv
+    javascript
+    ;; ipython-notebook
+    weechat
+    )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(all-the-icons
+   dotspacemacs-additional-packages '(
+                                      all-the-icons
                                       auth-source-pass
                                       benchmark-init
                                       clocker
                                       company-lsp
                                       exec-path-from-shell
                                       general
-                                      git-gutter
-                                      lsp-mode
-                                      (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
-                                      lsp-ui
-                                      oauth2
-                                      ob-ipython
+                                      ;; (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
                                       org-attach-screenshot
                                       org-gcal
-                                      ;;(org-jira :location (recipe :fetcher github :repo "samspills/org-jira" :branch "org-progress-issue-hook"))
                                       org-jira
                                       rainbow-delimiters
                                       spaceline-all-the-icons
@@ -363,4 +357,6 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (package-initialize)
-  (org-babel-load-file "~/dotfiles/dot-emacs/spacemacs.org"))
+  (org-babel-load-file "~/dotfiles/dot-emacs/spacemacs.org")
+
+  )
