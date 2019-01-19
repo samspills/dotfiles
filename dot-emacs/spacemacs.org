@@ -442,9 +442,12 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
 (use-package org-capture
   :ensure nil
   :config
+  ;; (add-to-list 'org-capture-templates
+  ;;               `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud.org" "Projects")
+  ;;                 "* TODO %^{prompt} :inbox: \n%?"))
   (add-to-list 'org-capture-templates
-                `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud.org" "Projects")
-                  "* TODO %^{prompt} :inbox: \n%?"))
+               `("t" "Task" entry (file "~/Dropbox/life/inbox.org")
+                 "* TODO %?\n SCHEDULED: %t"))
    (add-to-list 'org-capture-templates
                 `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?" :clock-in t :clock-resume t))
@@ -457,9 +460,9 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
    (add-to-list 'org-capture-templates
                 `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?"))
-   (add-to-list 'org-capture-templates
-                `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
-                  "* TODO %?"))
+   ;; (add-to-list 'org-capture-templates
+   ;;              `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
+   ;;                "* TODO %?"))
    (add-to-list 'org-capture-templates
                 `("P" "Personal Event" entry (file "~/Dropbox/life/sam-cal.org")
                   "* %^{Description} \n %^T \n %^{Notes}"))
