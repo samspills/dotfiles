@@ -924,3 +924,7 @@ necessary though.
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 (setq tramp-default-method "ssh")
 #+END_SRC
+* Future Improvements
+** TODO org-refile include link to original file+parent
+** TODO capture template expansion link to clocked task should use ID property instead of file+heading path
+** TODO function to find all headings that link to particular task
