@@ -293,6 +293,20 @@ different drawers.
 (org-drawers '("PROPERTIES" "LOGBOOK"))
 #+END_SRC
 
+**** Tags
+I like to setup some fast tag selection, because I try to use tags for easy
+searching in the future.
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+(org-tag-alist '((:startgroup . nil)
+                 ("rubikloud" . ?r) ("personal" . ?p)
+                 (:endgroup . nil)
+                 (:startgroup)
+                 ("client")
+                 (:grouptags)
+                 (:endgroup)
+))
+#+end_src
+
 *** Keybindings
 I add my most used org functions under my personal keymap so that they're always available
 #+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-keybindings
@@ -562,8 +576,9 @@ show up in the agenda and how it will look. In the =config= define an
                               (org-agenda-start-day "+1d")
                               (org-agenda-span 7)
                               (org-agenda-overriding-header "Next 7 Days")))
-                  (tags "inbox"
-                        ((org-agenda-overriding-header "Inbox")))
+                  (todo "TODO"
+                        ((org-agenda-files '("~/Dropbox/life/inbox.org"))
+                         (org-agenda-overriding-header "Inbox")))
                   )
                  ((org-agenda-tag-filter-preset '("-habit")))
                  ))))
@@ -944,3 +959,4 @@ necessary though.
 ** TODO org-refile include link to original file+parent
 ** TODO capture template expansion link to clocked task should use ID property instead of file+heading path
 ** TODO function to find all headings that link to particular task
+** TODO org-super-agenda instead of org custom agenda block
