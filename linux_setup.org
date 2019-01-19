@@ -6,6 +6,9 @@ that is tangled to the appropriate locations.
 This is still very much a work in progress.
 
 ** Package Installation
+:PROPERTIES:
+:ID:       8b53258b-b348-4001-8782-971aac6402d7
+:END:
 In order to get my literate config files onto a new machine and run them, I'll
 need git and emacs at least. So I figure why not handle package installs before
 we get into the org-mode stuff.
@@ -37,19 +40,183 @@ sudo apt-get update -y && sudo apt-get upgrade -y
 sudo apt-get install -y $(cat ~/packages.txt | awk '{print $1}')
 sudo apt autoremove -y
 
-curl -L git.io/antigen > antigen.zsh
+curl -L git.io/antigen > ~/.antigen.zsh
 
 setxkbmap -option ctrl:nocaps
 chsh -s $(which zsh)
 #+end_src
+*** fzf
+I use [[https://github.com/junegunn/fzf][fzf]] for shell history + completion. Completion of file names, configured
+ssh servers, environment variables, and probably a lot of other things can be
+triggered with ~**~.
+#+begin_src shell :results output
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+cd ~/.fzf/
+./install
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Downloading bin/fzf ...
+  - Already exists
+  - Checking fzf executable ... 0.17.5
+
+Generate /home/sam/.fzf.bash ... OK
+Generate /home/sam/.fzf.zsh ... OK
+
+Update /home/sam/.bashrc:
+  - [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    - Already exists: line #1
+
+Update /home/sam/.zshrc:
+  - [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+    - Already exists: line #76
+
+Finished. Restart your shell or reload config file.
+   source ~/.bashrc  # bash
+   source ~/.zshrc   # zsh
+
+Use uninstall script to remove fzf.
+
+For more information, see: https://github.com/junegunn/fzf
+#+end_example
+
 ** Git Config
+:PROPERTIES:
+:ID:       22443b22-e1b4-4e8d-9228-4908aeeccad4
+:END:
 Set up my user name and email address for git.
 #+begin_src yaml :tangle "~/.gitconfig"
 [user]
   email = srpillsworth@gmail.com
   name = Sam Pillsworth
 #+end_src
+** Shell
+*** zsh
+**** Environment
+:PROPERTIES:
+:ID:       34b5f30b-cb5b-463d-89e8-e20aff13f736
+:END:
+ #+begin_src shell :tangle "~/.zshenv"
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
+export TERM="screen-256color"
+ #+end_src
+**** Antigen
+:PROPERTIES:
+:ID:       bfb63105-5c3b-4a20-99cb-571aa9a48f38
+:END:
+I use antigen + oh-my-zsh to manage my zsh config for the most part
+#+begin_src  shell :tangle "~/.zshrc"
+source ~/.antigen.zsh
+antigen use oh-my-zsh
 
+antigen bundle colored-man-pages
+antigen bundle colorize
+antigen bundle virtualenvwrapper
+antigen bundle pip
+antigen bundle python
+
+antigen theme https://github.com/VidalChavez/pygmalion.git --loc=pygmalion
+
+antigen apply
+#+end_src
+**** Functions
+:PROPERTIES:
+:ID:       79e8b3d6-3631-4f98-8174-6d295e26c347
+:END:
+Here are all of my custom zsh functions. I also tend to use functions over
+aliases.
+#+begin_src shell :tangle "~/.zshrc"
+function ec() { emacsclient $1 & }
+function jql() { jq -C "." <$* | less; }
+function cowfig() {figlet "$*" | cowsay -n}
+function cpcowfig() {figlet "$*" | cowsay -n | pbcopy}
+function agp() {ag --py $*}
+function gitsync() {rsync -t $(git diff --name-only) --relative $1}
+function luigiui() {open -a "Google Chrome" $(plumb --host dev-magnezone-$1-1.rubikloudcorp.com status $2 | jq -r '.owner_public_ip' | awk ' {print "http://" $0 ":8082"} ')}
+function jn() {open -a "Google Chrome" "http://localhost:$1/tree?"}
+function jigh() {jig --host dev-configapi.rubikloudcorp.com $*}
+function plumbh() {plumb --host dev-magnezone.rubikloudcorp.com $*}
+function plumbh-log() {plumbh log $1 stdout > log && vim log}
+
+# Rubikloud Functions
+function lithium-jupyter() {scp spillsworth@lithium:/home/spillsworth/.run/current_kernel.json . && jupyter console --existing ./current_kernel.json --ssh lithium}
+function saws() {aws ec2 ${1}-instances --instance-ids i-01a4312b35d89399c  --region eu-west-1}
+function s3fstoken() {
+    aws-vault exec --no-session --assume-role-ttl 12h ${1:-default} -- python -c 'import os; print("""s3 = s3fs.S3FileSystem(key="{}", secret="{}", token="{}")""".format(os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("AWS_SESSION_TOKEN")))'
+}
+function s3atoken() {
+    aws-vault exec --no-session --assume-role-ttl 12h ${1:-default} -- python -c 'import os; print("""
+hadoop_conf.set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider")
+hadoop_conf.set("fs.s3a.access.key", "{}")
+hadoop_conf.set("fs.s3a.secret.key", "{}")
+hadoop_conf.set("fs.s3a.session.token", "{}")
+""".format(os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("AWS_SESSION_TOKEN")))'
+}
+#+end_src
+**** Exports and aliases
+:PROPERTIES:
+:ID:       424bc62d-1633-4633-8e9b-82f47767e150
+:END:
+Here I export some values and set a few aliases
+#+begin_src shell :tangle "~/.zshrc"
+export GTAGSLABEL=pygments
+export EDITOR=ec
+
+alias l='ls -lhFu'
+alias tmux="tmux -2 -u"
+alias zshconfig="ec ~/.zshrc"
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+#+end_src
+**** Terminal specific settings
+:PROPERTIES:
+:ID:       1d545107-9939-4d9a-8dc9-46d465e5afee
+:END:
+#+begin_src shell :tangle "~/.zshrc"
+bindkey -v
+KEYTIMEOUT=1
+
+setopt CORRECT
+
+# History options
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt inc_append_history
+setopt share_history
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+#+end_src
+
+I also have some terminal settings explicitly for when the terminal is dumb.
+This is the case when using emacs + tramp to work remotely. When remoting into a
+machine via tramp, all of the zsh config can really slow it down and also the
+prompt can cause problems (it's been a long time since I set this up and I don't
+remember the exact issue I was having).
+#+begin_src shell :tangle "~/.zshrc"
+if [[ "$TERM" == "dumb" ]]
+then
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    unfunction precmd
+    unfunction preexec
+    PS1='$ '
+fi
+#+end_src
+
+I use ~fzf~ for history search/completion.
+#+begin_src shell :tangle "~/.zshrc"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#+end_src
+
+Finally, source the environment file
+#+begin_src shell :tangle "~/.zshrc"
+source ~/.zshenv
+#+end_src
 * Plans
 ** TODO better lock screen
 ** TODO still getting some unknown characters in terminal
