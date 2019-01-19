@@ -114,7 +114,7 @@ These are some straight-forward settings for my personal preferences. I didn't
 know where else to put them, so they're all going here.
 *** Keybindings
 #+BEGIN_SRC emacs-lisp
-(spacemacs/set-leader-keys "SPC" 'avy-goto-char-timer) ;; SPC-SPC then start typing a word
+;; (spacemacs/set-leader-keys "SPC" 'avy-goto-char-timer) ;; SPC-SPC then start typing a word
 #+END_SRC
 *** Helpers/Config type things
 **** Customized Variables
