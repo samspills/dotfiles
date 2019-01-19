@@ -960,3 +960,12 @@ necessary though.
 ** TODO capture template expansion link to clocked task should use ID property instead of file+heading path
 ** TODO function to find all headings that link to particular task
 ** TODO org-super-agenda instead of org custom agenda block
+** TODO regex in tags hierarchy to point all SEG_xxxx tags to manifold tag
+** TODO rethink current clocking strategy
+This is less about my actual clocking commands and more about how I think about
+org-clocking. There are settings that I could fiddle with to make clocking less
+manual and a little more helpful. Before I can start investigating a new setup
+though, I need to think about what I want to clock, why I want to clock it, and
+then also a little bit about my organization of tasks/clocks.
+
+This line of thinking was initiated by re-reading [[http://doc.norang.ca/org-mode.html][Bernt Hansen's setup]].
