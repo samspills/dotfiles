@@ -508,13 +508,12 @@ into my org files
 #+BEGIN_SRC emacs-lisp
 (use-package org-attach-screenshot
   :custom
-  (org-attach-screenshot-command-line "screencapture -i %f")
   :config
   (setq org-attach-screenshot-dirfunction
         (lambda ()
           (progn (assert (buffer-file-name))
                  (concat (file-name-sans-extension (buffer-file-name))
-                         "_Art_"))))
+                         "_attachments_"))))
 )
 #+END_SRC
 
