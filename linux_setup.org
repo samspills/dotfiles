@@ -92,6 +92,80 @@ Set up my user name and email address for git.
   name = Sam Pillsworth
 #+end_src
 ** Shell
+*** .Xresources
+:PROPERTIES:
+:ID:       b24a26b9-8f57-48c5-8fd4-588833966455
+:END:
+I used [[https://github.com/auduchinok/base16-builder][base16-builder]] to generate an ~.Xresources~ template for the spacemacs dark theme.
+#+begin_src shell :tangle "~/.Xresources"
+! Base16 Spacemacs
+! Scheme: Nasser Alshammari (https://github.com/nashamri/spacemacs-theme)
+
+#define base00 #1f2022
+#define base01 #282828
+#define base02 #444155
+#define base03 #585858
+#define base04 #b8b8b8
+#define base05 #a3a3a3
+#define base06 #e8e8e8
+#define base07 #f8f8f8
+#define base08 #f2241f
+#define base09 #ffa500
+#define base0A #b1951d
+#define base0B #67b11d
+#define base0C #2d9574
+#define base0D #4f97d7
+#define base0E #a31db1
+#define base0F #b03060
+
+*foreground:   base05
+*background:   base00
+*cursorColor:  base05
+
+*color0:       base00
+*color1:       base08
+*color2:       base0B
+*color3:       base0A
+*color4:       base0D
+*color5:       base0E
+*color6:       base0C
+*color7:       base05
+
+*color8:       base03
+*color9:       base08
+*color10:      base0B
+*color11:      base0A
+*color12:      base0D
+*color13:      base0E
+*color14:      base0C
+*color15:      base07
+
+! Note: colors beyond 15 might not be loaded (e.g., xterm, urxvt),
+! use 'shell' template to set these if necessary
+*color16:      base09
+*color17:      base0F
+*color18:      base01
+*color19:      base02
+*color20:      base04
+*color21:      base06
+#+end_src
+
+#+begin_src shell :tangle "~/.Xresources"
+*utf8:                  1
+*saveLines:             999999
+#+end_src
+
+What is an ~Xft~ setting? I have no idea
+#+begin_src shell :tangle "~/.Xresources"
+!-- Xft settings -- !
+Xft.dpi:        144
+Xft.rgba:       rgb
+Xft.autohint:   0
+Xft.lcdfilter:  lcddefault
+Xft.hintstyle:  hintfull
+Xft.hinting:    1
+Xft.antialias:  1
+#+end_src
 *** zsh
 **** Environment
 :PROPERTIES:
@@ -217,7 +291,983 @@ Finally, source the environment file
 #+begin_src shell :tangle "~/.zshrc"
 source ~/.zshenv
 #+end_src
+** i3
+*** Installation
+:PROPERTIES:
+:ID:       62bfae99-74df-4eb9-a7c4-8ee6366d8885
+:END:
+First we have to add the i3 Ubuntu repository to the list of apt sources.
+#+begin_src shell :dir "/sudo::" :cache no :results pp
+/usr/lib/apt/apt-helper download-file http://debian.sur5r.net/i3/pool/main/s/sur5r-keyring/sur5r-keyring_2018.01.30_all.deb keyring.deb SHA256:baa43dbbd7232ea2b5444cae238d53bebb9d34601cc000e82f11111b1889078a
+sudo dpkg -i ./keyring.deb
+sudo echo "deb http://debian.sur5r.net/i3/ $(grep '^DISTRIB_CODENAME=' /etc/lsb-release | cut -f2 -d=) universe" >> /etc/apt/sources.list.d/sur5r-i3.list
+#+end_src
+
+#+RESULTS:
+: 0% [Working]            Get:1 http://debian.sur5r.net/i3/pool/main/s/sur5r-keyring/sur5r-keyring_2018.01.30_all.deb [3,258 B]
+: 100% [Working]              (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 178986 files and directories currently installed.)
+: Preparing to unpack ./keyring.deb ...
+: Unpacking sur5r-keyring (2018.01.30) over (2018.01.30) ...
+: Setting up sur5r-keyring (2018.01.30) ...
+
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt update
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[33m0% [Working][0m            Hit:1 http://security.ubuntu.com/ubuntu bionic-security InRelease
+[33m0% [Connecting to archive.ubuntu.com (91.189.88.149)] [Waiting for headers] [Co[0m                                                                               Ign:2 http://dl.google.com/linux/chrome/deb stable InRelease
+[33m0% [Connecting to archive.ubuntu.com (91.189.88.149)] [Waiting for headers] [Co[0m[33m0% [1 InRelease gpgv 88.7 kB] [Connecting to archive.ubuntu.com (91.189.88.149)[0m                                                                               Hit:3 http://archive.canonical.com/ubuntu bionic InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Connecting to archive.ubuntu.com (91.189.88.149)[0m                                                                               Ign:4 http://oem.archive.canonical.com/updates bionic-oem InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Ign:5 http://dell.archive.canonical.com/updates bionic-dell-beaver-italia InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Hit:6 http://ppa.launchpad.net/kelleyk/emacs/ubuntu bionic InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Hit:7 http://archive.ubuntu.com/ubuntu bionic InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Hit:8 http://dl.google.com/linux/chrome/deb stable Release
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Hit:9 http://oem.archive.canonical.com/updates bionic-oem Release
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Ign:10 http://dell.archive.canonical.com/updates bionic-dell-service InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers] [Wait[0m                                                                               Hit:11 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+[33m                                                                               0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers][0m                                                                         Hit:12 http://debian.sur5r.net/i3 bionic InRelease
+[33m0% [1 InRelease gpgv 88.7 kB] [Waiting for headers] [Waiting for headers][0m[33m                                                                         0% [Waiting for headers] [Waiting for headers][0m[33m0% [3 InRelease gpgv 10.2 kB] [Waiting for headers] [Waiting for headers][0m                                                                         Ign:13 http://dell.archive.canonical.com/updates bionic-dell InRelease
+[33m                                                                         0% [3 InRelease gpgv 10.2 kB] [Waiting for headers][0m                                                   Hit:14 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+[33m0% [3 InRelease gpgv 10.2 kB] [Waiting for headers][0m                                                   Hit:15 http://dell.archive.canonical.com/updates bionic-dell-beaver-italia Release
+[33m                                                   0% [3 InRelease gpgv 10.2 kB][0m                             Hit:16 http://dell.archive.canonical.com/updates bionic-dell-service Release
+[33m0% [3 InRelease gpgv 10.2 kB][0m[33m                             0% [Waiting for headers][0m[33m0% [6 InRelease gpgv 21.3 kB] [Waiting for headers][0m                                                   Hit:17 http://dell.archive.canonical.com/updates bionic-dell Release
+[33m                                                   0% [6 InRelease gpgv 21.3 kB][0m[33m                             0% [Working][0m[33m0% [7 InRelease gpgv 242 kB][0m[33m                            0% [Working][0m[33m0% [Release.gpg gpgv 943 B][0m[33m                           0% [Working][0m[33m0% [Release.gpg gpgv 4,171 B][0m[33m                             0% [Working][0m[33m0% [11 InRelease gpgv 88.7 kB][0m[33m                              0% [Working][0m[33m0% [12 InRelease gpgv 6,444 B][0m[33m                              0% [Working][0m[33m0% [14 InRelease gpgv 74.6 kB][0m[33m                              0% [Working][0m[33m0% [Release.gpg gpgv 4,201 B][0m[33m                             0% [Working][0m[33m0% [Release.gpg gpgv 4,189 B][0m[33m                             0% [Working][0m[33m0% [Release.gpg gpgv 4,173 B][0m[33m                             20% [Working][0m             Reading package lists... 0%Reading package lists... 0%Reading package lists... 0%Reading package lists... 3%Reading package lists... 3%Reading package lists... 6%Reading package lists... 6%Reading package lists... 7%Reading package lists... 7%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 9%Reading package lists... 34%Reading package lists... 34%Reading package lists... 59%Reading package lists... 59%Reading package lists... 63%Reading package lists... 73%Reading package lists... 73%Reading package lists... 84%Reading package lists... 84%Reading package lists... 84%Reading package lists... 84%Reading package lists... 85%Reading package lists... 85%Reading package lists... 85%Reading package lists... 85%Reading package lists... 87%Reading package lists... 87%Reading package lists... 88%Reading package lists... 88%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 89%Reading package lists... 92%Reading package lists... 92%Reading package lists... 95%Reading package lists... 95%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 97%Reading package lists... 97%Reading package lists... 97%Reading package lists... 97%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+All packages are up to date.
+#+end_example
+
+Now we can install i3, and some of the utilities that my i3 setup relies on.
+These are rxvt, and scrot.
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt install -y i3
+sudo apt install -y rxvt-unicode-256color scrot
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+i3 is already the newest version (4.16-1~~bionic1).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following additional packages will be installed:
+  fonts-dejavu fonts-vlgothic ncurses-term rxvt-unicode
+The following NEW packages will be installed:
+  fonts-dejavu fonts-vlgothic ncurses-term rxvt-unicode rxvt-unicode-256color
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Need to get 3,203 kB of archives.
+After this operation, 16.1 MB of additional disk space will be used.
+[33m0% [Working][0m            Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-vlgothic all 20141206-4ubuntu1 [2,219 kB]
+[33m0% [1 fonts-vlgothic 2,611 B/2,219 kB 0%][0m[33m20% [1 fonts-vlgothic 789 kB/2,219 kB 36%][0m[33m                                          59% [Working][0m             Get:2 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-dejavu all 2.37-1 [3,130 B]
+[33m59% [2 fonts-dejavu 1,169 B/3,130 B 37%][0m[33m                                        64% [Waiting for headers][0m                         Get:3 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 ncurses-term all 6.1-1ubuntu1.18.04 [248 kB]
+[33m64% [3 ncurses-term 15.1 kB/248 kB 6%][0m[33m                                      74% [Waiting for headers][0m                         Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 rxvt-unicode amd64 9.22-3 [729 kB]
+[33m74% [4 rxvt-unicode 4,449 B/729 kB 1%][0m[33m                                      96% [Waiting for headers][0m                         Get:5 http://archive.ubuntu.com/ubuntu bionic/universe amd64 rxvt-unicode-256color all 9.22-3 [3,640 B]
+[33m96% [5 rxvt-unicode-256color 3,640 B/3,640 B 100%][0m[33m                                                  100% [Working][0m              Fetched 3,203 kB in 1s (2,761 kB/s)
+Selecting previously unselected package fonts-vlgothic.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 179323 files and directories currently installed.)
+Preparing to unpack .../fonts-vlgothic_20141206-4ubuntu1_all.deb ...
+Unpacking fonts-vlgothic (20141206-4ubuntu1) ...
+Selecting previously unselected package fonts-dejavu.
+Preparing to unpack .../fonts-dejavu_2.37-1_all.deb ...
+Unpacking fonts-dejavu (2.37-1) ...
+Selecting previously unselected package ncurses-term.
+Preparing to unpack .../ncurses-term_6.1-1ubuntu1.18.04_all.deb ...
+Unpacking ncurses-term (6.1-1ubuntu1.18.04) ...
+Selecting previously unselected package rxvt-unicode.
+Preparing to unpack .../rxvt-unicode_9.22-3_amd64.deb ...
+update-alternatives: error: no alternatives for rxvt
+Unpacking rxvt-unicode (9.22-3) ...
+Selecting previously unselected package rxvt-unicode-256color.
+Preparing to unpack .../rxvt-unicode-256color_9.22-3_all.deb ...
+Unpacking rxvt-unicode-256color (9.22-3) ...
+Setting up ncurses-term (6.1-1ubuntu1.18.04) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for desktop-file-utils (0.23-1ubuntu3.18.04.2) ...
+Setting up rxvt-unicode (9.22-3) ...
+Setting up fonts-vlgothic (20141206-4ubuntu1) ...
+update-alternatives: using /usr/share/fonts/truetype/vlgothic/VL-Gothic-Regular.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for gnome-menus (3.13.3-11ubuntu1.1) ...
+Processing triggers for fontconfig (2.12.6-0ubuntu2) ...
+Setting up fonts-dejavu (2.37-1) ...
+Setting up rxvt-unicode-256color (9.22-3) ...
+#+end_example
+
+*** Configuration
+:PROPERTIES:
+:ID:       705e0a62-fe76-4269-bd44-5a7ee7d62f80
+:END:
+To start, I'm just stealing the whole configuration setup by Jess Frazelle, and
+can be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][found here]]
+#+begin_src shell :tangle "~/.config/i3/config"
+# i3 config file (v4)
+#
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+set $mod Mod4
+set $term urxvt
+set $menu i3-dmenu-desktop
+set $barcmd i3status
+set $lockcmd i3lock
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango:DejaVu Sans Mono 12
+
+# HiDPI for sway
+# output eDP-1 scale 1
+
+# Inputs for sway
+# Reverse scroll
+#input "2:7:SynPS/2_Synaptics_TouchPad" {
+#    natural_scroll enabled
+#    left_handed disabled
+#    pointer_accel 0.9
+#}
+
+# Before i3 v4.8, we used to recommend this one as the default:
+# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+# The font above is very space-efficient, that is, it looks good, sharp and
+# clear in small sizes. However, its unicode glyph coverage is limited, the old
+# X core fonts rendering does not support right-to-left and this being a bitmap
+# font, it doesn’t scale on retina/hidpi displays.
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec $term
+
+# start dmenu
+bindsym $mod+d exec $menu
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# spotify: no border
+for_window [class="^Spotify$"] border none
+for_window [class="^Spotify Premium$"] border none
+
+# skype, steam, wine: float Gimp
+for_window [class="Code"] floating enable
+for_window [class="Firefox"] floating enable
+for_window [class="Gimp"] floating enable
+for_window [class="google-chrome"] floating enable
+for_window [class="Google-chrome"] floating enable
+for_window [class="Keybase"] floating enable
+for_window [class="Neoman"] floating enable
+for_window [class="NES"] floating enable
+for_window [class="Pidgin"] floating enable
+for_window [class="Portal"] floating enable
+for_window [class="RStudio"] floating enable
+for_window [class="Skype"] floating enable
+for_window [class="Slack"] floating enable
+for_window [class="Steam"] floating enable
+for_window [class="Tor Browser"] floating enable
+for_window [class="Virt-viewer"] floating enable
+for_window [class="VirtualBox"] floating enable
+for_window [class="vlc"] floating enable
+for_window [class="Wine"] floating enable
+for_window [class="Wireshark"] floating enable
+
+# lock screen
+bindsym $mod+l exec $lockcmd -c 111111
+
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+semicolon focus right
+
+# move to monitor
+bindsym $mod+Shift+Left move workspace to output left
+bindsym $mod+Shift+Right move workspace to output right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+
+# alternatively, you can use the cursor keys:
+# bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+# bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod+bar split h
+
+# split in vertical orientation
+bindsym $mod+minus split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# audio controls
+bindsym XF86AudioRaiseVolume exec amixer set Master 5%+ #increase sound volume
+bindsym XF86AudioLowerVolume exec amixer set Master 5%- #decrease sound volume
+bindsym XF86AudioMute exec amixer set Master 1+ toggle # mute sound
+bindsym XF86AudioMicMute exec amixer set Capture toggle # mute mic
+
+# screen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightness
+
+# Screenshots
+# Screenshot fullscreen
+bindsym Print exec "scrot -q 100 ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# Screenshot fullscreen, sway
+#bindsym Shift+Print exec "swaygrab ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
+# Screenshot with selection
+bindsym $mod+Print exec "sleep 0.4; scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# Screenshot capture, sway
+#bindsym Shift+Print exec "swaygrab -c ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').webm"
+# Screenshot current focused window
+bindsym Shift+Print exec "scrot -q 100 -u ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# Screenshot current focused window, sway
+#bindsym Shift+Print exec "swaygrab --focused ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exit
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# i3status bar config
+bar {
+  font pango:DejaVu Sans Mono 12
+  status_command $barcmd --config ~/.config/i3/i3status.conf
+}
+
+# auto run commands
+# set background
+# use the same background as slim (login manager)
+# this file is an alias to something in /home/jessie/Pictures
+exec --no-startup-id feh --bg-fill ${HOME}/Pictures/central-park.jpg
+
+# Sway backgroud
+# output "*" background ${HOME}/Pictures/central-park2.jpg fill
+
+# run the merge for good colors
+exec xrdb -merge $HOME/.Xresources
+exec xrdb -merge $HOME/.Xdefaults
+#+end_src
+
+*** i3status
+:PROPERTIES:
+:ID:       3580802b-dc7d-41d4-b84f-12cb717a9084
+:END:
+
+i3Status has the following dependencies:
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt install -y libconfuse-dev libyajl-dev libasound2-dev libiw-dev asciidoc libpulse-dev libnl-genl-3-dev
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following additional packages will be installed:
+  asciidoc-base asciidoc-common asciidoc-dblatex asciidoc-doc dblatex
+  dblatex-doc docbook-dsssl docbook-utils docbook-xml docbook-xsl
+  fonts-gfs-baskerville fonts-gfs-porson fonts-lmodern fonts-texgyre
+  libconfuse-doc libfile-homedir-perl libfile-which-perl libglib2.0-dev
+  libglib2.0-dev-bin libmime-charset-perl libnl-3-dev libosp5 libostyle1c2
+  libpcre16-3 libpcre3-dev libpcre32-3 libpcrecpp0v5 libpotrace0 libptexenc1
+  libsgmls-perl libsombok3 libsynctex1 libtcl8.6 libtexlua52 libtexluajit2
+  libtk8.6 libunicode-linebreak-perl libxml2-utils libyaml-tiny-perl
+  libzzip-0-13 lmodern lynx lynx-common openjade opensp pkg-config
+  preview-latex-style python-apt sgml-data sgmlspl tcl tcl8.6 tex-common
+  tex-gyre texlive texlive-base texlive-bibtex-extra texlive-binaries
+  texlive-extra-utils texlive-fonts-recommended texlive-formats-extra
+  texlive-lang-greek texlive-latex-base texlive-latex-extra
+  texlive-latex-recommended texlive-pictures texlive-plain-generic
+  texlive-science texlive-xetex tipa tk tk8.6 vim-addon-manager vim-asciidoc
+  xml-core xmlto xsltproc zlib1g-dev
+Suggested packages:
+  source-highlight epubcheck docbook inkscape latex-cjk-all texlive-lang-all
+  texlive-lang-cyrillic transfig xindy docbook-dsssl-doc docbook-defguide
+  dbtoepub docbook-xsl-doc-html | docbook-xsl-doc-pdf | docbook-xsl-doc-text
+  | docbook-xsl-doc docbook-xsl-saxon fop libsaxon-java libxalan2-java
+  libxslthl-java xalan libasound2-doc libglib2.0-doc libencode-hanextra-perl
+  libpod2-base-perl sgmls-doc doc-base python-apt-dbg python-apt-doc perlsgml
+  w3-recs tcl-tclreadline debhelper perl-tk chktex dvidvi dvipng fragmaster
+  lacheck latexdiff latexmk purifyeps texlive-fonts-recommended-doc
+  texlive-latex-base-doc python-pygments icc-profiles
+  libspreadsheet-parseexcel-perl texlive-latex-extra-doc
+  texlive-latex-recommended-doc texlive-pstricks dot2tex prerex ruby-tcltk
+  | libtcltk-ruby texlive-pictures-doc vprerex texlive-science-doc w3m
+  | lynx-cur | links texlive-htmlxml
+The following NEW packages will be installed:
+  asciidoc asciidoc-base asciidoc-common asciidoc-dblatex asciidoc-doc dblatex
+  dblatex-doc docbook-dsssl docbook-utils docbook-xml docbook-xsl
+  fonts-gfs-baskerville fonts-gfs-porson fonts-lmodern fonts-texgyre
+  libasound2-dev libconfuse-dev libconfuse-doc libfile-homedir-perl
+  libfile-which-perl libglib2.0-dev libglib2.0-dev-bin libiw-dev
+  libmime-charset-perl libnl-3-dev libnl-genl-3-dev libosp5 libostyle1c2
+  libpcre16-3 libpcre3-dev libpcre32-3 libpcrecpp0v5 libpotrace0 libptexenc1
+  libpulse-dev libsgmls-perl libsombok3 libsynctex1 libtcl8.6 libtexlua52
+  libtexluajit2 libtk8.6 libunicode-linebreak-perl libxml2-utils libyajl-dev
+  libyaml-tiny-perl libzzip-0-13 lmodern lynx lynx-common openjade opensp
+  pkg-config preview-latex-style python-apt sgml-data sgmlspl tcl tcl8.6
+  tex-common tex-gyre texlive texlive-base texlive-bibtex-extra
+  texlive-binaries texlive-extra-utils texlive-fonts-recommended
+  texlive-formats-extra texlive-lang-greek texlive-latex-base
+  texlive-latex-extra texlive-latex-recommended texlive-pictures
+  texlive-plain-generic texlive-science texlive-xetex tipa tk tk8.6
+  vim-addon-manager vim-asciidoc xml-core xmlto xsltproc zlib1g-dev
+0 upgraded, 85 newly installed, 0 to remove and 0 not upgraded.
+Need to get 302 MB of archives.
+After this operation, 700 MB of additional disk space will be used.
+[33m0% [Working][0m            Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 tex-common all 6.09 [33.0 kB]
+[33m0% [1 tex-common 2,615 B/33.0 kB 8%][0m[33m                                    0% [Working][0m            Get:2 http://archive.ubuntu.com/ubuntu bionic/universe amd64 asciidoc-common all 8.6.10-2 [199 kB]
+[33m0% [2 asciidoc-common 2,613 B/199 kB 1%][0m[33m                                        1% [Waiting for headers][0m                        Get:3 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxml2-utils amd64 2.9.4+dfsg1-6.1ubuntu1.2 [35.8 kB]
+[33m1% [3 libxml2-utils 532 B/35.8 kB 1%][0m[33m                                     1% [Waiting for headers][0m                        Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 asciidoc-base all 8.6.10-2 [80.7 kB]
+[33m1% [4 asciidoc-base 2,050 B/80.7 kB 3%][0m[33m                                       1% [Working][0m            Get:5 http://archive.ubuntu.com/ubuntu bionic/universe amd64 asciidoc all 8.6.10-2 [3,264 B]
+[33m1% [5 asciidoc 3,264 B/3,264 B 100%][0m[33m                                    1% [Working][0m            Get:6 http://archive.ubuntu.com/ubuntu bionic/main amd64 xml-core all 0.18 [21.3 kB]
+[33m1% [6 xml-core 4,362 B/21.3 kB 20%][0m[33m                                   2% [Waiting for headers][0m                        Get:7 http://archive.ubuntu.com/ubuntu bionic/universe amd64 sgml-data all 2.0.10 [173 kB]
+[33m2% [7 sgml-data 3,039 B/173 kB 2%][0m[33m                                  2% [Waiting for headers][0m                        Get:8 http://archive.ubuntu.com/ubuntu bionic/universe amd64 docbook-xml all 4.5-8 [71.8 kB]
+[33m2% [8 docbook-xml 4,523 B/71.8 kB 6%][0m[33m                                     2% [Waiting for headers][0m                        Get:9 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-apt amd64 1.6.3 [149 kB]
+[33m2% [9 python-apt 6,248 B/149 kB 4%][0m[33m                                   2% [Working][0m            Get:10 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libptexenc1 amd64 2017.20170613.44572-8ubuntu0.1 [34.5 kB]
+[33m2% [10 libptexenc1 14.4 kB/34.5 kB 42%][0m[33m                                       3% [Waiting for headers][0m                        Get:11 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsynctex1 amd64 2017.20170613.44572-8ubuntu0.1 [41.4 kB]
+[33m3% [11 libsynctex1 1,350 B/41.4 kB 3%][0m[33m                                      3% [Waiting for headers][0m                        Get:12 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libtexlua52 amd64 2017.20170613.44572-8ubuntu0.1 [91.2 kB]
+[33m3% [12 libtexlua52 1,652 B/91.2 kB 2%][0m[33m                                      3% [Waiting for headers][0m                        Get:13 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libtexluajit2 amd64 2017.20170613.44572-8ubuntu0.1 [230 kB]
+[33m3% [13 libtexluajit2 14.4 kB/230 kB 6%][0m[33m                                       3% [Working][0m            Get:14 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpotrace0 amd64 1.14-2 [17.4 kB]
+[33m3% [14 libpotrace0 5,212 B/17.4 kB 30%][0m[33m                                       4% [Waiting for headers][0m                        Get:15 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libzzip-0-13 amd64 0.13.62-3.1ubuntu0.18.04.1 [26.0 kB]
+[33m4% [15 libzzip-0-13 6,333 B/26.0 kB 24%][0m[33m                                        4% [Waiting for headers][0m                        Get:16 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 texlive-binaries amd64 2017.20170613.44572-8ubuntu0.1 [8,179 kB]
+[33m4% [16 texlive-binaries 6,116 B/8,179 kB 0%][0m[33m                                            6% [Waiting for headers][0m                        Get:17 http://archive.ubuntu.com/ubuntu bionic/main amd64 texlive-base all 2017.20180305-1 [18.7 MB]
+[33m6% [17 texlive-base 28.7 kB/18.7 MB 0%][0m[33m9% [17 texlive-base 9,389 kB/18.7 MB 50%][0m[33m11% [17 texlive-base 16.5 MB/18.7 MB 88%][0m[33m                                         11% [Waiting for headers][0m                         Get:18 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-fonts-recommended all 2017.20180305-1 [5,262 kB]
+[33m11% [18 texlive-fonts-recommended 40.5 kB/5,262 kB 1%][0m[33m                                                      13% [Working][0m             Get:19 http://archive.ubuntu.com/ubuntu bionic/main amd64 fonts-lmodern all 2.004.5-3 [4,551 kB]
+[33m13% [19 fonts-lmodern 21.0 kB/4,551 kB 0%][0m[33m                                          15% [Waiting for headers][0m                         Get:20 http://archive.ubuntu.com/ubuntu bionic/main amd64 texlive-latex-base all 2017.20180305-1 [951 kB]
+[33m15% [20 texlive-latex-base 39.4 kB/951 kB 4%][0m[33m                                             15% [Waiting for headers][0m                         Get:21 http://archive.ubuntu.com/ubuntu bionic/main amd64 texlive-latex-recommended all 2017.20180305-1 [14.9 MB]
+[33m15% [21 texlive-latex-recommended 16.5 kB/14.9 MB 0%][0m[33m17% [21 texlive-latex-recommended 8,082 kB/14.9 MB 54%][0m[33m                                                       19% [Waiting for headers][0m                         Get:22 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive all 2017.20180305-1 [14.4 kB]
+[33m19% [22 texlive 14.4 kB/14.4 kB 100%][0m[33m                                     19% [Working][0m             Get:23 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-bibtex-extra all 2017.20180305-2 [56.0 MB]
+[33m19% [23 texlive-bibtex-extra 8,167 B/56.0 MB 0%][0m[33m22% [23 texlive-bibtex-extra 8,081 kB/56.0 MB 14%][0m[33m                                                  24% [23 texlive-bibtex-extra 18.3 MB/56.0 MB 33%][0m[33m27% [23 texlive-bibtex-extra 27.3 MB/56.0 MB 49%][0m[33m29% [23 texlive-bibtex-extra 37.8 MB/56.0 MB 67%][0m[33m32% [23 texlive-bibtex-extra 48.0 MB/56.0 MB 86%]                 16.2 MB/s 12s[0m[33m34% [23 texlive-bibtex-extra 56.0 MB/56.0 MB 100%]                16.2 MB/s 11s[0m[33m35% [Waiting for headers]                                         16.2 MB/s 11s[0m                                                                               Get:24 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libsombok3 amd64 2.4.0-1 [27.2 kB]
+[33m35% [24 libsombok3 27.2 kB/27.2 kB 100%]                          16.2 MB/s 11s[0m[33m35% [Working]                                                     16.2 MB/s 11s[0m                                                                               Get:25 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libmime-charset-perl all 1.012.2-1 [30.9 kB]
+[33m35% [25 libmime-charset-perl 20.5 kB/30.9 kB 66%]                 16.2 MB/s 11s[0m[33m35% [Working]                                                     16.2 MB/s 11s[0m                                                                               Get:26 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libunicode-linebreak-perl amd64 0.0.20160702-1build2 [96.6 kB]
+[33m35% [26 libunicode-linebreak-perl 64.5 kB/96.6 kB 67%]            16.2 MB/s 11s[0m[33m35% [Working]                                                     16.2 MB/s 11s[0m                                                                               Get:27 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-extra-utils all 2017.20180305-2 [20.9 MB]
+[33m35% [27 texlive-extra-utils 33.1 kB/20.9 MB 0%]                   16.2 MB/s 11s[0m[33m39% [27 texlive-extra-utils 12.3 MB/20.9 MB 59%]                  16.2 MB/s 11s[0m[33m41% [Waiting for headers]                                         16.2 MB/s 10s[0m                                                                               Get:28 http://archive.ubuntu.com/ubuntu bionic/main amd64 preview-latex-style all 11.91-1ubuntu1 [185 kB]
+[33m41% [28 preview-latex-style 39.5 kB/185 kB 21%]                   16.2 MB/s 10s[0m[33m41% [Waiting for headers]                                         16.2 MB/s 10s[0m                                                                               Get:29 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-pictures all 2017.20180305-1 [4,026 kB]
+[33m41% [29 texlive-pictures 51.0 kB/4,026 kB 1%]                     16.2 MB/s 10s[0m[33m43% [Waiting for headers]                                         16.2 MB/s 10s[0m                                                                               Get:30 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-latex-extra all 2017.20180305-2 [10.6 MB]
+[33m43% [30 texlive-latex-extra 22.2 kB/10.6 MB 0%]                   16.2 MB/s 10s[0m[33m44% [30 texlive-latex-extra 6,586 kB/10.6 MB 62%]                  16.2 MB/s 9s[0m[33m46% [Waiting for headers]                                          16.2 MB/s 9s[0m                                                                               Get:31 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-gfs-baskerville all 1.1-5 [43.4 kB]
+[33m46% [31 fonts-gfs-baskerville 43.4 kB/43.4 kB 100%]                16.2 MB/s 9s[0m[33m46% [Working]                                                      16.2 MB/s 9s[0m                                                                               Get:32 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-gfs-porson all 1.1-6 [33.7 kB]
+[33m46% [32 fonts-gfs-porson 6,398 B/33.7 kB 19%]                      16.2 MB/s 9s[0m[33m46% [Waiting for headers]                                          16.2 MB/s 9s[0m                                                                               Get:33 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-lang-greek all 2017.20180305-1 [76.3 MB]
+[33m46% [33 texlive-lang-greek 37.9 kB/76.3 MB 0%]                     16.2 MB/s 9s[0m[33m49% [33 texlive-lang-greek 8,794 kB/76.3 MB 12%]                   16.2 MB/s 9s[0m[33m51% [33 texlive-lang-greek 19.4 MB/76.3 MB 25%]                    16.2 MB/s 8s[0m[33m54% [33 texlive-lang-greek 28.8 MB/76.3 MB 38%]                    16.2 MB/s 7s[0m[33m56% [33 texlive-lang-greek 37.6 MB/76.3 MB 49%]                    16.2 MB/s 7s[0m[33m57% [33 texlive-lang-greek 41.3 MB/76.3 MB 54%]                    16.2 MB/s 7s[0m[33m59% [33 texlive-lang-greek 50.0 MB/76.3 MB 66%]                    16.2 MB/s 6s[0m[33m61% [33 texlive-lang-greek 56.7 MB/76.3 MB 74%]                    16.8 MB/s 5s[0m[33m64% [33 texlive-lang-greek 67.1 MB/76.3 MB 88%]                    16.8 MB/s 5s[0m[33m66% [33 texlive-lang-greek 76.3 MB/76.3 MB 100%]                   16.8 MB/s 4s[0m[33m67% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:34 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-science all 2017.20180305-2 [3,077 kB]
+[33m67% [34 texlive-science 3,896 B/3,077 kB 0%]                       16.8 MB/s 4s[0m[33m68% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:35 http://archive.ubuntu.com/ubuntu bionic/main amd64 xsltproc amd64 1.1.29-5 [14.0 kB]
+[33m68% [35 xsltproc 14.0 kB/14.0 kB 100%]                             16.8 MB/s 4s[0m[33m68% [Working]                                                      16.8 MB/s 4s[0m                                                                               Get:36 http://archive.ubuntu.com/ubuntu bionic/universe amd64 dblatex all 0.3.10-2 [346 kB]
+[33m68% [36 dblatex 8,192 B/346 kB 2%]                                 16.8 MB/s 4s[0m[33m68% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:37 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libosp5 amd64 1.5.2-13ubuntu2 [584 kB]
+[33m68% [37 libosp5 4,708 B/584 kB 1%]                                 16.8 MB/s 4s[0m[33m69% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:38 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libostyle1c2 amd64 1.4devel1-21.3 [592 kB]
+[33m69% [38 libostyle1c2 18.7 kB/592 kB 3%]                            16.8 MB/s 4s[0m[33m69% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:39 http://archive.ubuntu.com/ubuntu bionic/universe amd64 openjade amd64 1.4devel1-21.3 [235 kB]
+[33m69% [39 openjade 21.3 kB/235 kB 9%]                                16.8 MB/s 4s[0m[33m69% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:40 http://archive.ubuntu.com/ubuntu bionic/universe amd64 docbook-dsssl all 1.79-9.1 [217 kB]
+[33m69% [40 docbook-dsssl 24.8 kB/217 kB 11%]                          16.8 MB/s 4s[0m[33m70% [Waiting for headers]                                          16.8 MB/s 4s[0m                                                                               Get:41 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-plain-generic all 2017.20180305-2 [23.6 MB]
+[33m70% [41 texlive-plain-generic 6,166 B/23.6 MB 0%]                  16.8 MB/s 4s[0m[33m72% [41 texlive-plain-generic 8,625 kB/23.6 MB 36%]                16.8 MB/s 3s[0m[33m75% [41 texlive-plain-generic 18.8 MB/23.6 MB 80%]                 16.8 MB/s 3s[0m[33m76% [Working]                                                      16.8 MB/s 3s[0m                                                                               Get:42 http://archive.ubuntu.com/ubuntu bionic/universe amd64 tipa all 2:1.3-20 [2,978 kB]
+[33m76% [42 tipa 5,956 B/2,978 kB 0%]                                  16.8 MB/s 3s[0m[33m77% [Waiting for headers]                                          16.8 MB/s 2s[0m                                                                               Get:43 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-xetex all 2017.20180305-1 [10.7 MB]
+[33m77% [43 texlive-xetex 33.1 kB/10.7 MB 0%]                          16.8 MB/s 2s[0m[33m79% [43 texlive-xetex 8,626 kB/10.7 MB 81%]                        16.8 MB/s 2s[0m[33m80% [Waiting for headers]                                          16.8 MB/s 2s[0m                                                                               Get:44 http://archive.ubuntu.com/ubuntu bionic/universe amd64 texlive-formats-extra all 2017.20180305-2 [4,626 kB]
+[33m80% [44 texlive-formats-extra 0 B/4,626 kB 0%]                     16.8 MB/s 2s[0m[33m82% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:45 http://archive.ubuntu.com/ubuntu bionic/universe amd64 lynx-common all 2.8.9dev16-3 [940 kB]
+[33m82% [45 lynx-common 65.5 kB/940 kB 7%]                             16.8 MB/s 1s[0m[33m82% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:46 http://archive.ubuntu.com/ubuntu bionic/universe amd64 lynx amd64 2.8.9dev16-3 [628 kB]
+[33m82% [46 lynx 24.1 kB/628 kB 4%]                                    16.8 MB/s 1s[0m[33m83% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:47 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libsgmls-perl all 1.03ii-36 [23.1 kB]
+[33m83% [47 libsgmls-perl 13.0 kB/23.1 kB 56%]                         16.8 MB/s 1s[0m[33m83% [Working]                                                      16.8 MB/s 1s[0m                                                                               Get:48 http://archive.ubuntu.com/ubuntu bionic/universe amd64 sgmlspl all 1.03ii-36 [6,158 B]
+[33m83% [48 sgmlspl 6,158 B/6,158 B 100%]                              16.8 MB/s 1s[0m[33m83% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:49 http://archive.ubuntu.com/ubuntu bionic/universe amd64 opensp amd64 1.5.2-13ubuntu2 [143 kB]
+[33m83% [49 opensp 18.0 kB/143 kB 13%]                                 16.8 MB/s 1s[0m[33m83% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:50 http://archive.ubuntu.com/ubuntu bionic/universe amd64 docbook-utils all 0.6.14-3.3 [58.6 kB]
+[33m83% [50 docbook-utils 3,077 B/58.6 kB 5%]                          16.8 MB/s 1s[0m[33m84% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:51 http://archive.ubuntu.com/ubuntu bionic/universe amd64 asciidoc-dblatex all 8.6.10-2 [4,376 B]
+[33m84% [Working]                                                      16.8 MB/s 1s[0m                                                                               Get:52 http://archive.ubuntu.com/ubuntu bionic/universe amd64 asciidoc-doc all 8.6.10-2 [168 kB]
+[33m84% [52 asciidoc-doc 10.5 kB/168 kB 6%]                            16.8 MB/s 1s[0m[33m84% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:53 http://archive.ubuntu.com/ubuntu bionic/universe amd64 dblatex-doc all 0.3.10-2 [1,354 kB]
+[33m84% [53 dblatex-doc 11.2 kB/1,354 kB 1%]                           16.8 MB/s 1s[0m[33m85% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:54 http://archive.ubuntu.com/ubuntu bionic/universe amd64 docbook-xsl all 1.79.1+dfsg-2 [1,075 kB]
+[33m85% [54 docbook-xsl 10.9 kB/1,075 kB 1%]                           16.8 MB/s 1s[0m[33m85% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:55 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-texgyre all 20160520-1 [8,761 kB]
+[33m85% [55 fonts-texgyre 0 B/8,761 kB 0%]                             16.8 MB/s 1s[0m[33m88% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:56 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libasound2-dev amd64 1.1.3-5ubuntu0.1 [123 kB]
+[33m88% [56 libasound2-dev 11.4 kB/123 kB 9%]                          16.8 MB/s 1s[0m[33m88% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:57 http://archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libconfuse-dev amd64 3.2.1+dfsg-4ubuntu0.1 [30.4 kB]
+[33m88% [57 libconfuse-dev 19.1 kB/30.4 kB 63%]                        16.8 MB/s 1s[0m[33m88% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:58 http://archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libconfuse-doc all 3.2.1+dfsg-4ubuntu0.1 [148 kB]
+[33m88% [58 libconfuse-doc 28.5 kB/148 kB 19%]                         16.8 MB/s 1s[0m[33m89% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:59 http://archive.ubuntu.com/ubuntu bionic/main amd64 libfile-which-perl all 1.21-1 [11.8 kB]
+[33m89% [59 libfile-which-perl 11.8 kB/11.8 kB 100%]                   16.8 MB/s 1s[0m[33m89% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:60 http://archive.ubuntu.com/ubuntu bionic/main amd64 libfile-homedir-perl all 1.002-1 [37.1 kB]
+[33m89% [60 libfile-homedir-perl 1,790 B/37.1 kB 5%]                   16.8 MB/s 1s[0m[33m89% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:61 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev-bin amd64 2.56.3-0ubuntu0.18.04.1 [102 kB]
+[33m89% [61 libglib2.0-dev-bin 17.9 kB/102 kB 18%]                     16.8 MB/s 1s[0m[33m89% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:62 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpcre16-3 amd64 2:8.39-9 [147 kB]
+[33m89% [62 libpcre16-3 16.7 kB/147 kB 11%]                            16.8 MB/s 1s[0m[33m90% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:63 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpcre32-3 amd64 2:8.39-9 [138 kB]
+[33m90% [63 libpcre32-3 117 B/138 kB 0%]                               16.8 MB/s 1s[0m[33m90% [Working]                                                      16.8 MB/s 1s[0m                                                                               Get:64 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpcrecpp0v5 amd64 2:8.39-9 [15.3 kB]
+[33m90% [64 libpcrecpp0v5 2,476 B/15.3 kB 16%]                         16.8 MB/s 1s[0m[33m90% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:65 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpcre3-dev amd64 2:8.39-9 [537 kB]
+[33m90% [65 libpcre3-dev 9,853 B/537 kB 2%]                            16.8 MB/s 1s[0m[33m90% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:66 http://archive.ubuntu.com/ubuntu bionic/main amd64 pkg-config amd64 0.29.1-0ubuntu2 [45.0 kB]
+[33m90% [66 pkg-config 9,855 B/45.0 kB 22%]                            16.8 MB/s 1s[0m[33m91% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:67 http://archive.ubuntu.com/ubuntu bionic/main amd64 zlib1g-dev amd64 1:1.2.11.dfsg-0ubuntu2 [176 kB]
+[33m91% [67 zlib1g-dev 41.3 kB/176 kB 24%]                             16.8 MB/s 1s[0m[33m91% [Waiting for headers]                                          16.8 MB/s 1s[0m                                                                               Get:68 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev amd64 2.56.3-0ubuntu0.18.04.1 [1,384 kB]
+[33m91% [68 libglib2.0-dev 28.7 kB/1,384 kB 2%]                        16.8 MB/s 1s[0m[33m92% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:69 http://archive.ubuntu.com/ubuntu bionic/main amd64 libnl-3-dev amd64 3.2.29-0ubuntu3 [90.6 kB]
+[33m92% [69 libnl-3-dev 17.9 kB/90.6 kB 20%]                           16.8 MB/s 0s[0m[33m92% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:70 http://archive.ubuntu.com/ubuntu bionic/main amd64 libnl-genl-3-dev amd64 3.2.29-0ubuntu3 [10.7 kB]
+[33m92% [70 libnl-genl-3-dev 10.7 kB/10.7 kB 100%]                     16.8 MB/s 0s[0m[33m92% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:71 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpulse-dev amd64 1:11.1-1ubuntu7.1 [81.5 kB]
+[33m92% [71 libpulse-dev 20.4 kB/81.5 kB 25%]                          16.8 MB/s 0s[0m[33m92% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:72 http://archive.ubuntu.com/ubuntu bionic/main amd64 libtcl8.6 amd64 8.6.8+dfsg-3 [881 kB]
+[33m92% [72 libtcl8.6 11.7 kB/881 kB 1%]                               16.8 MB/s 0s[0m[33m93% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:73 http://archive.ubuntu.com/ubuntu bionic/main amd64 libtk8.6 amd64 8.6.8-4 [693 kB]
+[33m93% [73 libtk8.6 35.7 kB/693 kB 5%]                                16.8 MB/s 0s[0m[33m93% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:74 http://archive.ubuntu.com/ubuntu bionic/main amd64 libyaml-tiny-perl all 1.70-1 [25.1 kB]
+[33m93% [74 libyaml-tiny-perl 8,989 B/25.1 kB 36%]                     16.8 MB/s 0s[0m[33m93% [Working]                                                      16.8 MB/s 0s[0m                                                                               Get:75 http://archive.ubuntu.com/ubuntu bionic/main amd64 lmodern all 2.004.5-3 [9,631 kB]
+[33m93% [75 lmodern 17.4 kB/9,631 kB 0%]                               16.8 MB/s 0s[0m[33m96% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:76 http://archive.ubuntu.com/ubuntu bionic/main amd64 tcl8.6 amd64 8.6.8+dfsg-3 [14.4 kB]
+[33m96% [76 tcl8.6 14.4 kB/14.4 kB 100%]                               16.8 MB/s 0s[0m[33m97% [Working]                                                      16.8 MB/s 0s[0m                                                                               Get:77 http://archive.ubuntu.com/ubuntu bionic/universe amd64 tcl amd64 8.6.0+9 [5,146 B]
+[33m97% [77 tcl 5,146 B/5,146 B 100%]                                  16.8 MB/s 0s[0m[33m97% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:78 http://archive.ubuntu.com/ubuntu bionic/universe amd64 tex-gyre all 20160520-1 [4,998 kB]
+[33m97% [78 tex-gyre 642 B/4,998 kB 0%]                                16.8 MB/s 0s[0m[33m98% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:79 http://archive.ubuntu.com/ubuntu bionic/main amd64 tk8.6 amd64 8.6.8-4 [12.3 kB]
+[33m98% [79 tk8.6 9,247 B/12.3 kB 75%]                                 16.8 MB/s 0s[0m[33m99% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:80 http://archive.ubuntu.com/ubuntu bionic/universe amd64 tk amd64 8.6.0+9 [3,178 B]
+[33m99% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:81 http://archive.ubuntu.com/ubuntu bionic/universe amd64 vim-addon-manager all 0.5.7 [18.7 kB]
+[33m99% [81 vim-addon-manager 16.4 kB/18.7 kB 87%]                     16.8 MB/s 0s[0m[33m99% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:82 http://archive.ubuntu.com/ubuntu bionic/universe amd64 vim-asciidoc all 8.6.10-2 [9,320 B]
+[33m99% [82 vim-asciidoc 9,320 B/9,320 B 100%]                         16.8 MB/s 0s[0m[33m99% [Waiting for headers]                                          16.8 MB/s 0s[0m                                                                               Get:83 http://archive.ubuntu.com/ubuntu bionic/universe amd64 xmlto amd64 0.0.28-2 [26.6 kB]
+[33m99% [83 xmlto 22.5 kB/26.6 kB 85%]                                 16.8 MB/s 0s[0m[33m100% [Waiting for headers]                                         16.8 MB/s 0s[0m                                                                               Get:84 http://archive.ubuntu.com/ubuntu bionic/main amd64 libiw-dev amd64 30~pre9-12ubuntu1 [33.6 kB]
+[33m100% [84 libiw-dev 24.6 kB/33.6 kB 73%]                            16.8 MB/s 0s[0m[33m100% [Waiting for headers]                                         16.8 MB/s 0s[0m                                                                               Get:85 http://archive.ubuntu.com/ubuntu bionic/main amd64 libyajl-dev amd64 2.1.0-2build1 [25.9 kB]
+[33m100% [85 libyajl-dev 5,142 B/25.9 kB 20%]                          16.8 MB/s 0s[0m[33m100% [Working]                                                     16.8 MB/s 0s[0m                                                                               Fetched 302 MB in 18s (17.0 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package tex-common.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 182194 files and directories currently installed.)
+Preparing to unpack .../00-tex-common_6.09_all.deb ...
+Unpacking tex-common (6.09) ...
+Selecting previously unselected package asciidoc-common.
+Preparing to unpack .../01-asciidoc-common_8.6.10-2_all.deb ...
+Unpacking asciidoc-common (8.6.10-2) ...
+Selecting previously unselected package libxml2-utils.
+Preparing to unpack .../02-libxml2-utils_2.9.4+dfsg1-6.1ubuntu1.2_amd64.deb ...
+Unpacking libxml2-utils (2.9.4+dfsg1-6.1ubuntu1.2) ...
+Selecting previously unselected package asciidoc-base.
+Preparing to unpack .../03-asciidoc-base_8.6.10-2_all.deb ...
+Unpacking asciidoc-base (8.6.10-2) ...
+Selecting previously unselected package asciidoc.
+Preparing to unpack .../04-asciidoc_8.6.10-2_all.deb ...
+Unpacking asciidoc (8.6.10-2) ...
+Selecting previously unselected package xml-core.
+Preparing to unpack .../05-xml-core_0.18_all.deb ...
+Unpacking xml-core (0.18) ...
+Selecting previously unselected package sgml-data.
+Preparing to unpack .../06-sgml-data_2.0.10_all.deb ...
+Unpacking sgml-data (2.0.10) ...
+Selecting previously unselected package docbook-xml.
+Preparing to unpack .../07-docbook-xml_4.5-8_all.deb ...
+Unpacking docbook-xml (4.5-8) ...
+Selecting previously unselected package python-apt.
+Preparing to unpack .../08-python-apt_1.6.3_amd64.deb ...
+Unpacking python-apt (1.6.3) ...
+Selecting previously unselected package libptexenc1:amd64.
+Preparing to unpack .../09-libptexenc1_2017.20170613.44572-8ubuntu0.1_amd64.deb ...
+Unpacking libptexenc1:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Selecting previously unselected package libsynctex1:amd64.
+Preparing to unpack .../10-libsynctex1_2017.20170613.44572-8ubuntu0.1_amd64.deb ...
+Unpacking libsynctex1:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Selecting previously unselected package libtexlua52:amd64.
+Preparing to unpack .../11-libtexlua52_2017.20170613.44572-8ubuntu0.1_amd64.deb ...
+Unpacking libtexlua52:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Selecting previously unselected package libtexluajit2:amd64.
+Preparing to unpack .../12-libtexluajit2_2017.20170613.44572-8ubuntu0.1_amd64.deb ...
+Unpacking libtexluajit2:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Selecting previously unselected package libpotrace0.
+Preparing to unpack .../13-libpotrace0_1.14-2_amd64.deb ...
+Unpacking libpotrace0 (1.14-2) ...
+Selecting previously unselected package libzzip-0-13:amd64.
+Preparing to unpack .../14-libzzip-0-13_0.13.62-3.1ubuntu0.18.04.1_amd64.deb ...
+Unpacking libzzip-0-13:amd64 (0.13.62-3.1ubuntu0.18.04.1) ...
+Selecting previously unselected package texlive-binaries.
+Preparing to unpack .../15-texlive-binaries_2017.20170613.44572-8ubuntu0.1_amd64.deb ...
+Unpacking texlive-binaries (2017.20170613.44572-8ubuntu0.1) ...
+Selecting previously unselected package texlive-base.
+Preparing to unpack .../16-texlive-base_2017.20180305-1_all.deb ...
+Unpacking texlive-base (2017.20180305-1) ...
+Selecting previously unselected package texlive-fonts-recommended.
+Preparing to unpack .../17-texlive-fonts-recommended_2017.20180305-1_all.deb ...
+Unpacking texlive-fonts-recommended (2017.20180305-1) ...
+Selecting previously unselected package fonts-lmodern.
+Preparing to unpack .../18-fonts-lmodern_2.004.5-3_all.deb ...
+Unpacking fonts-lmodern (2.004.5-3) ...
+Selecting previously unselected package texlive-latex-base.
+Preparing to unpack .../19-texlive-latex-base_2017.20180305-1_all.deb ...
+Unpacking texlive-latex-base (2017.20180305-1) ...
+Selecting previously unselected package texlive-latex-recommended.
+Preparing to unpack .../20-texlive-latex-recommended_2017.20180305-1_all.deb ...
+Unpacking texlive-latex-recommended (2017.20180305-1) ...
+Selecting previously unselected package texlive.
+Preparing to unpack .../21-texlive_2017.20180305-1_all.deb ...
+Unpacking texlive (2017.20180305-1) ...
+Selecting previously unselected package texlive-bibtex-extra.
+Preparing to unpack .../22-texlive-bibtex-extra_2017.20180305-2_all.deb ...
+Unpacking texlive-bibtex-extra (2017.20180305-2) ...
+Selecting previously unselected package libsombok3:amd64.
+Preparing to unpack .../23-libsombok3_2.4.0-1_amd64.deb ...
+Unpacking libsombok3:amd64 (2.4.0-1) ...
+Selecting previously unselected package libmime-charset-perl.
+Preparing to unpack .../24-libmime-charset-perl_1.012.2-1_all.deb ...
+Unpacking libmime-charset-perl (1.012.2-1) ...
+Selecting previously unselected package libunicode-linebreak-perl.
+Preparing to unpack .../25-libunicode-linebreak-perl_0.0.20160702-1build2_amd64.deb ...
+Unpacking libunicode-linebreak-perl (0.0.20160702-1build2) ...
+Selecting previously unselected package texlive-extra-utils.
+Preparing to unpack .../26-texlive-extra-utils_2017.20180305-2_all.deb ...
+Unpacking texlive-extra-utils (2017.20180305-2) ...
+Selecting previously unselected package preview-latex-style.
+Preparing to unpack .../27-preview-latex-style_11.91-1ubuntu1_all.deb ...
+Unpacking preview-latex-style (11.91-1ubuntu1) ...
+Selecting previously unselected package texlive-pictures.
+Preparing to unpack .../28-texlive-pictures_2017.20180305-1_all.deb ...
+Unpacking texlive-pictures (2017.20180305-1) ...
+Selecting previously unselected package texlive-latex-extra.
+Preparing to unpack .../29-texlive-latex-extra_2017.20180305-2_all.deb ...
+Unpacking texlive-latex-extra (2017.20180305-2) ...
+Selecting previously unselected package fonts-gfs-baskerville.
+Preparing to unpack .../30-fonts-gfs-baskerville_1.1-5_all.deb ...
+Unpacking fonts-gfs-baskerville (1.1-5) ...
+Selecting previously unselected package fonts-gfs-porson.
+Preparing to unpack .../31-fonts-gfs-porson_1.1-6_all.deb ...
+Unpacking fonts-gfs-porson (1.1-6) ...
+Selecting previously unselected package texlive-lang-greek.
+Preparing to unpack .../32-texlive-lang-greek_2017.20180305-1_all.deb ...
+Unpacking texlive-lang-greek (2017.20180305-1) ...
+Selecting previously unselected package texlive-science.
+Preparing to unpack .../33-texlive-science_2017.20180305-2_all.deb ...
+Unpacking texlive-science (2017.20180305-2) ...
+Selecting previously unselected package xsltproc.
+Preparing to unpack .../34-xsltproc_1.1.29-5_amd64.deb ...
+Unpacking xsltproc (1.1.29-5) ...
+Selecting previously unselected package dblatex.
+Preparing to unpack .../35-dblatex_0.3.10-2_all.deb ...
+Unpacking dblatex (0.3.10-2) ...
+Selecting previously unselected package libosp5.
+Preparing to unpack .../36-libosp5_1.5.2-13ubuntu2_amd64.deb ...
+Unpacking libosp5 (1.5.2-13ubuntu2) ...
+Selecting previously unselected package libostyle1c2.
+Preparing to unpack .../37-libostyle1c2_1.4devel1-21.3_amd64.deb ...
+Unpacking libostyle1c2 (1.4devel1-21.3) ...
+Selecting previously unselected package openjade.
+Preparing to unpack .../38-openjade_1.4devel1-21.3_amd64.deb ...
+Unpacking openjade (1.4devel1-21.3) ...
+Selecting previously unselected package docbook-dsssl.
+Preparing to unpack .../39-docbook-dsssl_1.79-9.1_all.deb ...
+Unpacking docbook-dsssl (1.79-9.1) ...
+Selecting previously unselected package texlive-plain-generic.
+Preparing to unpack .../40-texlive-plain-generic_2017.20180305-2_all.deb ...
+Unpacking texlive-plain-generic (2017.20180305-2) ...
+Selecting previously unselected package tipa.
+Preparing to unpack .../41-tipa_2%3a1.3-20_all.deb ...
+Unpacking tipa (2:1.3-20) ...
+Selecting previously unselected package texlive-xetex.
+Preparing to unpack .../42-texlive-xetex_2017.20180305-1_all.deb ...
+Unpacking texlive-xetex (2017.20180305-1) ...
+Selecting previously unselected package texlive-formats-extra.
+Preparing to unpack .../43-texlive-formats-extra_2017.20180305-2_all.deb ...
+Unpacking texlive-formats-extra (2017.20180305-2) ...
+Selecting previously unselected package lynx-common.
+Preparing to unpack .../44-lynx-common_2.8.9dev16-3_all.deb ...
+Unpacking lynx-common (2.8.9dev16-3) ...
+Selecting previously unselected package lynx.
+Preparing to unpack .../45-lynx_2.8.9dev16-3_amd64.deb ...
+Unpacking lynx (2.8.9dev16-3) ...
+Selecting previously unselected package libsgmls-perl.
+Preparing to unpack .../46-libsgmls-perl_1.03ii-36_all.deb ...
+Unpacking libsgmls-perl (1.03ii-36) ...
+Selecting previously unselected package sgmlspl.
+Preparing to unpack .../47-sgmlspl_1.03ii-36_all.deb ...
+Unpacking sgmlspl (1.03ii-36) ...
+Selecting previously unselected package opensp.
+Preparing to unpack .../48-opensp_1.5.2-13ubuntu2_amd64.deb ...
+Unpacking opensp (1.5.2-13ubuntu2) ...
+Selecting previously unselected package docbook-utils.
+Preparing to unpack .../49-docbook-utils_0.6.14-3.3_all.deb ...
+Unpacking docbook-utils (0.6.14-3.3) ...
+Selecting previously unselected package asciidoc-dblatex.
+Preparing to unpack .../50-asciidoc-dblatex_8.6.10-2_all.deb ...
+Unpacking asciidoc-dblatex (8.6.10-2) ...
+Selecting previously unselected package asciidoc-doc.
+Preparing to unpack .../51-asciidoc-doc_8.6.10-2_all.deb ...
+Unpacking asciidoc-doc (8.6.10-2) ...
+Selecting previously unselected package dblatex-doc.
+Preparing to unpack .../52-dblatex-doc_0.3.10-2_all.deb ...
+Unpacking dblatex-doc (0.3.10-2) ...
+Selecting previously unselected package docbook-xsl.
+Preparing to unpack .../53-docbook-xsl_1.79.1+dfsg-2_all.deb ...
+Unpacking docbook-xsl (1.79.1+dfsg-2) ...
+Selecting previously unselected package fonts-texgyre.
+Preparing to unpack .../54-fonts-texgyre_20160520-1_all.deb ...
+Unpacking fonts-texgyre (20160520-1) ...
+Selecting previously unselected package libasound2-dev:amd64.
+Preparing to unpack .../55-libasound2-dev_1.1.3-5ubuntu0.1_amd64.deb ...
+Unpacking libasound2-dev:amd64 (1.1.3-5ubuntu0.1) ...
+Selecting previously unselected package libconfuse-dev:amd64.
+Preparing to unpack .../56-libconfuse-dev_3.2.1+dfsg-4ubuntu0.1_amd64.deb ...
+Unpacking libconfuse-dev:amd64 (3.2.1+dfsg-4ubuntu0.1) ...
+Selecting previously unselected package libconfuse-doc.
+Preparing to unpack .../57-libconfuse-doc_3.2.1+dfsg-4ubuntu0.1_all.deb ...
+Unpacking libconfuse-doc (3.2.1+dfsg-4ubuntu0.1) ...
+Selecting previously unselected package libfile-which-perl.
+Preparing to unpack .../58-libfile-which-perl_1.21-1_all.deb ...
+Unpacking libfile-which-perl (1.21-1) ...
+Selecting previously unselected package libfile-homedir-perl.
+Preparing to unpack .../59-libfile-homedir-perl_1.002-1_all.deb ...
+Unpacking libfile-homedir-perl (1.002-1) ...
+Selecting previously unselected package libglib2.0-dev-bin.
+Preparing to unpack .../60-libglib2.0-dev-bin_2.56.3-0ubuntu0.18.04.1_amd64.deb ...
+Unpacking libglib2.0-dev-bin (2.56.3-0ubuntu0.18.04.1) ...
+Selecting previously unselected package libpcre16-3:amd64.
+Preparing to unpack .../61-libpcre16-3_2%3a8.39-9_amd64.deb ...
+Unpacking libpcre16-3:amd64 (2:8.39-9) ...
+Selecting previously unselected package libpcre32-3:amd64.
+Preparing to unpack .../62-libpcre32-3_2%3a8.39-9_amd64.deb ...
+Unpacking libpcre32-3:amd64 (2:8.39-9) ...
+Selecting previously unselected package libpcrecpp0v5:amd64.
+Preparing to unpack .../63-libpcrecpp0v5_2%3a8.39-9_amd64.deb ...
+Unpacking libpcrecpp0v5:amd64 (2:8.39-9) ...
+Selecting previously unselected package libpcre3-dev:amd64.
+Preparing to unpack .../64-libpcre3-dev_2%3a8.39-9_amd64.deb ...
+Unpacking libpcre3-dev:amd64 (2:8.39-9) ...
+Selecting previously unselected package pkg-config.
+Preparing to unpack .../65-pkg-config_0.29.1-0ubuntu2_amd64.deb ...
+Unpacking pkg-config (0.29.1-0ubuntu2) ...
+Selecting previously unselected package zlib1g-dev:amd64.
+Preparing to unpack .../66-zlib1g-dev_1%3a1.2.11.dfsg-0ubuntu2_amd64.deb ...
+Unpacking zlib1g-dev:amd64 (1:1.2.11.dfsg-0ubuntu2) ...
+Selecting previously unselected package libglib2.0-dev:amd64.
+Preparing to unpack .../67-libglib2.0-dev_2.56.3-0ubuntu0.18.04.1_amd64.deb ...
+Unpacking libglib2.0-dev:amd64 (2.56.3-0ubuntu0.18.04.1) ...
+Selecting previously unselected package libnl-3-dev:amd64.
+Preparing to unpack .../68-libnl-3-dev_3.2.29-0ubuntu3_amd64.deb ...
+Unpacking libnl-3-dev:amd64 (3.2.29-0ubuntu3) ...
+Selecting previously unselected package libnl-genl-3-dev:amd64.
+Preparing to unpack .../69-libnl-genl-3-dev_3.2.29-0ubuntu3_amd64.deb ...
+Unpacking libnl-genl-3-dev:amd64 (3.2.29-0ubuntu3) ...
+Selecting previously unselected package libpulse-dev:amd64.
+Preparing to unpack .../70-libpulse-dev_1%3a11.1-1ubuntu7.1_amd64.deb ...
+Unpacking libpulse-dev:amd64 (1:11.1-1ubuntu7.1) ...
+Selecting previously unselected package libtcl8.6:amd64.
+Preparing to unpack .../71-libtcl8.6_8.6.8+dfsg-3_amd64.deb ...
+Unpacking libtcl8.6:amd64 (8.6.8+dfsg-3) ...
+Selecting previously unselected package libtk8.6:amd64.
+Preparing to unpack .../72-libtk8.6_8.6.8-4_amd64.deb ...
+Unpacking libtk8.6:amd64 (8.6.8-4) ...
+Selecting previously unselected package libyaml-tiny-perl.
+Preparing to unpack .../73-libyaml-tiny-perl_1.70-1_all.deb ...
+Unpacking libyaml-tiny-perl (1.70-1) ...
+Selecting previously unselected package lmodern.
+Preparing to unpack .../74-lmodern_2.004.5-3_all.deb ...
+Unpacking lmodern (2.004.5-3) ...
+Selecting previously unselected package tcl8.6.
+Preparing to unpack .../75-tcl8.6_8.6.8+dfsg-3_amd64.deb ...
+Unpacking tcl8.6 (8.6.8+dfsg-3) ...
+Selecting previously unselected package tcl.
+Preparing to unpack .../76-tcl_8.6.0+9_amd64.deb ...
+Unpacking tcl (8.6.0+9) ...
+Selecting previously unselected package tex-gyre.
+Preparing to unpack .../77-tex-gyre_20160520-1_all.deb ...
+Unpacking tex-gyre (20160520-1) ...
+Selecting previously unselected package tk8.6.
+Preparing to unpack .../78-tk8.6_8.6.8-4_amd64.deb ...
+Unpacking tk8.6 (8.6.8-4) ...
+Selecting previously unselected package tk.
+Preparing to unpack .../79-tk_8.6.0+9_amd64.deb ...
+Unpacking tk (8.6.0+9) ...
+Selecting previously unselected package vim-addon-manager.
+Preparing to unpack .../80-vim-addon-manager_0.5.7_all.deb ...
+Unpacking vim-addon-manager (0.5.7) ...
+Selecting previously unselected package vim-asciidoc.
+Preparing to unpack .../81-vim-asciidoc_8.6.10-2_all.deb ...
+Unpacking vim-asciidoc (8.6.10-2) ...
+Selecting previously unselected package xmlto.
+Preparing to unpack .../82-xmlto_0.0.28-2_amd64.deb ...
+Unpacking xmlto (0.0.28-2) ...
+Selecting previously unselected package libiw-dev:amd64.
+Preparing to unpack .../83-libiw-dev_30~pre9-12ubuntu1_amd64.deb ...
+Unpacking libiw-dev:amd64 (30~pre9-12ubuntu1) ...
+Selecting previously unselected package libyajl-dev:amd64.
+Preparing to unpack .../84-libyajl-dev_2.1.0-2build1_amd64.deb ...
+Unpacking libyajl-dev:amd64 (2.1.0-2build1) ...
+Setting up libtexlua52:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Setting up libasound2-dev:amd64 (1.1.3-5ubuntu0.1) ...
+Setting up libsynctex1:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Setting up libptexenc1:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Setting up tex-common (6.09) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+update-language: texlive-base not installed and configured, doing nothing!
+Processing triggers for mime-support (3.60ubuntu1) ...
+Setting up libfile-which-perl (1.21-1) ...
+Processing triggers for desktop-file-utils (0.23-1ubuntu3.18.04.2) ...
+Setting up libglib2.0-dev-bin (2.56.3-0ubuntu0.18.04.1) ...
+Processing triggers for install-info (6.5.0.dfsg.1-2) ...
+Setting up fonts-gfs-porson (1.1-6) ...
+Setting up libfile-homedir-perl (1.002-1) ...
+Processing triggers for libglib2.0-0:amd64 (2.56.3-0ubuntu0.18.04.1) ...
+Setting up libnl-3-dev:amd64 (3.2.29-0ubuntu3) ...
+Setting up libxml2-utils (2.9.4+dfsg1-6.1ubuntu1.2) ...
+Setting up tex-gyre (20160520-1) ...
+Setting up libosp5 (1.5.2-13ubuntu2) ...
+Setting up xsltproc (1.1.29-5) ...
+Setting up preview-latex-style (11.91-1ubuntu1) ...
+Setting up fonts-texgyre (20160520-1) ...
+Setting up dblatex-doc (0.3.10-2) ...
+Processing triggers for sgml-base (1.29) ...
+Setting up libyaml-tiny-perl (1.70-1) ...
+Setting up libyajl-dev:amd64 (2.1.0-2build1) ...
+Setting up libiw-dev:amd64 (30~pre9-12ubuntu1) ...
+Setting up pkg-config (0.29.1-0ubuntu2) ...
+Setting up asciidoc-common (8.6.10-2) ...
+Setting up libmime-charset-perl (1.012.2-1) ...
+Setting up asciidoc-base (8.6.10-2) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Setting up libostyle1c2 (1.4devel1-21.3) ...
+Setting up fonts-gfs-baskerville (1.1-5) ...
+Setting up asciidoc (8.6.10-2) ...
+Setting up openjade (1.4devel1-21.3) ...
+Setting up libpotrace0 (1.14-2) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Setting up libpcrecpp0v5:amd64 (2:8.39-9) ...
+Setting up libpcre32-3:amd64 (2:8.39-9) ...
+Processing triggers for gnome-menus (3.13.3-11ubuntu1.1) ...
+Setting up libpcre16-3:amd64 (2:8.39-9) ...
+Setting up libtcl8.6:amd64 (8.6.8+dfsg-3) ...
+Setting up xml-core (0.18) ...
+Setting up libconfuse-doc (3.2.1+dfsg-4ubuntu0.1) ...
+Setting up libsgmls-perl (1.03ii-36) ...
+Setting up python-apt (1.6.3) ...
+Setting up lynx-common (2.8.9dev16-3) ...
+Setting up libzzip-0-13:amd64 (0.13.62-3.1ubuntu0.18.04.1) ...
+Setting up libconfuse-dev:amd64 (3.2.1+dfsg-4ubuntu0.1) ...
+Setting up libtexluajit2:amd64 (2017.20170613.44572-8ubuntu0.1) ...
+Setting up libsombok3:amd64 (2.4.0-1) ...
+Processing triggers for fontconfig (2.12.6-0ubuntu2) ...
+Setting up fonts-lmodern (2.004.5-3) ...
+Setting up lynx (2.8.9dev16-3) ...
+update-alternatives: using /usr/bin/lynx to provide /usr/bin/www-browser (www-browser) in auto mode
+Setting up vim-addon-manager (0.5.7) ...
+Setting up zlib1g-dev:amd64 (1:1.2.11.dfsg-0ubuntu2) ...
+Setting up libpcre3-dev:amd64 (2:8.39-9) ...
+Setting up opensp (1.5.2-13ubuntu2) ...
+Setting up libnl-genl-3-dev:amd64 (3.2.29-0ubuntu3) ...
+Setting up asciidoc-doc (8.6.10-2) ...
+Setting up libtk8.6:amd64 (8.6.8-4) ...
+Setting up vim-asciidoc (8.6.10-2) ...
+Setting up texlive-binaries (2017.20170613.44572-8ubuntu0.1) ...
+update-alternatives: using /usr/bin/xdvi-xaw to provide /usr/bin/xdvi.bin (xdvi.bin) in auto mode
+update-alternatives: using /usr/bin/bibtex.original to provide /usr/bin/bibtex (bibtex) in auto mode
+Setting up libglib2.0-dev:amd64 (2.56.3-0ubuntu0.18.04.1) ...
+Setting up sgmlspl (1.03ii-36) ...
+Setting up tcl8.6 (8.6.8+dfsg-3) ...
+Setting up libunicode-linebreak-perl (0.0.20160702-1build2) ...
+Setting up texlive-base (2017.20180305-1) ...
+tl-paper: setting paper size for dvips to a4: /var/lib/texmf/dvips/config/config-paper.ps
+tl-paper: setting paper size for dvipdfmx to a4: /var/lib/texmf/dvipdfmx/dvipdfmx-paper.cfg
+tl-paper: setting paper size for xdvi to a4: /var/lib/texmf/xdvi/XDvi-paper
+tl-paper: setting paper size for pdftex to a4: /var/lib/texmf/tex/generic/config/pdftexconfig.tex
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+tl-paper: setting paper size for dvipdfmx to letter: /var/lib/texmf/dvipdfmx/dvipdfmx-paper.cfg
+tl-paper: setting paper size for dvips to letter: /var/lib/texmf/dvips/config/config-paper.ps
+tl-paper: setting paper size for pdftex to letter: /var/lib/texmf/tex/generic/config/pdftexconfig.tex
+tl-paper: setting paper size for xdvi to letter: /var/lib/texmf/xdvi/XDvi-paper
+Setting up texlive-fonts-recommended (2017.20180305-1) ...
+Setting up texlive-plain-generic (2017.20180305-2) ...
+Setting up texlive-latex-base (2017.20180305-1) ...
+Setting up lmodern (2.004.5-3) ...
+Setting up texlive-latex-recommended (2017.20180305-1) ...
+Setting up texlive-extra-utils (2017.20180305-2) ...
+Setting up texlive-lang-greek (2017.20180305-1) ...
+Setting up tk8.6 (8.6.8-4) ...
+Setting up libpulse-dev:amd64 (1:11.1-1ubuntu7.1) ...
+Setting up texlive-science (2017.20180305-2) ...
+Setting up texlive-pictures (2017.20180305-1) ...
+Setting up tcl (8.6.0+9) ...
+Setting up tipa (2:1.3-20) ...
+Regenerating '/var/lib/texmf/fmtutil.cnf-DEBIAN'... done.
+Regenerating '/var/lib/texmf/fmtutil.cnf-TEXLIVEDIST'... done.
+update-fmtutil has updated the following file(s):
+  /var/lib/texmf/fmtutil.cnf-DEBIAN
+  /var/lib/texmf/fmtutil.cnf-TEXLIVEDIST
+If you want to activate the changes in the above file(s),
+you should run fmtutil-sys or fmtutil.
+Setting up tk (8.6.0+9) ...
+Setting up texlive-bibtex-extra (2017.20180305-2) ...
+Setting up texlive (2017.20180305-1) ...
+Setting up texlive-latex-extra (2017.20180305-2) ...
+Setting up texlive-xetex (2017.20180305-1) ...
+Setting up texlive-formats-extra (2017.20180305-2) ...
+Processing triggers for sgml-base (1.29) ...
+Setting up sgml-data (2.0.10) ...
+Setting up docbook-xsl (1.79.1+dfsg-2) ...
+Processing triggers for sgml-base (1.29) ...
+Setting up docbook-xml (4.5-8) ...
+Processing triggers for sgml-base (1.29) ...
+Setting up dblatex (0.3.10-2) ...
+Setting up docbook-dsssl (1.79-9.1) ...
+Setting up xmlto (0.0.28-2) ...
+Processing triggers for sgml-base (1.29) ...
+Setting up docbook-utils (0.6.14-3.3) ...
+Setting up asciidoc-dblatex (8.6.10-2) ...
+Processing triggers for tex-common (6.09) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+Running updmap-sys. This may take some time... done.
+Running mktexlsr /var/lib/texmf ... done.
+Building format(s) --all.
+  This may take some time... done.
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+#+end_example
+
+Again, I'm just stealing the i3status configuration from Jess Frazelle that can
+be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/status.conf][found here]]
+#+begin_src shell :tangle "~/.config/i3/i3status.conf"
+# i3status configuration file.
+# see "man i3status" for documentation.
+
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+
+general {
+  colors = true
+  interval = 2
+}
+
+order += "disk /"
+#order += "run_watch Docker"
+#order += "run_watch DHCP"
+#order += "path_exists VPN"
+#order += "ipv6"
+order += "wireless wlan0"
+#order += "ethernet eth0"
+order += "volume master"
+order += "battery 0"
+order += "cpu_temperature 0"
+order += "load"
+order += "tztime local"
+
+wireless wlan0 {
+  format_up = "W: (%quality at %essid) %ip"
+  format_down = "W: down"
+}
+
+ethernet eth0 {
+  # if you use %speed, i3status requires root privileges
+  format_up = "E: %ip (%speed)"
+  format_down = "E: down"
+}
+
+battery 0 {
+  format = "%status %percentage %remaining"
+  format_down = "No battery"
+  status_chr = "⚇ CHR"
+  status_bat = "⚡ BAT"
+  status_full = "☻ FULL"
+  path = "/sys/class/power_supply/BAT%d/uevent"
+  low_threshold = 10
+}
+
+run_watch Docker {
+  pidfile = "/run/docker.pid"
+}
+
+run_watch DHCP {
+  pidfile = "/var/run/dhclient*.pid"
+}
+
+path_exists VPN {
+  path = "/proc/sys/net/ipv4/conf/tun0"
+}
+
+tztime local {
+  format = "%Y-%m-%d %H:%M:%S"
+}
+
+load {
+  format = "%1min"
+}
+
+cpu_temperature 0 {
+  format = "T: %degrees °C"
+  path = "/sys/class/hwmon/hwmon0/temp1_input"
+}
+
+disk "/" {
+  format = "%avail"
+}
+
+volume master {
+  format = "♪: %volume"
+  format_muted = "♪: muted (%volume)"
+  device = "default"
+  mixer = "Master"
+  mixer_idx = 0
+}
+#+end_src
 * Plans
 ** TODO better lock screen
 ** TODO still getting some unknown characters in terminal
 ** TODO window management
+- try using i3
