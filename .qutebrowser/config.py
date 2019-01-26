@@ -12,19 +12,7 @@ c.auto_save.session = True
 
 # Enable JavaScript.
 # Type: Bool
-config.set('content.javascript.enabled', True, 'qute://*/')
-
-# Enable JavaScript.
-# Type: Bool
-config.set('content.javascript.enabled', True, 'file://*')
-
-# Enable JavaScript.
-# Type: Bool
-config.set('content.javascript.enabled', True, 'chrome://*/*')
-
-# Enable JavaScript.
-# Type: Bool
-config.set('content.javascript.enabled', True, 'qute://*/*')
+c.content.javascript.enabled = False
 
 # Editor (and arguments) to use for the `open-editor` command. The
 # following placeholders are defined: * `{file}`: Filename of the file
@@ -62,4 +50,4 @@ c.tabs.width = '15%'
 config.bind('zp', 'open -t https://getpocket.com/edit?url={url}')
 
 # Bindings for insert mode
-config.bind('<Ctrl+k>', 'spawn --userscript ~/.qutebrowser/userscripts/password_fill', mode='insert')
+config.bind('<ctrl+k>', 'spawn --userscript ~/.qutebrowser/userscripts/password_fill', mode='insert')
