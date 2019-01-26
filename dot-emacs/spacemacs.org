@@ -507,7 +507,6 @@ link to them in org-mode but I don't. Instead I take a screenshot and paste them
 into my org files
 #+BEGIN_SRC emacs-lisp
 (use-package org-attach-screenshot
-  :custom
   :config
   (setq org-attach-screenshot-dirfunction
         (lambda ()
