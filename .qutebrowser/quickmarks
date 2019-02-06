@@ -4,6 +4,6 @@ ask https://news.ycombinator.com/ask
 okta https://rubikloud.okta.com/login/login.htm?fromURI=%2Fapp%2FUserHome
 payworks https://payroll.payworks.ca/loginscreen.asp?CustomerID=O02886
 l https://github.com/rubikloud/LifecycleManager
-j https://jenkins.rubikloudcorp.com/view/dse-core/
+j https://rubikloud.atlassian.net/secure/Dashboard.jspa
 lithium http://localhost:8890/#/
 manifold https://github.com/rubikloud/Manifold

@@ -12,4 +12,5 @@ export PATH=/usr/local/opt/sqlite/bin:$PATH
 export PATH=/usr/local/src/anaconda3/bin:$PATH:$GOBIN:$TEXBIN:~/.local/bin
 export PATH=/usr/local/share/dotnet:$PATH
 
-export PYTHONPATH=/usr/local/Cellar/apache-spark/2.1.1/libexec/python:/usr/local/Cellar/apache-spark/2.1.1/libexec/python/build:$PYTHONPATH
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+export PYSPARK_DRIVER_PYTHON="ipython"
