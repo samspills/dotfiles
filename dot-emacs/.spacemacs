@@ -58,7 +58,7 @@ values."
     (python :variables
             python-test-runner 'pytest
             python-fill-column 100
-            ;; python-backend 'lsp
+            python-backend 'lsp
             )
     sql
     csv
@@ -78,7 +78,7 @@ values."
                                       company-lsp
                                       exec-path-from-shell
                                       general
-                                      ;; (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
+                                      (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
                                       org-attach-screenshot
                                       org-gcal
                                       org-jira
