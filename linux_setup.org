@@ -166,6 +166,11 @@ Xft.hintstyle:  hintfull
 Xft.hinting:    1
 Xft.antialias:  1
 #+end_src
+
+Some settings for ~urxvt~ specifically
+#+begin_src shell :tangle "~/.Xresources"
+URxvt.font xft:DejaVu Sans Mono:size=7
+#+end_src
 *** zsh
 **** Environment
 :PROPERTIES:
