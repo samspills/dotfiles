@@ -12,7 +12,7 @@ c.auto_save.session = True
 
 # Enable JavaScript.
 # Type: Bool
-c.content.javascript.enabled = False
+c.content.javascript.enabled = True
 
 # Editor (and arguments) to use for the `open-editor` command. The
 # following placeholders are defined: * `{file}`: Filename of the file
