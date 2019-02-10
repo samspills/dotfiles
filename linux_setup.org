@@ -210,7 +210,6 @@ antigen apply
 Here are all of my custom zsh functions. I also tend to use functions over
 aliases.
 #+begin_src shell :tangle "~/.zshrc"
-function ec() { emacsclient $1 & }
 function jql() { jq -C "." <$* | less; }
 function cowfig() {figlet "$*" | cowsay -n}
 function cpcowfig() {figlet "$*" | cowsay -n | pbcopy}
@@ -244,8 +243,9 @@ hadoop_conf.set("fs.s3a.session.token", "{}")
 Here I export some values and set a few aliases
 #+begin_src shell :tangle "~/.zshrc"
 export GTAGSLABEL=pygments
-export EDITOR=ec
+export EDITOR='emacsclient -a vim -u -q'
 
+alias ec='emacsclient -u -q'
 alias l='ls -lhFu'
 alias tmux="tmux -2 -u"
 alias zshconfig="ec ~/.zshrc"
