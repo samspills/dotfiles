@@ -27,16 +27,17 @@ qutebrowser
 emacs26
 xclip
 fonts-powerline
-fonts-firacode
 fonts-symbola
+fonts-iosevka
 nautilus-dropbox
 #+end_src
 
 I have a short bash script to handle the installation:
-#+begin_src shell :tangle "~/ubuntu_setup.sh"
- #!/bin/bash
+#+begin_src shell :tangle "~/ubuntu_setup.sh" :tangle-mode (identity #o755)
+#!/usr/bin/env bash
 
-sudo add-apt-repository ppa:kelleyk/emacs
+sudo add-apt-repository -y ppa:kelleyk/emacs
+sudo add-apt-repository ppa:laurent-boulard/fonts
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 sudo apt-get install -y $(cat ~/packages.txt | awk '{print $1}')
@@ -93,7 +94,16 @@ Set up my user name and email address for git.
   email = srpillsworth@gmail.com
   name = Sam Pillsworth
 #+end_src
-** Shell
+** X11
+*** xinitrc
+:PROPERTIES:
+:ID:       c02ec5f1-ea87-40b2-a353-6e088285d8a9
+:END:
+A very minimal xinitrc to load up my ~.Xresources~ before executing i3
+#+begin_src shell :tangle "~/.xinitrc"
+[[ -f ~/.Xresources ]] && xrdb -merge "${HOME}/.Xresources"
+exec i3
+#+end_src
 *** .Xresources
 :PROPERTIES:
 :ID:       b24a26b9-8f57-48c5-8fd4-588833966455
@@ -172,9 +182,18 @@ Xft.antialias:  1
 Some settings for ~urxvt~ specifically
 #+begin_src shell :tangle "~/.Xresources"
 ! -- Fonts -- !
-URxvt.font: xft:Fire Code Retina:pixelsize=15:antialias=true:hinting=full,xft:Symbola:pixelsize=19:antialias=true:hinting=full
-URxvt.boldFont: xft:Fira Code Retina:style=bold:pixelsize=15:antialias=true:hinting=full,xft:Symbola:pixelsize=19:antialias=true:hinting=full
+URxvt.font:xft:Iosevka:pixelsize=16:style=regular,xft:Symbola:pixelsize=16
+URxvt.boldFont:xft:Iosevka:pixelsize=16:style=bold,xft:Symbola:pixelsize=16
+URxvt.italicFont:xft:Iosevka:pixelsize=16:style=italic,xft:Symbola:pixelsize=16
+URxvt.bolditalicFont:xft:Iosevka:pixelsize=16:style=bold:style=italic,xft:Symbola:pixelsize=16
+
+URxvt*letterSpace: +1
+URxvt*allow_bold: true
+URxvt*saveLines: 300000
+URxvt.scrollBar: false
+URxvt*cursorUnderline: true
 #+end_src
+** Shell
 *** zsh
 **** Environment
 :PROPERTIES:
@@ -182,7 +201,6 @@ URxvt.boldFont: xft:Fira Code Retina:style=bold:pixelsize=15:antialias=true:hint
 :END:
  #+begin_src shell :tangle "~/.zshenv"
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
-export TERM="screen-256color"
  #+end_src
 **** Antigen
 :PROPERTIES:
@@ -630,13 +648,14 @@ bar {
 # set background
 # use the same background as slim (login manager)
 # this file is an alias to something in /home/jessie/Pictures
-exec --no-startup-id feh --bg-fill ${HOME}/Pictures/central-park.jpg
+# exec --no-startup-id feh --bg-fill ${HOME}/Pictures/central-park.jpg
 
 # Sway backgroud
 # output "*" background ${HOME}/Pictures/central-park2.jpg fill
 
 # run the merge for good colors
-exec xrdb -merge $HOME/.Xresources
+exec --no-startup-id xrdb -merge $HOME/.Xresources
+exec --no-startup-id xrdb -merge $HOME/.Xdefaults
 #+end_src
 
 *** i3status
@@ -1271,6 +1290,9 @@ volume master {
 }
 #+end_src
 *** i3lock
+:PROPERTIES:
+:ID:       e2bee763-884e-431f-b299-de1bf739163c
+:END:
 
 I like the lockscreen style described in [[https://github.com/brunodles/i3wm-conf][brunodles i3 config]], so I have stolen it.
 
@@ -1404,7 +1426,11 @@ main "$@"
 
 #+end_src
 * Plans
-** TODO better lock screen
+** DONE better lock screen
+CLOSED: [2019-02-09 Sat 10:56]
+- State "DONE"       from "TODO"       [2019-02-09 Sat 10:56]
 ** TODO still getting some unknown characters in terminal
-** TODO window management
+** DONE window management
+CLOSED: [2019-02-09 Sat 10:56]
+- State "DONE"       from "TODO"       [2019-02-09 Sat 10:56]
 - try using i3
