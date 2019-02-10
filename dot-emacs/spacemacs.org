@@ -163,7 +163,6 @@ Highlight parens etc. for improved readability.
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 #+END_SRC
-
 *** Modeline
 I use [[https://github.com/the-kenny/weechat.el][weechat]] inside of emacs, and I'd like to be able to see active buffers in the mode-line.
 #+BEGIN_SRC emacs-lisp
@@ -266,6 +265,7 @@ The current time is used if the entry has no timestamp. If FILE
 is nil, refile in the current file."
   (interactive "f")
   (let* ((datetree-date (or (org-entry-get nil "CLOSED" t)
+                            (org-entry-get nil "DEADLINE" t)
                             (org-entry-get nil "SCHEDULED" t)
                             (org-read-date t nil "now")))
          (date (org-date-to-gregorian datetree-date))
@@ -390,8 +390,22 @@ I like to use a different set of bullets than the default set in the spacemacs
 org layer. A gallery of unicode symbols to use as bullets can be found in
 [[http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters][the appendix here]].
 #+begin_src emacs-lisp :noweb-ref org-mode-config
-(setq org-bullets-bullet-list '("■" "◆" "▲" "▶" "●"))
+(setq org-bullets-bullet-list '("■" "◆" "▲" "▶" "●")) ;;
+(setq org-ellipsis "⮰") ;;
 #+end_src
+
+There are some other bullet possibilities that I would like to experiment with
+using the Symbola font.
+#+begin_example
+🜀 🜁 🜂 🜃 🜄 🜅 🜆 🜇 🜈 🜉 🜊 🜋 🜌 🜍 🜎 🜏
+🜐 🜑 🜒 🜓 🜔 🜕 🜖 🜗 🜘 🜙 🜚 🜛 🜜 🜝 🜞 🜟
+🜠 🜡 🜢 🜣 🜤 🜥 🜦 🜧 🜨 🜩 🜪 🜫 🜬 🜭 🜮 🜯
+🜰 🜱 🜲 🜳 🜴 🜵 🜶 🜷 🜸 🜹 🜺 🜻 🜼 🜽 🜾 🜿
+🝀 🝁 🝂 🝃 🝄 🝅 🝆 🝇 🝈 🝉 🝊 🝋 🝌 🝍 🝎 🝏
+🝐 🝑 🝒 🝓 🝔 🝕 🝖 🝗 🝘 🝙 🝚 🝛 🝜 🝝 🝞 🝟
+🝠 🝡 🝢 🝣 🝤 🝥 🝦 🝧 🝨 🝩 🝪 🝫 🝬 🝭 🝮 🝯
+🝰 🝱 🝲 🝳
+#+end_example
 **** Experimental
 We choose a nice font for the document title and the section headings. The first
 one found in the system from the list below is used, and the same font is used
