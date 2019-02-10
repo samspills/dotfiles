@@ -27,6 +27,8 @@ qutebrowser
 emacs26
 xclip
 fonts-powerline
+fonts-firacode
+fonts-symbola
 nautilus-dropbox
 #+end_src
 
@@ -169,7 +171,9 @@ Xft.antialias:  1
 
 Some settings for ~urxvt~ specifically
 #+begin_src shell :tangle "~/.Xresources"
-URxvt.font xft:DejaVu Sans Mono:size=7
+! -- Fonts -- !
+URxvt.font: xft:Fire Code Retina:pixelsize=15:antialias=true:hinting=full,xft:Symbola:pixelsize=19:antialias=true:hinting=full
+URxvt.boldFont: xft:Fira Code Retina:style=bold:pixelsize=15:antialias=true:hinting=full,xft:Symbola:pixelsize=19:antialias=true:hinting=full
 #+end_src
 *** zsh
 **** Environment
@@ -424,7 +428,7 @@ set $barcmd i3status
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 12
+font pango: Fira Code Retina 12
 
 # HiDPI for sway
 # output eDP-1 scale 1
@@ -618,7 +622,7 @@ bindsym $mod+r mode "resize"
 
 # i3status bar config
 bar {
-  font pango:DejaVu Sans Mono 12
+  font pango:Fira Code Retina 12
   status_command $barcmd --config ~/.config/i3/i3status.conf
 }
 
