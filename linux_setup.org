@@ -104,12 +104,12 @@ A very minimal xinitrc to load up my ~.Xresources~ before executing i3
 [[ -f ~/.Xresources ]] && xrdb -merge "${HOME}/.Xresources"
 exec i3
 #+end_src
-*** .Xresources
+*** .Xresources (some but not all)
 :PROPERTIES:
 :ID:       b24a26b9-8f57-48c5-8fd4-588833966455
 :END:
 I used [[https://github.com/auduchinok/base16-builder][base16-builder]] to generate an ~.Xresources~ template for the spacemacs dark theme.
-#+begin_src shell :tangle "~/.Xresources"
+#+begin_src shell
 ! Base16 Spacemacs
 ! Scheme: Nasser Alshammari (https://github.com/nashamri/spacemacs-theme)
 
@@ -162,6 +162,9 @@ I used [[https://github.com/auduchinok/base16-builder][base16-builder]] to gener
 *color21:      base06
 #+end_src
 
+Some other default ~.Xresources~ settings. Enable unicode, save very many lines,
+and then set some Xft settings as well. Full disclosure, I don't actually know
+what all the Xft settings are for.
 #+begin_src shell :tangle "~/.Xresources"
 *utf8:                  1
 *saveLines:             999999
@@ -179,20 +182,6 @@ Xft.hinting:    1
 Xft.antialias:  1
 #+end_src
 
-Some settings for ~urxvt~ specifically
-#+begin_src shell :tangle "~/.Xresources"
-! -- Fonts -- !
-URxvt.font:xft:Iosevka:pixelsize=16:style=regular,xft:Symbola:pixelsize=16
-URxvt.boldFont:xft:Iosevka:pixelsize=16:style=bold,xft:Symbola:pixelsize=16
-URxvt.italicFont:xft:Iosevka:pixelsize=16:style=italic,xft:Symbola:pixelsize=16
-URxvt.bolditalicFont:xft:Iosevka:pixelsize=16:style=bold:style=italic,xft:Symbola:pixelsize=16
-
-URxvt*letterSpace: +1
-URxvt*allow_bold: true
-URxvt*saveLines: 300000
-URxvt.scrollBar: false
-URxvt*cursorUnderline: true
-#+end_src
 ** Shell
 *** zsh
 **** Environment
@@ -318,6 +307,93 @@ Finally, source the environment file
 #+begin_src shell :tangle "~/.zshrc"
 source ~/.zshenv
 #+end_src
+*** urxvt
+
+Set the spacemacs colour scheme for URxvt.
+#+begin_src shell :tangle "~/.Xresources"
+! Base16 Spacemacs
+! Scheme: Nasser Alshammari (https://github.com/nashamri/spacemacs-theme)
+
+! URxvt*tintColor:                      color
+! URxvt*fadeColor:                      color
+
+URxvt*background:                     #1f2022
+URxvt*foreground:                     #a3a3a3
+URxvt*cursorColor:                    #a3a3a3
+
+! URxvt*colorBD:                        color
+! URxvt*colorIT:                        color
+! URxvt*colorUL:                        color
+! URxvt*colorRV:                        color
+! URxvt*underlineColor:                 color
+URxvt*scrollColor:                    #a3a3a3
+! URxvt*troughColor:                    color
+URxvt*highlightColor:                 #444155
+URxvt*highlightTextColor:             #b8b8b8
+! URxvt*cursorColor2:                   color
+! URxvt*pointerColor:                   color
+! URxvt*pointerColor2:                  color
+! URxvt*borderColor:                    color
+! URxvt*tab-bg:                         colour
+! URxvt*tab-fg:                         colour
+! URxvt*tabbar-bg:                      colour
+! URxvt*tabbar-fg:                      colour
+
+URxvt*color0:                         #1f2022
+URxvt*color1:                         #f2241f
+URxvt*color2:                         #67b11d
+URxvt*color3:                         #b1951d
+URxvt*color4:                         #4f97d7
+URxvt*color5:                         #a31db1
+URxvt*color6:                         #2d9574
+URxvt*color7:                         #a3a3a3
+URxvt*color8:                         #585858
+URxvt*color9:                         #f2241f
+URxvt*color10:                        #67b11d
+URxvt*color11:                        #b1951d
+URxvt*color12:                        #4f97d7
+URxvt*color13:                        #a31db1
+URxvt*color14:                        #2d9574
+URxvt*color15:                        #f8f8f8
+
+! 256 color space
+URxvt*color16:                        #ffa500
+URxvt*color17:                        #b03060
+URxvt*color18:                        #282828
+URxvt*color19:                        #444155
+URxvt*color20:                        #b8b8b8
+URxvt*color21:                        #e8e8e8
+
+#+end_src
+
+Some ~.Xresources~ configuration for urxvt, my terminal emulator of choice.
+
+Set the default font to be Iosevka, with Symbola as a backup for any missing
+glyphs. So far this has been a really great combination for me.
+#+begin_src shell :tangle "~/.Xresources"
+! -- URxvt Fonts -- !
+URxvt.font:xft:Iosevka:pixelsize=16:style=regular,xft:Symbola:pixelsize=16
+URxvt.boldFont:xft:Iosevka:pixelsize=16:style=bold,xft:Symbola:pixelsize=16
+URxvt.italicFont:xft:Iosevka:pixelsize=16:style=italic,xft:Symbola:pixelsize=16
+URxvt.bolditalicFont:xft:Iosevka:pixelsize=16:style=bold:style=italic,xft:Symbola:pixelsize=16
+#+end_src
+
+The ~URxvt*letterSpace~ setting helps with cases where some font glyphs are not
+truly monospaced. This can be an issue when using something like font-awesome.
+I'm not sure I need this since I'm using Symbola instead, but it's something to
+keep in mind.
+#+begin_src shell :tangle "~/.Xresources"
+URxvt*letterSpace: +1
+#+end_src
+
+Finally just some straightforward terminal settings: allow bold fonts, turn off
+the scrollbar, and switch the cursor to an underline.
+#+begin_src shell :tangle "~/.Xresources"
+URxvt*allow_bold: true
+URxvt.scrollBar: false
+URxvt*cursorUnderline: true
+#+end_src
+
 ** i3
 *** Installation
 :PROPERTIES:
@@ -439,14 +515,15 @@ can be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][found here
 
 set $mod Mod4
 set $term urxvt
-set $menu i3-dmenu-desktop
+set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icon -display-combi "🔎🔎🔎"
+set $pass rofi-pass -display-pass "sam"  # "🔒🔒🔒"
 set $barcmd i3status
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Fira Code Retina 12
+font pango: Iosevka 12
 
 # HiDPI for sway
 # output eDP-1 scale 1
@@ -474,6 +551,10 @@ bindsym $mod+Return exec $term
 
 # start dmenu
 bindsym $mod+d exec $menu
+
+# pass menu
+bindsym $mod+p exec $pass
+
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -640,18 +721,9 @@ bindsym $mod+r mode "resize"
 
 # i3status bar config
 bar {
-  font pango:Fira Code Retina 12
+  font pango:Iosevka 12
   status_command $barcmd --config ~/.config/i3/i3status.conf
 }
-
-# auto run commands
-# set background
-# use the same background as slim (login manager)
-# this file is an alias to something in /home/jessie/Pictures
-# exec --no-startup-id feh --bg-fill ${HOME}/Pictures/central-park.jpg
-
-# Sway backgroud
-# output "*" background ${HOME}/Pictures/central-park2.jpg fill
 
 # run the merge for good colors
 exec --no-startup-id xrdb -merge $HOME/.Xresources
@@ -1425,6 +1497,124 @@ main() {
 main "$@"
 
 #+end_src
+** rofi
+*** Installation
+
+Now we can install i3, and some of the utilities that my i3 setup relies on.
+These are rxvt, and scrot.
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt install -y rofi
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libllvm6.0
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  libxcb-ewmh2
+The following NEW packages will be installed:
+  libxcb-ewmh2 rofi
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Need to get 180 kB of archives.
+After this operation, 632 kB of additional disk space will be used.
+[33m0% [Working][0m            Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 libxcb-ewmh2 amd64 0.4.1-1ubuntu1 [16.6 kB]
+[33m1% [1 libxcb-ewmh2 2,615 B/16.6 kB 16%][0m[33m                                       17% [Working][0m             Get:2 http://archive.ubuntu.com/ubuntu bionic/universe amd64 rofi amd64 1.5.0-1 [163 kB]
+[33m19% [2 rofi 2,613 B/163 kB 2%][0m[33m                              100% [Working][0m              Fetched 180 kB in 1s (266 kB/s)
+Selecting previously unselected package libxcb-ewmh2:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 255922 files and directories currently installed.)
+Preparing to unpack .../libxcb-ewmh2_0.4.1-1ubuntu1_amd64.deb ...
+Unpacking libxcb-ewmh2:amd64 (0.4.1-1ubuntu1) ...
+Selecting previously unselected package rofi.
+Preparing to unpack .../rofi_1.5.0-1_amd64.deb ...
+Unpacking rofi (1.5.0-1) ...
+Setting up libxcb-ewmh2:amd64 (0.4.1-1ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Setting up rofi (1.5.0-1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+#+end_example
+*** Configuration
+
+Visual settings for Rofi. Sets up the colour theme (solarized for now, need to
+figure out something spacemacs-dark complimentary later), and also sets the font
+and separator styles.
+#+begin_src shell :tangle "~/.Xresources"
+! -- ROFI Color theme -- !
+rofi.color-enabled: true
+rofi.color-window: #002b37, #002b37, #003642
+rofi.color-normal: #002b37, #819396, #002b37, #003642, #819396
+rofi.color-active: #002b37, #008ed4, #002b37, #003642, #008ed4
+rofi.color-urgent: #002b37, #da4281, #002b37, #003642, #da4281
+
+rofi.separator-style:                solid
+rofi.font: Iosevka 10
+rofi.combi_hide_mode_prefix: TRUE
+#+end_src
+
+#+begin_src shell :tangle "~/.Xresources"
+rofi.case-sensitive: false
+#+end_src
+
+**** Rofi-Pass
+
+First make sure you have the [[https://github.com/carnager/rofi-pass][rofi-pass]] repo.
+#+begin_src shell :cache no :results output
+git clone git@github.com:carnager/rofi-pass.git ~/.etc/rofi-pass
+#+end_src
+
+Install missing ~rofi-pass~ dependencies.
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt install -y gawk xdotool
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libllvm6.0
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  libsigsegv2 libxdo3
+Suggested packages:
+  gawk-doc
+The following NEW packages will be installed:
+  gawk libsigsegv2 libxdo3 xdotool
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Need to get 478 kB of archives.
+After this operation, 1,800 kB of additional disk space will be used.
+[33m0% [Working][0m            Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 libsigsegv2 amd64 2.12-1 [14.7 kB]
+[33m0% [1 libsigsegv2 2,615 B/14.7 kB 18%][0m[33m                                      7% [Working][0m            Get:2 http://archive.ubuntu.com/ubuntu bionic/main amd64 gawk amd64 1:4.1.4+dfsg-1build1 [401 kB]
+[33m8% [2 gawk 2,613 B/401 kB 1%][0m[33m                             80% [Waiting for headers][0m                         Get:3 http://archive.ubuntu.com/ubuntu bionic/universe amd64 libxdo3 amd64 1:3.20160805.1-3 [20.5 kB]
+[33m83% [3 libxdo3 20.5 kB/20.5 kB 100%][0m[33m                                    88% [Waiting for headers][0m                         Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 xdotool amd64 1:3.20160805.1-3 [41.0 kB]
+[33m92% [4 xdotool 21.1 kB/41.0 kB 51%][0m[33m                                   100% [Working][0m              Fetched 478 kB in 1s (518 kB/s)
+Selecting previously unselected package libsigsegv2:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 255969 files and directories currently installed.)
+Preparing to unpack .../libsigsegv2_2.12-1_amd64.deb ...
+Unpacking libsigsegv2:amd64 (2.12-1) ...
+Setting up libsigsegv2:amd64 (2.12-1) ...
+Selecting previously unselected package gawk.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 255976 files and directories currently installed.)
+Preparing to unpack .../gawk_1%3a4.1.4+dfsg-1build1_amd64.deb ...
+Unpacking gawk (1:4.1.4+dfsg-1build1) ...
+Selecting previously unselected package libxdo3:amd64.
+Preparing to unpack .../libxdo3_1%3a3.20160805.1-3_amd64.deb ...
+Unpacking libxdo3:amd64 (1:3.20160805.1-3) ...
+Selecting previously unselected package xdotool.
+Preparing to unpack .../xdotool_1%3a3.20160805.1-3_amd64.deb ...
+Unpacking xdotool (1:3.20160805.1-3) ...
+Setting up gawk (1:4.1.4+dfsg-1build1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Setting up libxdo3:amd64 (1:3.20160805.1-3) ...
+Setting up xdotool (1:3.20160805.1-3) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+#+end_example
+
 * Plans
 ** DONE better lock screen
 CLOSED: [2019-02-09 Sat 10:56]
