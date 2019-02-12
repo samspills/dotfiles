@@ -904,6 +904,25 @@ from the previously defined mapping. Finally we call
        (message action)
        (org-jira-progress-issue-action action))))
 #+END_SRC
+*** Auto-commit and push git repo                            :experimental:
+I would like to experiment with keeping my org files in a git repository instead
+of keeping them in Dropbox. It seems that an easy way to do this would be to use
+[[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]].
+
+Ensure that ~git-auto-commit-mode~ is installed, and set the
+~gac-automatically-push-p~ variable to true.
+#+begin_src emacs-lisp
+(use-package git-auto-commit-mode
+    :ensure t
+    :custom (gac-automatically-push-p 1))
+#+end_src
+
+I am using a directory local variable to initialize ~git-auto-commit-mode~. I have a ~.dir-locals.el~ file in the repo with the
+following:
+#+NAME: Local variable to auto-commit on save
+#+begin_src emacs-lisp :tangle no
+((nil . ((eval git-auto-commit-mode 1))))
+#+end_src
 ** Tools
 *** Company
 With =company-mode=, we get automatic completion - when there are completions
