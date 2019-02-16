@@ -44,10 +44,9 @@ sudo apt-get install -y $(cat ~/packages.txt | awk '{print $1}')
 sudo apt autoremove -y
 
 curl -L git.io/antigen > ~/.antigen.zsh
-
-setxkbmap -option ctrl:nocaps
 chsh -s $(which zsh)
 #+end_src
+
 *** fzf
 I use [[https://github.com/junegunn/fzf][fzf]] for shell history + completion. Completion of file names, configured
 ssh servers, environment variables, and probably a lot of other things can be
@@ -95,6 +94,38 @@ Set up my user name and email address for git.
   name = Sam Pillsworth
 #+end_src
 ** X11
+*** xmodmap
+:PROPERTIES:
+:ID:       c2789703-b11d-4a42-88fc-5b5332242ef2
+:END:
+~xmodmap~ is a utility that modifies keybindings in =XOrg=. Modifications can be
+specified directly in a command line argument or they can be written in a
+configuration file and executed against using ~xmodmap /path/to/config/file~.
+
+All of my configurations will be tangled to =~/.config/xmodmaprc=, and I want the
+~xmodmap~ command in my =~/.xinitrc= so that the modifications will be applied at
+the start of every X session.
+
+#+begin_src shell :tangle "~/.xinitrc"
+xmodmap ${HOME}/.config/xmodmaprc
+#+end_src
+
+#+RESULTS:
+
+**** Remap caps lock to ctrl
+:PROPERTIES:
+:ID:       3ee2ee10-84dc-494d-b125-1a17a11f7093
+:END:
+I never use caps lock, so I rebind the key to another ctrl. I don't swap them
+because I honestly feel that three ctrl keys is more useful than 2 ctrl keys and
+a caps lock key, no matter where the caps lock key is located.
+#+begin_src shell :tangle "~/.config/xmodmaprc"
+remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Caps_Lock = Control_L
+add Lock = Caps_Lock
+add Control = Control_L
+#+end_src
 *** xinitrc
 :PROPERTIES:
 :ID:       c02ec5f1-ea87-40b2-a353-6e088285d8a9
@@ -181,7 +212,6 @@ Xft.hintstyle:  hintfull
 Xft.hinting:    1
 Xft.antialias:  1
 #+end_src
-
 ** Shell
 *** zsh
 **** Environment
