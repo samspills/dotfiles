@@ -5,7 +5,7 @@ that is tangled to the appropriate locations.
 
 This is still very much a work in progress.
 
-** Package Installation
+** Package Installation and Minimal Setup
 :PROPERTIES:
 :ID:       8b53258b-b348-4001-8782-971aac6402d7
 :END:
@@ -32,7 +32,8 @@ fonts-iosevka
 nautilus-dropbox
 #+end_src
 
-I have a short bash script to handle the installation:
+I have a short bash script to handle the installation. The bash script also
+downloads antigen, and sets the default shell to zsh.
 #+begin_src shell :tangle "~/ubuntu_setup.sh" :tangle-mode (identity #o755)
 #!/usr/bin/env bash
 
@@ -338,6 +339,9 @@ Finally, source the environment file
 source ~/.zshenv
 #+end_src
 *** urxvt
+:PROPERTIES:
+:ID:       1aacc5fb-6982-414a-9551-74d960b4c2f6
+:END:
 
 Set the spacemacs colour scheme for URxvt.
 #+begin_src shell :tangle "~/.Xresources"
@@ -536,59 +540,55 @@ Setting up rxvt-unicode-256color (9.22-3) ...
 :PROPERTIES:
 :ID:       705e0a62-fe76-4269-bd44-5a7ee7d62f80
 :END:
-To start, I'm just stealing the whole configuration setup by Jess Frazelle, and
-can be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][found here]]
-#+begin_src shell :tangle "~/.config/i3/config"
-# i3 config file (v4)
-#
-# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+**** Set variables
+:PROPERTIES:
+:ID:       392bea2b-c4cb-4c01-9877-693ca6a50fe5
+:END:
 
+I'm setting some variables first to keep them in an easy-to-find place,
+for easy updating. These are either things I think I might want to change
+(~$mod~), or commands that will be executed that I might want to update frequently.
+
+#+begin_src shell :tangle "~/.config/i3/config"
 set $mod Mod4
 set $term urxvt
 set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icon -display-combi "🔎🔎🔎"
 set $pass rofi-pass -display-pass "sam"  # "🔒🔒🔒"
 set $barcmd i3status
+set $lock ~/.config/i3/i3lock-extra -p 5 -m pixelize
+#+end_src
+
+**** Beautify
+:PROPERTIES:
+:ID:       e8ecd02b-b952-4f4f-8ff4-6e64891d3267
+:END:
+The beautifying part of my i3 configuration: font settings, borders, colours,
+generally making things pretty.
+
+I like to use the [[https://github.com/be5invis/iosevka][Iosevka]] font for everything.
+#+begin_src shell :tangle "~/.config/i3/config"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
 font pango: Iosevka 12
+#+end_src
 
-# HiDPI for sway
-# output eDP-1 scale 1
+I use the same font for the status bar (setting the font here isn't strictly
+necessary but I like to be explicit). Then I load the =i3status.conf= (see
+[[id:3580802b-dc7d-41d4-b84f-12cb717a9084][i3status]] for that configuration file).
+#+begin_src shell :tangle "~/.config/i3/config"
+bar {
+  font pango:Iosevka 12
+  status_command $barcmd --config ~/.config/i3/i3status.conf
+}
+#+end_src
 
-# Inputs for sway
-# Reverse scroll
-#input "2:7:SynPS/2_Synaptics_TouchPad" {
-#    natural_scroll enabled
-#    left_handed disabled
-#    pointer_accel 0.9
-#}
+Jess Frazelle sets different borders for spotify and sets other windows to have
+floating enabled by default in [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][her config]]. I don't really know why these
+settings are set this way. I'm leaving it all for now just to see what happens
+and if I hate it or love it (or feel nothing).
 
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
-
-# Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
-
-# start a terminal
-bindsym $mod+Return exec $term
-
-# start dmenu
-bindsym $mod+d exec $menu
-
-# pass menu
-bindsym $mod+p exec $pass
-
-
-# kill focused window
-bindsym $mod+Shift+q kill
-
+#+begin_src shell :tangle "~/.config/i3/config"
 # spotify: no border
 for_window [class="^Spotify$"] border none
 for_window [class="^Spotify Premium$"] border none
@@ -614,6 +614,29 @@ for_window [class="VirtualBox"] floating enable
 for_window [class="vlc"] floating enable
 for_window [class="Wine"] floating enable
 for_window [class="Wireshark"] floating enable
+#+end_src
+**** Keybindings
+:PROPERTIES:
+:ID:       01df5ea3-4821-4c01-b828-2b21d532eaa2
+:END:
+To start, I'm just stealing the whole configuration setup by Jess Frazelle, and
+can be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][found here]]
+#+begin_src shell :tangle "~/.config/i3/config"
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec $term
+
+# start dmenu
+bindsym $mod+d exec $menu
+bindcode --release 133 exec $menu
+
+# pass menu
+bindsym $mod+p exec $pass
+
+# kill focused window
+bindsym $mod+Shift+q kill
 
 # change focus
 bindsym $mod+j focus left
@@ -703,18 +726,20 @@ bindsym XF86MonBrightnessUp exec xbacklight -inc 5 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightness
 
 # Screenshots
+bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
 # Screenshot fullscreen
-bindsym Print exec "scrot -q 100 ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# Screenshot fullscreen, sway
-#bindsym Shift+Print exec "swaygrab ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
-# Screenshot with selection
-bindsym $mod+Print exec "sleep 0.4; scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# Screenshot capture, sway
-#bindsym Shift+Print exec "swaygrab -c ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').webm"
-# Screenshot current focused window
-bindsym Shift+Print exec "scrot -q 100 -u ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# Screenshot current focused window, sway
-#bindsym Shift+Print exec "swaygrab --focused ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
+# bindsym Print exec "scrot -q 100 ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# # Screenshot fullscreen, sway
+# #bindsym Shift+Print exec "swaygrab ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
+# # Screenshot with selection
+# bindsym $mod+Print exec "sleep 0.4; scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# # Screenshot capture, sway
+# #bindsym Shift+Print exec "swaygrab -c ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').webm"
+# # Screenshot current focused window
+# bindsym Shift+Print exec "scrot -q 100 -u ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
+# # Screenshot current focused window, sway
+# #
+# bindsym Shift+Print exec "swaygrab --focused ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -748,23 +773,12 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
-
-# i3status bar config
-bar {
-  font pango:Iosevka 12
-  status_command $barcmd --config ~/.config/i3/i3status.conf
-}
-
-# run the merge for good colors
-exec --no-startup-id xrdb -merge $HOME/.Xresources
-exec --no-startup-id xrdb -merge $HOME/.Xdefaults
 #+end_src
 
 *** i3status
 :PROPERTIES:
 :ID:       3580802b-dc7d-41d4-b84f-12cb717a9084
 :END:
-
 i3Status has the following dependencies:
 #+begin_src shell :dir "/sudo::" :cache no :results output
 sudo apt install -y libconfuse-dev libyajl-dev libasound2-dev libiw-dev asciidoc libpulse-dev libnl-genl-3-dev
@@ -1400,7 +1414,7 @@ I like the lockscreen style described in [[https://github.com/brunodles/i3wm-con
 
 #+begin_src shell :tangle "~/.config/i3/config"
 # I don't have a lock icon yet, I need to get one
-bindsym $mod+l exec ~/.config/i3/.i3lock-extra -p 5 -m pixelize # $lock_image
+bindsym $mod+l exec $lock
 #+end_src
 
 #+RESULTS:
@@ -1527,6 +1541,17 @@ main() {
 main "$@"
 
 #+end_src
+*** fin
+:PROPERTIES:
+:ID:       0d5acb35-2fed-4d52-9dd6-a5621c1dd97f
+:END:
+This section contains any lines that must be executed at the end of the i3
+config.
+
+#+begin_src shell :tangle "~/.config/i3/config"
+# run the merge for good colors
+exec --no-startup-id xrdb -merge $HOME/.Xresources
+#+end_src
 ** rofi
 *** Installation
 
@@ -1567,6 +1592,9 @@ Setting up rofi (1.5.0-1) ...
 Processing triggers for libc-bin (2.27-3ubuntu1) ...
 #+end_example
 *** Configuration
+:PROPERTIES:
+:ID:       71374108-706d-4914-af6b-c4c7052b6ecf
+:END:
 
 Visual settings for Rofi. Sets up the colour theme (solarized for now, need to
 figure out something spacemacs-dark complimentary later), and also sets the font
