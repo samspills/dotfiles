@@ -583,6 +583,16 @@ bar {
 }
 #+end_src
 
+Setup a tabbed layout by default.
+#+begin_src shell :tangle "~/.config/i3/config"
+workspace_layout tabbed
+#+end_src
+
+Also hide the edge borders around windows.
+#+begin_src shell :tangle "~/.config/i3/config"
+for_window [class="^.*"] border pixel 0
+#+end_src
+
 Jess Frazelle sets different borders for spotify and sets other windows to have
 floating enabled by default in [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][her config]]. I don't really know why these
 settings are set this way. I'm leaving it all for now just to see what happens
@@ -614,6 +624,21 @@ for_window [class="VirtualBox"] floating enable
 for_window [class="vlc"] floating enable
 for_window [class="Wine"] floating enable
 for_window [class="Wireshark"] floating enable
+#+end_src
+**** Functionality
+This section contains little snippets to provide a certain functionality or
+behaviour in i3.
+***** Auto focus to urgent window
+:PROPERTIES:
+:ID:       5541cb47-3f37-4a7e-9166-f3ac16276943
+:END:
+If a workspace has an urgent window, then I want to switch to that workspace
+automatically. I use the running emacsclient (in GUI mode) as my editor and if
+the terminal triggers an edit (through git or pass for example) then this
+sitting causes the focus to automatically switch to emacs. Very nice.
+
+#+begin_src shell :tangle "~/.config/i3/config"
+for_window [urgent=latest] focus
 #+end_src
 **** Keybindings
 :PROPERTIES:
