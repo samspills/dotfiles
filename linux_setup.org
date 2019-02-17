@@ -1693,12 +1693,70 @@ Setting up xdotool (1:3.20160805.1-3) ...
 Processing triggers for libc-bin (2.27-3ubuntu1) ...
 #+end_example
 
+** applications
+*** weechat
+**** Installation
+First we need to install weechat for Ubuntu/Debian.
+
+#+begin_src shell :dir "/sudo::" :cache no :results output
+sudo apt install -y weechat-curses weechat-plugins
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+Reading state information... 0%Reading state information... 0%Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libllvm6.0
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  liblua5.1-0 weechat-core
+Suggested packages:
+  weechat-doc weechat-scripts
+The following NEW packages will be installed:
+  liblua5.1-0 weechat-core weechat-curses weechat-plugins
+0 upgraded, 4 newly installed, 0 to remove and 7 not upgraded.
+Need to get 1,514 kB of archives.
+After this operation, 7,128 kB of additional disk space will be used.
+[33m0% [Working][0m[33m0% [Working][0m[33m0% [Connecting to archive.ubuntu.com][0m[33m                                     0% [Waiting for headers][0m[33m0% [Waiting for headers][0m                        Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 liblua5.1-0 amd64 5.1.5-8.1build2 [100 kB]
+[33m1% [1 liblua5.1-0 12.2 kB/100 kB 12%][0m[33m                                     10% [Working][0m[33m10% [Waiting for headers][0m                         Get:2 http://archive.ubuntu.com/ubuntu bionic/universe amd64 weechat-core amd64 1.9.1-1ubuntu1 [680 kB]
+[33m10% [2 weechat-core 1,017 B/680 kB 0%][0m[33m27% [2 weechat-core 317 kB/680 kB 47%][0m[33m40% [2 weechat-core 571 kB/680 kB 84%][0m[33m                                      51% [Waiting for headers][0m                         Get:3 http://archive.ubuntu.com/ubuntu bionic/universe amd64 weechat-curses amd64 1.9.1-1ubuntu1 [355 kB]
+[33m51% [3 weechat-curses 1,685 B/355 kB 0%][0m[33m66% [3 weechat-curses 274 kB/355 kB 77%][0m[33m                                        75% [Waiting for headers][0m                         Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 weechat-plugins amd64 1.9.1-1ubuntu1 [379 kB]
+[33m75% [4 weechat-plugins 6,135 B/379 kB 2%][0m[33m92% [4 weechat-plugins 320 kB/379 kB 84%]                           242 kB/s 0s[0m[33m100% [Working]                                                      242 kB/s 0s[0m                                                                               Fetched 1,514 kB in 6s (246 kB/s)
+Selecting previously unselected package liblua5.1-0:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 256135 files and directories currently installed.)
+Preparing to unpack .../liblua5.1-0_5.1.5-8.1build2_amd64.deb ...
+Unpacking liblua5.1-0:amd64 (5.1.5-8.1build2) ...
+Selecting previously unselected package weechat-core.
+Preparing to unpack .../weechat-core_1.9.1-1ubuntu1_amd64.deb ...
+Unpacking weechat-core (1.9.1-1ubuntu1) ...
+Selecting previously unselected package weechat-curses.
+Preparing to unpack .../weechat-curses_1.9.1-1ubuntu1_amd64.deb ...
+Unpacking weechat-curses (1.9.1-1ubuntu1) ...
+Selecting previously unselected package weechat-plugins.
+Preparing to unpack .../weechat-plugins_1.9.1-1ubuntu1_amd64.deb ...
+Unpacking weechat-plugins (1.9.1-1ubuntu1) ...
+Setting up weechat-core (1.9.1-1ubuntu1) ...
+Setting up weechat-curses (1.9.1-1ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Setting up liblua5.1-0:amd64 (5.1.5-8.1build2) ...
+Setting up weechat-plugins (1.9.1-1ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+#+end_example
+
 * Plans
 ** DONE better lock screen
 CLOSED: [2019-02-09 Sat 10:56]
 - State "DONE"       from "TODO"       [2019-02-09 Sat 10:56]
-** TODO still getting some unknown characters in terminal
+** DONE still getting some unknown characters in terminal
+CLOSED: [2019-02-16 Sat 14:33]
+- State "DONE"       from "TODO"       [2019-02-16 Sat 14:33]
 ** DONE window management
 CLOSED: [2019-02-09 Sat 10:56]
 - State "DONE"       from "TODO"       [2019-02-09 Sat 10:56]
 - try using i3
+** TODO i3 gaps
+** TODO polybar
+** TODO weechat + weeslack + weemacs
