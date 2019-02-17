@@ -555,7 +555,7 @@ set $term urxvt
 set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icon -display-combi "🔎🔎🔎"
 set $pass rofi-pass -display-pass "sam"  # "🔒🔒🔒"
 set $barcmd i3status
-set $lock ~/.config/i3/i3lock-extra -p 5 -m pixelize
+set $lock --no-startup-id i3lock-extra -p 5 -m pixelize
 #+end_src
 
 **** Beautify
@@ -630,10 +630,12 @@ bindsym $mod+Return exec $term
 
 # start dmenu
 bindsym $mod+d exec $menu
-bindcode --release 133 exec $menu
 
 # pass menu
 bindsym $mod+p exec $pass
+
+# lock
+bindsym $mod+l exec $lock
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -1412,14 +1414,7 @@ volume master {
 
 I like the lockscreen style described in [[https://github.com/brunodles/i3wm-conf][brunodles i3 config]], so I have stolen it.
 
-#+begin_src shell :tangle "~/.config/i3/config"
-# I don't have a lock icon yet, I need to get one
-bindsym $mod+l exec $lock
-#+end_src
-
-#+RESULTS:
-
-#+begin_src shell :tangle "~/.config/i3/i3lock_extra" :tangle-mode (identity #o755)
+#+begin_src shell :tangle "~/bin/i3lock-extra" :tangle-mode (identity #o775)
 #!/usr/bin/env bash
 
 cfg_tmpdir="/run/user/$UID/i3lock-extra"
