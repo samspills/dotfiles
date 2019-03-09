@@ -570,7 +570,7 @@ for easy updating. These are either things I think I might want to change
 #+begin_src shell :tangle "~/.config/i3/config"
 set $mod Mod4
 set $term urxvt
-set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icon -display-combi "🔎🔎🔎"
+set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icons -display-combi "🔎"
 set $pass rofi-pass -display-pass "sam"  # "🔒🔒🔒"
 set $barcmd i3status
 set $lock --no-startup-id i3lock-extra -p 5 -m pixelize
@@ -771,7 +771,8 @@ bindsym XF86MonBrightnessUp exec xbacklight -inc 5 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightness
 
 # Screenshots
-bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
+# bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
+bindsym --release $mod+Print exec "scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png'"
 # Screenshot fullscreen
 # bindsym Print exec "scrot -q 100 ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
 # # Screenshot fullscreen, sway
@@ -1744,7 +1745,7 @@ insert_pass="Alt+n"
 #+end_src
 
 ** applications
-*** weechat
+*** weechat + slack
 **** Installation
 First we need to install weechat for Ubuntu/Debian.
 
@@ -1795,6 +1796,22 @@ Setting up liblua5.1-0:amd64 (5.1.5-8.1build2) ...
 Setting up weechat-plugins (1.9.1-1ubuntu1) ...
 Processing triggers for libc-bin (2.27-3ubuntu1) ...
 #+end_example
+
+The slack plugin for weechat can be setup inside of a weechat instance with
+#+begin_src shell :cache no :results output
+cd ~/.weechat/python
+wget https://raw.githubusercontent.com/wee-slack/wee-slack/master/wee_slack.py
+ln -s ../wee_slack.py autoload
+#+end_src
+
+#+RESULTS:
+
+If loading the script doesn't work it might be because of missing python
+dependencies.
+#+begin_src shell :cache no :results object
+pip install websocket-client
+#+end_src
+
 
 * Plans
 ** DONE better lock screen
