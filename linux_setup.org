@@ -94,6 +94,25 @@ Set up my user name and email address for git.
   email = srpillsworth@gmail.com
   name = Sam Pillsworth
 #+end_src
+** GPG agent configuration
+:PROPERTIES:
+:ID:       ff9df46b-bcf7-40e8-bbd1-edb3030df298
+:END:
+I keep my password store encrypted, and I don't want to have to type my master
+key every time I need to access a password. I also don't want to store my master
+key in any sort of a keychain, partly because I'm paranoid but also partly
+because that seems like it would take effort to set up.
+
+Instead I setup a longer cache time for my gpg-agent.
+
+#+begin_src shell :tangle "~/.gnupg/gpg-agent.conf"
+allow-emacs-pinentry
+allow-loopback-pinentry
+max-cache-ttl 10800
+default-cache-ttl 10800
+log-file /var/log/gpg-agent.log
+pinentry-program /usr/bin/pinentry
+#+end_src
 ** X11
 *** xmodmap
 :PROPERTIES:
