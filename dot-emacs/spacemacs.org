@@ -978,6 +978,64 @@ the previously linked blog post.
 ;;   (projectile-project-search-path '("~/rubikloud"))
 ;; )
 #+END_SRC
+*** Slack
+I use slack to talk to everyone now. Rubikloud uses slack, I have two different
+slacks for two different friend groups, and I have a slack team for my family.
+
+There are some settings that I want to apply globally for every slack team that
+I am part of.
+
+Notify me of new messages or activity in the modeline
+#+begin_src emacs-lisp
+(setq alert-default-style 'mode-line)
+#+end_src
+
+If the room buffer doesn't exist when a new message is received, create it and
+notify.
+#+begin_src emacs-lisp
+(setq slack-buffer-create-on-notify t)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package slack
+  :commands (slack-start)
+  :config
+  (slack-register-team
+   :name "pillsworth"
+   :default t
+  :subscribed-channels '(family)
+   :full-and-display-names t
+   :modeline-enabled t)
+)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (slack-register-team
+   :name "workcrewto"
+   :default t
+   :subscribed-channels '(family)
+   :full-and-display-names t
+   :slack-modeline t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (slack-register-team
+   :name "derpslack"
+   :default t
+   :subscribed-channels '(family)
+   :full-and-display-names t
+   :slack-modeline t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (slack-register-team
+   :name "rubikloud"
+   :default t
+   :subscribed-channels '(family)
+   :full-and-display-names t
+   :slack-modeline t)
+#+end_src
+
 *** Tramp
 I was having a lot of issues with tramp + zsh on my remote machine, this was
 part of the debugging I did then. I don't remember exactly why these things were

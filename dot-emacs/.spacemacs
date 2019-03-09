@@ -48,6 +48,7 @@ values."
           org-want-todo-bindings t)
     (shell :variables
            shell-default-shell 'eshell)
+    slack
     syntax-checking
     ;; (lsp :variables
     ;;      lsp-message-project-root-warning t
@@ -64,7 +65,6 @@ values."
     csv
     javascript
     ;; ipython-notebook
-    weechat
     )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -76,6 +76,7 @@ values."
                                       benchmark-init
                                       clocker
                                       company-lsp
+                                      (emacs-slack :location (recipe :fetcher github :repo "yuya373/emacs-slack" :branch "master"))
                                       exec-path-from-shell
                                       general
                                       (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
@@ -83,6 +84,7 @@ values."
                                       org-gcal
                                       org-jira
                                       rainbow-delimiters
+                                      (slack :location (recipe :fetcher github :repo "yuya373/emacs-slack" :branch "master"))
                                       spaceline-all-the-icons
                                       tracking
                                       )
