@@ -107,8 +107,20 @@ I use [[https://www.passwordstore.org/][pass]] to manage all my passwords, and t
   :init
     (auth-source-pass-enable)
     (setq auth-source-debug t)
+    (setenv "GPG_AGENT_INFO" nil)
     (setq auth-sources '(password-store)))
 #+END_SRC
+
+Sometimes the masterpass dialogue from the GUI pinentry will open behind my
+(always fullscreen) emacs frame, or on some other window in my i3 config. It's
+much easier if emacs just asks for my masterpass through the minibuffer.
+#+begin_src emacs-lisp
+(use-package pinentry
+  :defer nil
+  :init
+  (setq epa-pinentry-mode 'loopback)
+  (pinentry-start))
+#+end_src
 ** Spacemacs Personal Preferences
 These are some straight-forward settings for my personal preferences. I didn't
 know where else to put them, so they're all going here.
