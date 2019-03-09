@@ -514,7 +514,13 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
                 `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 #+END_SRC
-
+***** org-protocol
+In order to define system wide capture commands, we need org-protocol.
+#+begin_src emacs-lisp
+(use-package org-protocol
+  :ensure nil)
+#+end_src
+***** org-mac-link
 Capturing external content can be made a lot easier using =org-mac-link= (included in contrib),
 which implements the ability to grab links from different Mac apps and insert
 them in the file. Bind =SPC o g= to call =org-mac-grab-link= to choose an application
