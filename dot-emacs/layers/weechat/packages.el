@@ -31,33 +31,7 @@
 
 (defconst weechat-packages
   '(weechat
-    tracking)
-  "The list of Lisp packages required by the weechat layer.
-
-Each entry is either:
-
-1. A symbol, which is interpreted as a package to be installed, or
-
-2. A list of the form (PACKAGE KEYS...), where PACKAGE is the
-    name of the package to be installed or loaded, and KEYS are
-    any number of keyword-value-pairs.
-
-    The following keys are accepted:
-
-    - :excluded (t or nil): Prevent the package from being loaded
-      if value is non-nil
-
-    - :location: Specify a custom installation location.
-      The following values are legal:
-
-      - The symbol `elpa' (default) means PACKAGE will be
-        installed using the Emacs package manager.
-
-      - The symbol `local' directs Spacemacs to load the file at
-        `./local/PACKAGE/PACKAGE.el'
-
-      - A list beginning with the symbol `recipe' is a melpa
-        recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
+    tracking))
 
 (defun weechat/init-tracking ()
   "Initialize tracking"
@@ -78,6 +52,7 @@ Each entry is either:
                             weechat-button
                             weechat-color
                             weechat-tracking
+                            weechat-image
                             ))
     (when (configuration-layer/layer-usedp 'spell-checking)
       (push 'weechat-spelling weechat-modules))
@@ -87,8 +62,10 @@ Each entry is either:
           weechat-sync-active-buffer t
           weechat-sync-buffer-read-status t
           weechat-host-default "localhost"
-          weechat-port-default 9000
-          weechat-tracking-types '(:highlight :message))
+          weechat-port-default 8000
+          weechat-tracking-types '(:highlight :message)
+          weechat-complete-order-nickname t
+          )
 
     ;; TODO: Have predefined color schemes for spacemacs light
     ;;       and dark themes and set appropriately

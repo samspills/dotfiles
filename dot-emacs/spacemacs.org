@@ -477,6 +477,7 @@ Setting up the =variable-pitch= face to the proportional font I like to use. I'm
 :PROPERTIES:
 :ID:       85B593E5-998D-4455-972C-DFEF1AA3C30A
 :END:
+***** org-capture
 Setup some org capture templates. (TODO don't hardcode the file paths)
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture
@@ -623,7 +624,8 @@ I want my work events to be pulled in from google calendar and shown in my org-a
   (org-gcal-client-id (auth-source-pass-get "client" "org/org-gcal.el"))
   (org-gcal-client-secret (auth-source-pass-get 'secret "org/org-gcal.el"))
   :config
-  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "/Users/sam/Dropbox/life/rubikloud_cal.org"))
+  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "~/Dropbox/life/rubikloud_cal.org")
+                              ("srpillsworth@gmail.com" . "~/Dropbox/life/sam-cal.org"))
         ))
 #+END_SRC
 **** Clocking
@@ -917,13 +919,15 @@ from the previously defined mapping. Finally we call
        (org-jira-progress-issue-action action))))
 #+END_SRC
 *** Auto-commit and push git repo                            :experimental:
-I would like to experiment with keeping my org files in a git repository instead
++I would like to experiment with keeping my org files in a git repository instead
 of keeping them in Dropbox. It seems that an easy way to do this would be to use
-[[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]].
+[[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]].+
+
+Update (2019-02-18): setting up a similar autocommit strategy on my phone will be a huge hassle that I don't want to deal with. This experiment is paused until my chosen phone app can better support git repositories.
 
 Ensure that ~git-auto-commit-mode~ is installed, and set the
 ~gac-automatically-push-p~ variable to true.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package git-auto-commit-mode
     :ensure t
     :custom (gac-automatically-push-p 1))
@@ -946,6 +950,34 @@ enable it globally.
   (use-package company
     :hook
     (after-init . global-company-mode))
+#+end_src
+*** erc
+#+begin_src emacs-lisp :tangle no
+(defun erc-weechat-connect (server network)
+  "Connect to SERVER as a weechat ssl irc proxy.
+Gets password from `auth-sources' stored under host ssl.irc.weechat;
+and my-weechat-server.example.com:9001 hardcoded here.
+Will not connect if we already have a connection to NETWORK."
+  (if-let ((existing (erc-buffer-list (lambda () (eq (erc-network) network)))))
+      (message "Already connected to %s (%S), see buffer %S" network server (car existing))
+    (let ((password (auth-source-pass-get 'secret (concat "weechat/" server)))
+          (port (auth-source-pass-get "port" (concat "weechat/" server))))
+      (erc-tls :server "localhost"
+               :port port
+               :password password))))
+
+(defmacro erc-weechat-make-connect (server network)
+  "Partially apply `erc-weechat-connect' on a certain SERVER and NETWORK."
+  `(defun ,(intern (concat "erc-weechat-connect-" server)) ()
+     ,(concat "Connect to " server " on weechat, through ERC.
+Will not connect if we already have a connection to NETWORK.")
+     (interactive)
+     (erc-weechat-connect ,server ,network)))
+
+;; (erc-weechat-make-connect "bitlbee" 'BitlBee)
+;; (erc-weechat-make-connect "freenode-over-tor" 'freenode)
+(erc-weechat-make-connect "pillsworth.slack.com" 'localhost)
+;; can now do e.g. (erc-weechat-connect-freenode))
 #+end_src
 *** Flycheck
 #+BEGIN_SRC emacs-lisp
