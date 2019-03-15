@@ -1070,10 +1070,9 @@ notify.
   :config
   (slack-register-team
    :name "pillsworth"
-   :default t
    :client-id (auth-source-pass-get "client" "slack/pillsworth.slack.com")
    :client-secret (auth-source-pass-get 'secret "slack/pillsworth.slack.com")
-   :token (auth-source-pass-get "token" "slack/pillsworth.slack.com"
+   :token (auth-source-pass-get "token" "slack/pillsworth.slack.com")
    :subscribed-channels '(family)
    :full-and-display-names t
    :modeline-enabled t)
@@ -1083,7 +1082,6 @@ notify.
 #+begin_src emacs-lisp :tangle no
   (slack-register-team
    :name "workcrewto"
-   :default t
    :client-id (auth-source-pass-get "client" "slack/workcrewto.slack.com")
    :client-secret (auth-source-pass-get 'secret "slack/workcrewto.slack.com")
    :token (auth-source-pass-get "token" "slack/workcrewto.slack.com")
@@ -1095,7 +1093,6 @@ notify.
 #+begin_src emacs-lisp :tangle no
   (slack-register-team
    :name "derpslack"
-   :default t
    :client-id (auth-source-pass-get "client" "slack/derpslack.slack.com")
    :client-secret (auth-source-pass-get 'secret "slack/derpslack.slack.com")
    :token (auth-source-pass-get "token" "slack/derpslack.slack.com")
