@@ -1811,7 +1811,82 @@ dependencies.
 #+begin_src shell :cache no :results object
 pip install websocket-client
 #+end_src
+*** org-protocol
+:PROPERTIES:
+:ID:       c8cd3185-fb80-421c-a89e-72f63080d040
+:END:
 
+Some setup is needed to get [[https://orgmode.org/worg/org-contrib/org-protocol.html#org4166fc4][org-protocol]] working nicely in linux. Org-protocol
+can intercept calls from emacsclient to trigger custom actions. We need to tell
+linux that org-protocol is an available protocol handler.
+
+#+begin_src shell :tangle "~/.local/share/applications/org-protocol.desktop"
+[Desktop Entry]
+Name=org-protocol
+Exec=/usr/bin/emacsclient -n %u
+Type=Application
+Terminal=false
+Categories=System;
+MimeType=x-scheme-handler/org-protocol;
+#+end_src
+
+Update the desktop database:
+#+begin_src shell :dir "/sudo::" :results output
+sudo update-desktop-database /home/sam/.local/share/applications
+#+end_src
+
+#+RESULTS:
+
+~Org-protocol-capture-html~ captures webpages to a nice org heading by converting
+to pandoc first.
+#+begin_src shell :dir "/sudo::" :results output
+sudo apt install -y pandoc
+#+end_src
+
+#+RESULTS:
+: Reading package lists... 0%Reading package lists... 0%Reading package lists... 4%Reading package lists... Done
+: Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
+: Reading state information... 0%Reading state information... 0%Reading state information... Done
+: pandoc is already the newest version (1.19.2.4~dfsg-1build4).
+: The following packages were automatically installed and are no longer required:
+:   libllvm6.0 linux-headers-4.15.0-1030-oem linux-image-4.15.0-1030-oem
+:   linux-modules-4.15.0-1030-oem linux-oem-headers-4.15.0-1030
+: Use 'sudo apt autoremove' to remove them.
+: 0 upgraded, 0 newly installed, 0 to remove and 59 not upgraded.
+
+Download the org-protocol capture script.
+#+begin_src shell :results output
+wget --output-document="/home/sam/.local/bin/org-protocol-capture-html.sh" https://raw.githubusercontent.com/alphapapa/org-protocol-capture-html/master/org-protocol-capture-html.sh
+chmod +x /home/sam/.local/bin/org-protocol-capture-html.sh
+#+end_src
+
+#+RESULTS:
+
+Finally we need a way to trigger capture from qutebrowser. I am using a [[https://www.reddit.com/r/emacs/comments/9ze1ln/capture_orgmode_bookmarks_from_qutebrowser_with/ea98mm2][script I
+found on reddit]].
+#+begin_src shell :tangle "~/.qutebrowser/userscripts/org-capture" :tangle-mode (identity #o755)
+#!/usr/bin/env bash
+
+readonly CAPTURE_SCRIPT=~/.local/bin/org-protocol-capture-html.sh
+
+# if we start with hints, delete title and selected text and use capture
+if [[ "$QUTE_MODE" = "hints" ]]; then
+    QUTE_TITLE=""
+    QUTE_SELECTED_TEXT=""
+fi
+
+# we try to pass as many information as we have
+if [[ -n "$QUTE_SELECTED_TEXT" ]]; then
+    $CAPTURE_SCRIPT --heading "${QUTE_TITLE}" --url "${QUTE_URL}" "${QUTE_SELECTED_TEXT}"
+
+elif [[ -n "$QUTE_TITLE" ]]; then
+    $CAPTURE_SCRIPT --heading "${QUTE_TITLE}" --readability --url "${QUTE_URL}"
+
+elif [[ -n "$QUTE_URL" ]]; then
+    $CAPTURE_SCRIPT --readability --url "${QUTE_URL}"
+
+fi
+#+end_src
 
 * Plans
 ** DONE better lock screen
@@ -1826,4 +1901,7 @@ CLOSED: [2019-02-09 Sat 10:56]
 - try using i3
 ** TODO i3 gaps
 ** TODO polybar
-** TODO weechat + weeslack + weemacs
+** CANCELLED weechat + weeslack + weemacs
+CLOSED: [2019-03-14 Thu 18:23]
+- State "CANCELLED"  from "TODO"       [2019-03-14 Thu 18:23] \\
+  emacs slack package works better, and probably will just use erc for irc channels/gitter

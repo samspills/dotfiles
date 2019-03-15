@@ -83,6 +83,7 @@ values."
                                       org-attach-screenshot
                                       org-gcal
                                       org-jira
+                                      (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html" :branch "master"))
                                       rainbow-delimiters
                                       (slack :location (recipe :fetcher github :repo "yuya373/emacs-slack" :branch "master"))
                                       spaceline-all-the-icons

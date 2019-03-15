@@ -501,13 +501,16 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
    (add-to-list 'org-capture-templates
                 `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt}\n%U\n%?"))
+   (add-to-list 'org-capture-templates
+                `("w" "org-protocol" entry (file+olp+datetree "~/Dropbox/life/journal.org")
+                  "* %a :website:toread: \n%U\n%:initial\n" :immediate-finish))
    ;; (add-to-list 'org-capture-templates
    ;;              `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
    ;;                "* TODO %?"))
    (add-to-list 'org-capture-templates
                 `("P" "Personal Event" entry (file "~/Dropbox/life/sam-cal.org")
                   "* %^{Description} \n %^T \n %^{Notes}"))
-  (add-to-list 'org-capture-templates
+   (add-to-list 'org-capture-templates
                 `("J" "Personal Journal" entry (file+olp+datetree "~/Dropbox/life/journal.org")
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
@@ -515,11 +518,26 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 #+END_SRC
 ***** org-protocol
-In order to define system wide capture commands, we need org-protocol.
+In order to define system wide capture commands, we need org-protocol. I think
+these packages are incompatible with use-package in some way (or I just wasn't
+setting them up correctly). With use-package I found I had to manually compile
+my spacemacs.elc file in order to properly initialize both protocol packages.
+Using require doesn't necessitate a manual compile.
 #+begin_src emacs-lisp
-(use-package org-protocol
-  :ensure nil)
+(require 'org-protocol)
+(setq org-protocol-default-template-key "w")
 #+end_src
+
+To nicely capture entire webpages as an org-mode hierarchy, we need [[https://github.com/alphapapa/org-protocol-capture-html][org-protocol-capture-html]].
+#+begin_src emacs-lisp
+(require 'org-protocol-capture-html)
+(setq org-protocol-capture-html-pandoc-no-wrap-option nil)
+#+end_src
+
+#+begin_src emacs-lisp
+#+end_src
+
+
 ***** org-mac-link
 Capturing external content can be made a lot easier using =org-mac-link= (included in contrib),
 which implements the ability to grab links from different Mac apps and insert
@@ -1086,7 +1104,7 @@ notify.
    :slack-modeline t)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (slack-register-team
    :name "rubikloud"
    :default t
@@ -1108,7 +1126,12 @@ necessary though.
 #+END_SRC
 * Future Improvements
 ** TODO org-refile include link to original file+parent
-** TODO capture template expansion link to clocked task should use ID property instead of file+heading path
+** CANCELLED capture template expansion link to clocked task should use ID property instead of file+heading path
+CLOSED: [2019-03-14 Thu 18:25]
+- State "CANCELLED"  from "DONE"       [2019-03-14 Thu 18:25] \\
+  instead of logging notes in daily entry with link back to task, log to a history
+  subtree under the task heading
+- State "DONE"       from "TODO"       [2019-03-14 Thu 18:25]
 ** TODO function to find all headings that link to particular task
 ** TODO org-super-agenda instead of org custom agenda block
 ** TODO regex in tags hierarchy to point all SEG_xxxx tags to manifold tag

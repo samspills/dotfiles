@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+readonly CAPTURE_SCRIPT=~/.local/bin/org-protocol-capture-html.sh
+
+# if we start with hints, delete title and selected text and use capture
+if [[ "$QUTE_MODE" = "hints" ]]; then
+    QUTE_TITLE=""
+    QUTE_SELECTED_TEXT=""
+fi
+
+# we try to pass as many information as we have
+if [[ -n "$QUTE_SELECTED_TEXT" ]]; then
+    $CAPTURE_SCRIPT --heading "${QUTE_TITLE}" --url "${QUTE_URL}" "${QUTE_SELECTED_TEXT}"
+
+elif [[ -n "$QUTE_TITLE" ]]; then
+    $CAPTURE_SCRIPT --heading "${QUTE_TITLE}" --readability --url "${QUTE_URL}"
+
+elif [[ -n "$QUTE_URL" ]]; then
+    $CAPTURE_SCRIPT --readability --url "${QUTE_URL}"
+
+fi

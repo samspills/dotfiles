@@ -48,6 +48,8 @@ c.tabs.width = '15%'
 
 # Bindings for normal mode
 config.bind('zp', 'open -t https://getpocket.com/edit?url={url}')
+config.bind("zw", "spawn --userscript ~/.qutebrowser/userscripts/org-capture")
+
 
 # Bindings for insert mode
 config.bind('<ctrl+k>', 'spawn --userscript ~/.qutebrowser/userscripts/password_fill', mode='insert')
