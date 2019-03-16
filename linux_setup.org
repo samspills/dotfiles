@@ -503,6 +503,12 @@ set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi c
 set $pass rofi-pass -display-pass "sam"
 set $barcmd i3status
 set $lock --no-startup-id i3lock-extra -p 5 -m pixelize
+
+set $up l
+set $down k
+set $left j
+set $right semicolon
+
 #+end_src
 
 **** Beautify
@@ -530,48 +536,6 @@ bar {
 }
 #+end_src
 
-Setup a tabbed layout by default.
-#+begin_src shell :tangle "~/.config/i3/config" :mkdirp yes
-workspace_layout tabbed
-#+end_src
-
-Also hide the edge borders around windows.
-#+begin_src shell :tangle "~/.config/i3/config" :mkdirp yes
-for_window [class="^.*"] border pixel 0
-#+end_src
-
-Jess Frazelle sets different borders for spotify and sets other windows to have
-floating enabled by default in [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][her config]]. I don't really know why these
-settings are set this way. I'm leaving it all for now just to see what happens
-and if I hate it or love it (or feel nothing).
-
-#+begin_src shell :tangle "~/.config/i3/config" :mkdirp yes
-# spotify: no border
-for_window [class="^Spotify$"] border none
-for_window [class="^Spotify Premium$"] border none
-
-# skype, steam, wine: float Gimp
-for_window [class="Code"] floating enable
-for_window [class="Firefox"] floating enable
-for_window [class="Gimp"] floating enable
-for_window [class="google-chrome"] floating enable
-for_window [class="Google-chrome"] floating enable
-for_window [class="Keybase"] floating enable
-for_window [class="Neoman"] floating enable
-for_window [class="NES"] floating enable
-for_window [class="Pidgin"] floating enable
-for_window [class="Portal"] floating enable
-for_window [class="RStudio"] floating enable
-for_window [class="Skype"] floating enable
-for_window [class="Slack"] floating enable
-for_window [class="Steam"] floating enable
-for_window [class="Tor Browser"] floating enable
-for_window [class="Virt-viewer"] floating enable
-for_window [class="VirtualBox"] floating enable
-for_window [class="vlc"] floating enable
-for_window [class="Wine"] floating enable
-for_window [class="Wireshark"] floating enable
-#+end_src
 **** Functionality
 This section contains little snippets to provide a certain functionality or
 behaviour in i3.
@@ -613,31 +577,26 @@ bindsym $mod+l exec $lock
 bindsym $mod+Shift+q kill
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+semicolon focus right
+bindsym Mod1+$left focus left
+bindsym Mod1+$down focus down
+bindsym Mod1+$up focus up
+bindsym Mod1+$right focus right
 
 # move to monitor
 bindsym $mod+Shift+Left move workspace to output left
 bindsym $mod+Shift+Right move workspace to output right
 
 # alternatively, you can use the cursor keys:
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+bindsym Mod1+Left focus left
+bindsym Mod1+Down focus down
+bindsym Mod1+Up focus up
+bindsym Mod1+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
-
-# alternatively, you can use the cursor keys:
-# bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-# bindsym $mod+Shift+Right move right
+bindsym Mod1+Shift+$left move left
+bindsym Mod1+Shift+$down move down
+bindsym Mod1+Shift+$up move up
+bindsym Mod1+Shift+$right move right
 
 # split in horizontal orientation
 bindsym $mod+bar split h
@@ -646,7 +605,7 @@ bindsym $mod+bar split h
 bindsym $mod+minus split v
 
 # enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen
+bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
@@ -662,8 +621,12 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
-# focus the child container
-#bindsym $mod+d focus child
+# move the currently focused window to the scratchpad
+bindsym Mod1+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym Mod1+minus scratchpad show
 
 # switch to workspace
 bindsym $mod+1 workspace 1
@@ -702,26 +665,13 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightnes
 # Screenshots
 # bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
 bindsym --release $mod+Print exec "scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png'"
-# Screenshot fullscreen
-# bindsym Print exec "scrot -q 100 ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# # Screenshot fullscreen, sway
-# #bindsym Shift+Print exec "swaygrab ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
-# # Screenshot with selection
-# bindsym $mod+Print exec "sleep 0.4; scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# # Screenshot capture, sway
-# #bindsym Shift+Print exec "swaygrab -c ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').webm"
-# # Screenshot current focused window
-# bindsym Shift+Print exec "scrot -q 100 -u ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png' -e ${HOME}'/google-cloud-sdk/bin/gsutil cp -a public-read $f gs://misc.j3ss.co/screenshots/ && echo https://misc.j3ss.co/screenshots/$n | xclip -i -selection clipboard'"
-# # Screenshot current focused window, sway
-# #
-# bindsym Shift+Print exec "swaygrab --focused ${HOME}/Pictures/Screenshots/$(date '+%Y-%m-%d-%H-%M-%S').png"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exit
+bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -731,20 +681,21 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym semicolon resize grow width 10 px or 10 ppt
+        bindsym $left       resize shrink width 10 px or 10 ppt
+        bindsym $down       resize grow height 10 px or 10 ppt
+        bindsym $up         resize shrink height 10 px or 10 ppt
+        bindsym $right      resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Left        resize shrink width 10 px or 10 ppt
+        bindsym Down        resize grow height 10 px or 10 ppt
+        bindsym Up          resize shrink height 10 px or 10 ppt
+        bindsym Right       resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
+        # back to normal: Enter or Escape or Mod1+r
         bindsym Return mode "default"
         bindsym Escape mode "default"
+        bindsym Mod1+r mode "default"
 }
 
 bindsym $mod+r mode "resize"
