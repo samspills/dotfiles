@@ -45,6 +45,7 @@ we get into the org-mode stuff.
 I keep the packages I want to install in =packages.txt=:
 
 #+begin_src shell :tangle "packages.txt" :mkdirp yes
+community/flameshot
 community/pandoc
 community/pass
 community/powerline
@@ -64,7 +65,7 @@ through pacman or by cloning git repositories).
 #!/usr/bin/env bash
 
 sudo pacman -Syyu
-sudo pacman -Syu --noconfirm $(cat ~/package_list.txt | awk '{print $1}')
+sudo pacman -Syu --noconfirm $(cat packages.txt | awk '{print $1}')
 sudo pacman -Rs $(pacman -Qdtq)
 
 if [ ! -d ~/.password-store ]; then
@@ -523,7 +524,7 @@ I like to use the [[https://github.com/be5invis/iosevka][Iosevka]] font for ever
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango: Iosevka Nerd Font 12
+font pango:Iosevka Nerd Font 12
 #+end_src
 
 I use the same font for the status bar (setting the font here isn't strictly
@@ -664,7 +665,7 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightnes
 
 # Screenshots
 # bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
-bindsym --release $mod+Print exec "scrot -q 100 -s ${HOME}'/Pictures/Screenshots/%Y-%m-%d-%H-%M-%S_$wx$h.png'"
+bindsym --release $mod+Print exec flameshot gui -p "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -1019,3 +1020,9 @@ CLOSED: [2019-02-09 Sat 10:56]
 CLOSED: [2019-03-14 Thu 18:23]
 - State "CANCELLED"  from "TODO"       [2019-03-14 Thu 18:23] \\
   emacs slack package works better, and probably will just use erc for irc channels/gitter
+** TODO pystatus instead of i3status?
+https://github.com/ultrabug/py3status
+** TODO screenshots
+** TODO save and restore i3 window layout
+** TODO i3 alternating layours
+https://github.com/olemartinorg/i3-alternating-layout

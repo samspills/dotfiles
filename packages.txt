@@ -1,0 +1,12 @@
+community/flameshot
+community/pandoc
+community/pass
+community/powerline
+community/qutebrowser
+community/rofi
+community/the_silver_searcher
+community/tmux
+extra/emacs
+extra/python-pip
+extra/xclip
+extra/xorg-xclipboard
