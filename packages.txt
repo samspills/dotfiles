@@ -6,6 +6,7 @@ community/qutebrowser
 community/rofi
 community/the_silver_searcher
 community/tmux
+community/xcape
 extra/emacs
 extra/python-pip
 extra/xclip
