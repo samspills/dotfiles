@@ -47,7 +47,12 @@ values."
           org-want-todo-bindings t)
     (shell :variables
            shell-default-shell 'eshell)
-    slack
+    (slack :variables
+           slack-spacemacs-layout-name "@Slack"
+           slack-spacemacs-layout-binding "s"
+           alert-default-style 'mode-line
+           slack-buffer-create-on-notify t
+     )
     syntax-checking
     ;; (lsp :variables
     ;;      lsp-message-project-root-warning t

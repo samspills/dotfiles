@@ -1065,27 +1065,23 @@ notify.
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package slack
-  :commands (slack-start)
-  :config
-  (slack-register-team
-   :name "pillsworth"
-   :client-id (auth-source-pass-get "client" "slack/pillsworth.slack.com")
-   :client-secret (auth-source-pass-get 'secret "slack/pillsworth.slack.com")
-   :token (auth-source-pass-get "token" "slack/pillsworth.slack.com")
-   :subscribed-channels '(family)
-   :full-and-display-names t
-   :modeline-enabled t)
-  (slack-register-team
-   :name "rubikloud"
-   :default t
-   :client-id (auth-source-pass-get "client" "slack/rubikloud.slack.com")
-   :client-secret (auth-source-pass-get 'secret "slack/rubikloud.slack.com")
-   :token (auth-source-pass-get "token" "slack/rubikloud.slack.com")
-   :subscribed-channels '(manifold ml-lifecycle ds climbing)
-   :full-and-display-names t
-   :slack-modeline t)
-)
+(slack-register-team
+ :name "pillsworth"
+ :client-id (auth-source-pass-get "client" "slack/pillsworth.slack.com")
+ :client-secret (auth-source-pass-get 'secret "slack/pillsworth.slack.com")
+ :token (auth-source-pass-get "token" "slack/pillsworth.slack.com")
+ :subscribed-channels '(family)
+ :full-and-display-names t
+ :modeline-enabled t)
+(slack-register-team
+ :name "rubikloud"
+ :default t
+ :client-id (auth-source-pass-get "client" "slack/rubikloud.slack.com")
+ :client-secret (auth-source-pass-get 'secret "slack/rubikloud.slack.com")
+ :token (auth-source-pass-get "token" "slack/rubikloud.slack.com")
+ :subscribed-channels '(manifold ml-lifecycle ds climbing)
+ :full-and-display-names t
+ :slack-modeline t)
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
