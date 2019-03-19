@@ -40,7 +40,7 @@ values."
      yaml
      markdown
      auto-completion
-     spell-checking
+     ;; spell-checking
      better-defaults
      emacs-lisp
      git
