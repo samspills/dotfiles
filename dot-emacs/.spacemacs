@@ -40,7 +40,6 @@ values."
      yaml
      markdown
      auto-completion
-     ;; spell-checking
      better-defaults
      emacs-lisp
      git
@@ -175,11 +174,16 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Iosevka Nerd Font"
-                               :size 14
-                               :weight Regular
-                               :width normal
-                               :powerline-scale 1.3)
+   dotspacemacs-default-font '(("Iosevka"
+                                :size 14
+                                :weight Regular
+                                :width normal
+                                :powerline-scale 1.1)
+                               ("FontAwesome"
+                                :size 14
+                                :weight Regular
+                                :width normal
+                                :powerline-scale 1.1))
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -215,7 +219,7 @@ values."
    ;; (default nil)
    dotspacemacs-ex-substitute-global nil
    ;; Name of the default layout (default "Default")
-   dotspacemacs-default-layout-name "Default"
+   dotspacemacs-default-layout-name "🏠"
    ;; If non nil the default layout name is displayed in the mode-line.
    ;; (default nil)
    dotspacemacs-display-default-layout nil
