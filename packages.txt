@@ -1,4 +1,5 @@
 community/flameshot
+community/light
 community/pandoc
 community/pass
 community/powerline

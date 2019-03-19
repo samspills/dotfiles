@@ -50,6 +50,7 @@ I keep the packages I want to install in =packages.txt=:
 
 #+begin_src text :tangle "packages.txt"
 community/flameshot
+community/light
 community/pandoc
 community/pass
 community/powerline
@@ -723,14 +724,14 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 
 # audio controls
-bindsym XF86AudioRaiseVolume exec amixer -D pulse set Master 5%+ #increase sound volume
-bindsym XF86AudioLowerVolume exec amixer -D pulse set Master 5%- #decrease sound volume
-bindsym XF86AudioMute exec amixer -D pulse set Master toggle # mute sound
-bindsym XF86AudioMicMute exec amixer -D pulse set Capture toggle # mute mic
+bindsym XF86AudioRaiseVolume exec amixer set Master 5%+ #increase sound volume
+bindsym XF86AudioLowerVolume exec amixer set Master 5%- #decrease sound volume
+bindsym XF86AudioMute exec amixer set Master +1 toggle # mute sound
+bindsym XF86AudioMicMute exec amixer set Capture toggle # mute mic
 
 # screen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec xbacklight -dec 5 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
 
 # Screenshots
 # bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
