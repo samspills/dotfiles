@@ -567,9 +567,12 @@ bindsym $mod+n border normal
 :END:
 
 There is a [[https://github.com/justbuchanan/i3scripts/blob/master/autoname_workspaces.py][cute script]] that will replace windowspace numbers with icons showing
-the running programs in each space.
+the running programs in each space. I forked it and replaced the fontawesome
+icons + list of applications with nerd font icons and my own applications (the
+original script didn't have emacs which is largely what led me down this rabbit
+hole of spending hours and hours to pick out reasonable icons for each application).
 #+begin_src shell
-git clone git@github.com:justbuchanan/i3scripts ~/.etc/i3scripts
+git clone git@github.com:samspills/i3scripts ~/.etc/i3scripts
 chmod +x ~/.etc/i3scripts/autoname_workspaces.py
 #+end_src
 
@@ -577,7 +580,7 @@ chmod +x ~/.etc/i3scripts/autoname_workspaces.py
 
 Install the dependencies:
 #+begin_src shell
-pip install --user i3ipc fontawesome
+pip install --user i3ipc
 #+end_src
 
 #+RESULTS:
