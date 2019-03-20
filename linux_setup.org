@@ -274,9 +274,19 @@ antigen bundle virtualenvwrapper
 antigen bundle pip
 antigen bundle python
 
-antigen theme https://github.com/VidalChavez/pygmalion.git --loc=pygmalion
+#antigen theme https://github.com/VidalChavez/pygmalion.git --loc=pygmalion
+antigen theme denysdovhan/spaceship-prompt
 
 antigen apply
+#+end_src
+**** Spaceship Prompt
+:PROPERTIES:
+:ID:       d1da4d6f-cfd0-4417-b39e-ca276339e1a0
+:END:
+I'm trying out the spaceship prompt but there are some things that I don't like
+#+begin_src shell :tangle "~/.zshrc"
+export SPACESHIP_CHAR_SYMBOL='\ufb0c '
+export SPACESHIP_VI_MODE_SHOW=false
 #+end_src
 **** Functions
 :PROPERTIES:
