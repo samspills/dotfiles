@@ -530,7 +530,7 @@ set $term --no-startup-id urxvt
 set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icons -display-combi ""
 set $pass --no-startup-id ~/bin/rofi-pass -display-pass "sam"
 set $barcmd i3status
-set $lock --no-startup-id ~/bin/i3lock-extra -p 5 -m pixelize
+set $lock --no-startup-id ~/bin/i3lock-extra -p 10 -m pixelize ~/dotfiles/lock.png
 #+end_src
 
 **** Beautify
