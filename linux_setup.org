@@ -1247,6 +1247,26 @@ insert_pass="Alt+n"
 #+end_src
 
 ** applications
+*** dropbox
+:PROPERTIES:
+:ID:       b300ee12-58af-4d7b-bf28-0d958085fddf
+:END:
+I use dropbox to sync my org files across all my devices.
+
+First install the dropbox via the command line for the 64 bit linux arch.
+#+begin_src shell
+cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+#+end_src
+
+Run ~dropboxd~ and login for the first sync to happen.
+#+begin_src shell
+~/.dropbox-dist/dropboxd
+#+end_src
+
+Add a command to the i3 config to start dropbox on a restart.
+#+begin_src shell :tangle "~/.config/i3/config"
+exec --no-startup-id ~/.dropbox-dist/dropboxd
+#+end_src
 *** org-protocol
 :PROPERTIES:
 :ID:       c8cd3185-fb80-421c-a89e-72f63080d040
@@ -1823,3 +1843,5 @@ https://github.com/ultrabug/py3status
 https://github.com/olemartinorg/i3-alternating-layout
 ** TODO syncthing instead of dropbox?
 https://docs.syncthing.net/intro/getting-started.html#getting-started
+- seems like I would need a server OR use phone as intermediary for between work
+  and home??
