@@ -47,12 +47,6 @@ values."
           org-want-todo-bindings t)
     (shell :variables
            shell-default-shell 'eshell)
-    (slack :variables
-           slack-spacemacs-layout-name "@Slack"
-           slack-spacemacs-layout-binding "s"
-           alert-default-style 'mode-line
-           slack-buffer-create-on-notify t
-     )
     syntax-checking
     ;; (lsp :variables
     ;;      lsp-message-project-root-warning t
@@ -68,7 +62,6 @@ values."
     sql
     csv
     javascript
-    ;; ipython-notebook
     )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -80,7 +73,6 @@ values."
                                       benchmark-init
                                       clocker
                                       company-lsp
-                                      (emacs-slack :location (recipe :fetcher github :repo "yuya373/emacs-slack" :branch "master"))
                                       exec-path-from-shell
                                       general
                                       (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
