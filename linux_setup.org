@@ -504,7 +504,7 @@ Transparency
 #+begin_src shell :tangle "~/.Xresources"
 URxvt*inheritPixmap:            true
 URxvt*transparent:              true
-URxvt*shading:                  138
+URxvt*shading:                  35
 #+end_src
 
 #+begin_src shell :tangle "~/.Xresources"
@@ -594,18 +594,16 @@ pip install --user i3ipc
 #+end_src
 
 #+RESULTS:
-| Collecting   | i3ipc       |                                                                                                                                                     |                         |              |             |      |        |        |
-| Using        | cached      | https://files.pythonhosted.org/packages/83/9a/c44f96403a34dddf4359bb56f9564df77c78a7b444fa83a6a5330a514290/i3ipc-1.6.0.tar.gz                       |                         |              |             |      |        |        |
-| Collecting   | fontawesome |                                                                                                                                                     |                         |              |             |      |        |        |
-| Using        | cached      | https://files.pythonhosted.org/packages/15/10/f34aa20857e04ac0e3c5712a4e0f54c92ae49807bc55736a808429251784/fontawesome-5.7.2.post1-py3-none-any.whl |                         |              |             |      |        |        |
-| Collecting   | enum-compat | (from                                                                                                                                               | i3ipc)                  |              |             |      |        |        |
-| Using        | cached      | https://files.pythonhosted.org/packages/95/6e/26bdcba28b66126f66cf3e4cd03bcd63f7ae330d29ee68b1f6b623550bfa/enum-compat-0.0.2.tar.gz                 |                         |              |             |      |        |        |
-| Installing   | collected   | packages:                                                                                                                                           | enum-compat,            | i3ipc,       | fontawesome |      |        |        |
-| Running      | setup.py    | install                                                                                                                                             | for                     | enum-compat: | started     |      |        |        |
-| Running      | setup.py    | install                                                                                                                                             | for                     | enum-compat: | finished    | with | status | 'done' |
-| Running      | setup.py    | install                                                                                                                                             | for                     | i3ipc:       | started     |      |        |        |
-| Running      | setup.py    | install                                                                                                                                             | for                     | i3ipc:       | finished    | with | status | 'done' |
-| Successfully | installed   | enum-compat-0.0.2                                                                                                                                   | fontawesome-5.7.2.post1 | i3ipc-1.6.0  |             |      |        |        |
+| Collecting   | i3ipc                                                                                                                               |                   |              |              |          |      |        |        |
+| Downloading  | https://files.pythonhosted.org/packages/83/9a/c44f96403a34dddf4359bb56f9564df77c78a7b444fa83a6a5330a514290/i3ipc-1.6.0.tar.gz       |                   |              |              |          |      |        |        |
+| Collecting   | enum-compat                                                                                                                         | (from             | i3ipc)       |              |          |      |        |        |
+| Downloading  | https://files.pythonhosted.org/packages/95/6e/26bdcba28b66126f66cf3e4cd03bcd63f7ae330d29ee68b1f6b623550bfa/enum-compat-0.0.2.tar.gz |                   |              |              |          |      |        |        |
+| Installing   | collected                                                                                                                           | packages:         | enum-compat, | i3ipc        |          |      |        |        |
+| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | started  |      |        |        |
+| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | finished | with | status | 'done' |
+| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | started  |      |        |        |
+| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | finished | with | status | 'done' |
+| Successfully | installed                                                                                                                           | enum-compat-0.0.2 | i3ipc-1.6.0  |              |          |      |        |        |
 
 And add to the i3 config
 #+begin_src shell :tangle "~/.config/i3/config"
@@ -633,8 +631,8 @@ for_window [urgent=latest] focus
 Remap the caps lock key to another control key, and have act as the escape key
 when tapped.
 #+begin_src shell :tangle "~/.config/i3/config"
-exec --no-startup-id setxkbmap -option ctrl:nocaps
-exec --no-startup-id xcape -e 'Control_L=Escape'
+exec_always --no-startup-id setxkbmap -option ctrl:nocaps
+exec_always --no-startup-id xcape -e 'Control_L=Escape'
 #+end_src
 **** Keybindings
 :PROPERTIES:
