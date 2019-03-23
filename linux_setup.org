@@ -257,7 +257,7 @@ Xcursor.size:                     0
 :ID:       34b5f30b-cb5b-463d-89e8-e20aff13f736
 :END:
  #+begin_src shell :tangle "~/.zshenv"
-export PATH=/home/sam/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
+export PATH=/home/sam/bin:/home/sam/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH
  #+end_src
 **** Antigen
 :PROPERTIES:
