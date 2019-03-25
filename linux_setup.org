@@ -1324,9 +1324,10 @@ sudo update-desktop-database /home/sam/.local/share/applications
 ~Org-protocol-capture-html~ captures webpages to a nice org heading by converting
 to pandoc first.
 
-Download the org-protocol capture script.
+Download the org-protocol capture script (currently downloading from my own fork
+until updated to python 3 section get merged in).
 #+begin_src shell :results output
-wget --output-document="/home/sam/.local/bin/org-protocol-capture-html.sh" https://raw.githubusercontent.com/alphapapa/org-protocol-capture-html/master/org-protocol-capture-html.sh
+wget --output-document="/home/sam/.local/bin/org-protocol-capture-html.sh" https://raw.githubusercontent.com/samspills/org-protocol-capture-html/samspills/python2-3-compatible/org-protocol-capture-html.sh
 chmod +x /home/sam/.local/bin/org-protocol-capture-html.sh
 #+end_src
 
