@@ -266,6 +266,7 @@ export PATH=/home/sam/bin:/home/sam/.local/bin:/usr/local/bin:/usr/local/sbin:/u
 I use antigen + oh-my-zsh to manage my zsh config for the most part
 #+begin_src  shell :tangle "~/.zshrc"
 source ~/.antigen.zsh
+ZSH_DISABLE_COMPFIX=true
 antigen use oh-my-zsh
 
 antigen bundle colored-man-pages
@@ -274,7 +275,13 @@ antigen bundle virtualenvwrapper
 antigen bundle pip
 antigen bundle python
 
-#antigen theme https://github.com/VidalChavez/pygmalion.git --loc=pygmalion
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+antigen bundle command-not-found
+antigen bundle srijanshetty/zsh-pip-completion
+
 antigen theme denysdovhan/spaceship-prompt
 
 antigen apply
@@ -287,6 +294,11 @@ I'm trying out the spaceship prompt but there are some things that I don't like
 #+begin_src shell :tangle "~/.zshrc"
 export SPACESHIP_CHAR_SYMBOL='\ufb0c '
 export SPACESHIP_VI_MODE_SHOW=false
+export SPACESHIP_VENV_SYMBOL='\ue606 '
+export SPACESHIP_CONDA_SYMBOL='\ue606 '
+export SPACESHIP_BATTERY_PREFIX='\ue315'
+export SPACESHIP_BATTERY_THRESHOLD=30
+export SPACESHIP_JOBS_SYMBOL='\ufab4'
 #+end_src
 **** Functions
 :PROPERTIES:
@@ -368,6 +380,11 @@ alias pbpaste='xclip -selection clipboard -o'
 #+begin_src shell :tangle "~/.zshrc"
 bindkey -v
 KEYTIMEOUT=1
+
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
 setopt CORRECT
 
