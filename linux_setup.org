@@ -839,7 +839,7 @@ bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
 
 # Screenshots
 # bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
-bindsym $mod+Print --release exec --no-startup-id flameshot gui -p "${HOME}/Pictures/Screenshots"
+bindsym $Print --release exec --no-startup-id flameshot gui -p "${HOME}/Pictures/Screenshots"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
