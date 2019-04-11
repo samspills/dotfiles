@@ -60,6 +60,10 @@ community/the_silver_searcher
 community/tmux
 community/xcape
 extra/emacs
+extra/pa-applet
+extra/pavucontrol
+extra/pulseaudio
+extra/pulseaudio-bluetooth
 extra/python-pip
 extra/xclip
 extra/xorg-xclipboard
