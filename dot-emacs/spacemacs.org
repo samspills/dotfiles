@@ -1009,15 +1009,16 @@ slacks for two different friend groups, and I have a slack team for my family.
 
 Keybindings
 #+begin_src emacs-lisp :tangle no :noweb-ref global-keybindings
-(spacemacs/declare-prefix "aS" "slack")
+(spacemacs/declare-prefix "S" "slack")
       (spacemacs/set-leader-keys
-        "aSs" 'slack-start
-        "aSj" 'slack-channel-select
-        "aSg" 'slack-group-select
-        "aSr" 'slack-select-rooms
-        "aSd" 'slack-im-select
-        "aSu" 'helm-slack-unreads
-        "aSq" 'slack-ws-close)
+        "Ss" 'slack-start
+        "Sc" 'slack-channel-select
+        "Sg" 'slack-group-select
+        "Sr" 'slack-select-rooms
+        "Sd" 'slack-im-select
+        "Su" 'helm-slack-unreads
+        "Sq" 'slack-ws-close
+        "sT" 'slack-all-threads)
 #+end_src
 
 
@@ -1026,15 +1027,16 @@ Keybindings
                   ("mr" . "reactions")
                   ("mP" . "pins")
                   ("mm" . "messages")
+                  ("mf" . "files")
                   ))
-  (spacemacs/declare-prefix-for-mode 'slack-mode-map (car prefix) (cdr prefix)))
-(spacemacs/set-leader-keys-for-major-mode 'slack-mode-map
-  "c" 'slack-buffer-kill
-  "u" 'slack-room-update-messages
+  (spacemacs/declare-prefix-for-mode 'slack-message-buffer-mode (car prefix) (cdr prefix)))
+(spacemacs/set-leader-keys-for-major-mode 'slack-message-buffer-mode
+  "u" 'slack-buffer-update
   "@" 'slack-message-embed-mention
   "#" 'slack-message-embed-channel
   "n" 'slack-buffer-goto-next-message
   "p" 'slack-buffer-goto-prev-message
+  "t" 'slack-thread-show-or-create
   "ra" 'slack-message-add-reaction
   "rr" 'slack-message-remove-reaction
   "rs" 'slack-message-show-reaction-users
@@ -1044,13 +1046,17 @@ Keybindings
   "mm" 'slack-message-write-another-buffer
   "me" 'slack-message-edit
   "md" 'slack-message-delete
+  "fu" 'slack-file-upload
+  "fU" 'slack-file-upload-url
+  "fs" 'slack-file-upload-snippet
+
   )
 
-(spacemacs/set-leader-keys-for-major-mode 'slack-edit-message-mode-map
+(spacemacs/set-leader-keys-for-major-mode 'slack-message
   "k" 'slack-message-cancel-edit
   "s" 'slack-message-send-from-buffer)
 
-(evil-define-key 'insert slack-edit-message-mode-map
+(evil-define-key 'insert slack-edit-message-mode
   "@" 'slack-message-embed-mention
   "#" 'slack-message-embed-channel)
 #+end_src
