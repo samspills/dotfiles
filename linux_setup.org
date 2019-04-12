@@ -1984,11 +1984,6 @@ GRUB_THEME="/usr/share/grub/themes/manjaro/theme.txt"
 
 ~resume~ parameter defines the drive that contains the swapfile. (This is the
 entry from ~/etc/fstab~ with moint point ~/~ and a type of ~ext4~)
-#+begin_src shell :dir /sudo:: :results output
-echo "resume=UUID=96c4371f-8f39-4328-9420-830aefcad969" >> /etc/default/grub
-#+end_src
-
-#+RESULTS:
 
 ~resume_offset~ defines the point on the drive (defined above) where the swapfile
 begins.
@@ -2040,8 +2035,12 @@ File size of /swapfile is 3376414720 (824320 blocks of 4096 bytes)
 /swapfile: 12 extents found
 #+end_example
 
-#+begin_src shell :dir /sudo:: :results output
-echo "resume_offset=1167360" >> /etc/default/grub
+Both parameters are added to the ~GRUB_CMDLINE_LINUX~ parameter
+#+begin_src shell :results output :dir /sudo::
+# HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
+sed -i '/^GRUB_CMDLINE_LINUX=/ c\
+GRUB_CMDLINE_LINUX="resume=UUID=96c4371f-8f39-4328-9420-830aefcad969 resume_offset=1167360"
+' /etc/mkinitcpio.conf
 #+end_src
 
 #+RESULTS:
@@ -2137,9 +2136,11 @@ We need to update the hooks list currently in the above conf to include ~resume~
 #+begin_src shell :results output :dir /sudo::
 # HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
 sed -i '/^HOOKS=/ c\
-HOOKS="base udev resume autodetect modconf block keyboard keymap filesystems"
+HOOKS="base udev autodetect modconf block keyboard keymap filesystems resume"
 ' /etc/mkinitcpio.conf
 #+end_src
+
+#+RESULTS:
 
 Generate the boot image. The ~-p~ option can be used to specify which preset to
 generate an initramfs for. The ~-P~ option can be used to generate an initramf for
@@ -2156,13 +2157,13 @@ mkinitcpio -P
 ==> Starting build: 4.19.32-1-MANJARO
   -> Running build hook: [base]
   -> Running build hook: [udev]
-  -> Running build hook: [resume]
   -> Running build hook: [autodetect]
   -> Running build hook: [modconf]
   -> Running build hook: [block]
   -> Running build hook: [keyboard]
   -> Running build hook: [keymap]
   -> Running build hook: [filesystems]
+  -> Running build hook: [resume]
 ==> Generating module dependencies
 ==> Creating gzip-compressed initcpio image: /boot/initramfs-4.19-x86_64.img
 ==> Image generation successful
@@ -2171,12 +2172,12 @@ mkinitcpio -P
 ==> Starting build: 4.19.32-1-MANJARO
   -> Running build hook: [base]
   -> Running build hook: [udev]
-  -> Running build hook: [resume]
   -> Running build hook: [modconf]
   -> Running build hook: [block]
   -> Running build hook: [keyboard]
   -> Running build hook: [keymap]
   -> Running build hook: [filesystems]
+  -> Running build hook: [resume]
 ==> Generating module dependencies
 ==> Creating gzip-compressed initcpio image: /boot/initramfs-4.19-x86_64-fallback.img
 ==> Image generation successful
