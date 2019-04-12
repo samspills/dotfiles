@@ -60,6 +60,7 @@ values."
             python-backend 'lsp
             )
     sql
+    systemd
     treemacs
     csv
     javascript
