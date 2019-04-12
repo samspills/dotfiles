@@ -1868,6 +1868,329 @@ printjs() {
 echo "jseval -q $(printjs)" >> "$QUTE_FIFO"
 #+end_src
 
+* Notes
+** Hibernation
+Currently dell xps has no swap partition/file setup, which prevents me from
+hibernating/suspeding to disk:
+#+begin_src shell :results example
+systemctl hibernate
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Failed to hibernate system via logind: Not enough swap space for hibernation
+#+end_example
+
+*** Set up swap file
+I'm following the instructions from [[http://blog.programmableproduction.com/2016/02/22/ArchLinux-Powermanagement-Setting-Hibernate/][this blog article]].
+
+**** Create swapfile
+~fallocate~ to create swapfile. Memory to allocate should be about 2/5 of RAM, or
+the recommended value in =/sys/power/image_size=. For me this is ~3220M.
+#+begin_src shell :results output :dir /sudo::
+fallocate -l 3220M /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+#+end_src
+
+#+RESULTS:
+: Setting up swapspace version 1, size = 3.1 GiB (3376410624 bytes)
+: no label, UUID=2c67048a-18ed-4556-8a53-090c6065b89d
+
+
+The current output of =/etc/fstab=:
+#+begin_src shell :results output
+cat /etc/fstab
+#+end_src
+
+#+RESULTS:
+: # /etc/fstab: static file system information.
+: #
+: # Use 'blkid' to print the universally unique identifier for a device; this may
+: # be used with UUID= as a more robust way to name devices that works even if
+: # disks are added and removed. See fstab(5).
+: #
+: # <file system>             <mount point>  <type>  <options>  <dump>  <pass>
+: UUID=9DB8-EA97                            /boot/efi      vfat    defaults,noatime 0 2
+: UUID=96c4371f-8f39-4328-9420-830aefcad969 /              ext4    defaults,noatime 0 1
+
+Update =/etc/fstab=:
+#+begin_src shell :dir /sudo::
+echo "/swapfile none swap defaults 0 0" >> /etc/fstab
+#+end_src
+
+#+RESULTS:
+
+**** Update kernel startup params
+Now we need to update grub with params about the swapfile.
+
+#+begin_src shell :results output
+cat /etc/default/grub
+#+end_src
+
+#+RESULTS:
+#+begin_example
+GRUB_DEFAULT=saved
+GRUB_TIMEOUT=5
+GRUB_TIMEOUT_STYLE=menu
+GRUB_DISTRIBUTOR='Manjaro'
+GRUB_CMDLINE_LINUX_DEFAULT="quiet"
+GRUB_CMDLINE_LINUX=""
+
+# If you want to enable the save default function, uncomment the following
+# line, and set GRUB_DEFAULT to saved.
+GRUB_SAVEDEFAULT=true
+
+# Preload both GPT and MBR modules so that they are not missed
+GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+
+# Uncomment to enable booting from LUKS encrypted devices
+#GRUB_ENABLE_CRYPTODISK=y
+
+# Uncomment to use basic console
+GRUB_TERMINAL_INPUT=console
+
+# Uncomment to disable graphical terminal
+#GRUB_TERMINAL_OUTPUT=console
+
+# The resolution used on graphical terminal
+# note that you can use only modes which your graphic card supports via VBE
+# you can see them in real GRUB with the command 'videoinfo'
+GRUB_GFXMODE=auto
+
+# Uncomment to allow the kernel use the same resolution used by grub
+GRUB_GFXPAYLOAD_LINUX=keep
+
+# Uncomment if you want GRUB to pass to the Linux kernel the old parameter
+# format "root=/dev/xxx" instead of "root=/dev/disk/by-uuid/xxx"
+#GRUB_DISABLE_LINUX_UUID=true
+
+# Uncomment to disable generation of recovery mode menu entries
+GRUB_DISABLE_RECOVERY=true
+
+# Uncomment and set to the desired menu colors.  Used by normal and wallpaper
+# modes only.  Entries specified as foreground/background.
+GRUB_COLOR_NORMAL="light-gray/black"
+GRUB_COLOR_HIGHLIGHT="green/black"
+
+# Uncomment one of them for the gfx desired, a image background or a gfxtheme
+#GRUB_BACKGROUND="/usr/share/grub/background.png"
+GRUB_THEME="/usr/share/grub/themes/manjaro/theme.txt"
+
+# Uncomment to get a beep at GRUB start
+#GRUB_INIT_TUNE="480 440 1"
+#+end_example
+
+~resume~ parameter defines the drive that contains the swapfile. (This is the
+entry from ~/etc/fstab~ with moint point ~/~ and a type of ~ext4~)
+#+begin_src shell :dir /sudo:: :results output
+echo "resume=UUID=96c4371f-8f39-4328-9420-830aefcad969" >> /etc/default/grub
+#+end_src
+
+#+RESULTS:
+
+~resume_offset~ defines the point on the drive (defined above) where the swapfile
+begins.
+#+begin_src shell :dir /sudo:: :results output
+sudo filefrag -v /swapfile
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Filesystem type is: ef53
+File size of /swapfile is 3376414720 (824320 blocks of 4096 bytes)
+|     |     ext: | logical_offset: | physical_offset: |  length: | expected: | flags:             |           |
+|  0: |      0.. |              0: |        1167360.. | 1167360: |        1: |                    |           |
+|  1: |      1.. |           2047: |        1167361.. | 1169407: |     2047: | unwritten          |           |
+|  2: |   2048.. |           4095: |        1177600.. | 1179647: |     2048: | 1169408:           | unwritten |
+|  3: |   4096.. |           6143: |        1357824.. | 1359871: |     2048: | 1179648:           | unwritten |
+|  4: |   6144.. |          10239: |        1390592.. | 1394687: |     4096: | 1359872:           | unwritten |
+|  5: |  10240.. |          16383: |        1800192.. | 1806335: |     6144: | 1394688:           | unwritten |
+|  6: |  16384.. |          18431: |        1808384.. | 1810431: |     2048: | 1806336:           | unwritten |
+|  7: |  18432.. |          26623: |        1812480.. | 1820671: |     8192: | 1810432:           | unwritten |
+|  8: |  26624.. |          28671: |        1822720.. | 1824767: |     2048: | 1820672:           | unwritten |
+|  9: |  28672.. |          34815: |        1873920.. | 1880063: |     6144: | 1824768:           | unwritten |
+| 10: |  34816.. |          65535: |        1912832.. | 1943551: |    30720: | 1880064:           | unwritten |
+| 11: |  65536.. |          96255: |        1943552.. | 1974271: |    30720: | unwritten          |           |
+| 12: |  96256.. |         126975: |        1974272.. | 2004991: |    30720: | unwritten          |           |
+| 13: | 126976.. |         157695: |        2004992.. | 2035711: |    30720: | unwritten          |           |
+| 14: | 157696.. |         188415: |        2035712.. | 2066431: |    30720: | unwritten          |           |
+| 15: | 188416.. |         219135: |        2066432.. | 2097151: |    30720: | unwritten          |           |
+| 16: | 219136.. |         249855: |        2129920.. | 2160639: |    30720: | 2097152:           | unwritten |
+| 17: | 249856.. |         280575: |        2160640.. | 2191359: |    30720: | unwritten          |           |
+| 18: | 280576.. |         311295: |        2191360.. | 2222079: |    30720: | unwritten          |           |
+| 19: | 311296.. |         342015: |        2222080.. | 2252799: |    30720: | unwritten          |           |
+| 20: | 342016.. |         372735: |        2252800.. | 2283519: |    30720: | unwritten          |           |
+| 21: | 372736.. |         403455: |        2283520.. | 2314239: |    30720: | unwritten          |           |
+| 22: | 403456.. |         434175: |        2314240.. | 2344959: |    30720: | unwritten          |           |
+| 23: | 434176.. |         464895: |        2344960.. | 2375679: |    30720: | unwritten          |           |
+| 24: | 464896.. |         495615: |        2375680.. | 2406399: |    30720: | unwritten          |           |
+| 25: | 495616.. |         526335: |        2406400.. | 2437119: |    30720: | unwritten          |           |
+| 26: | 526336.. |         557055: |        2437120.. | 2467839: |    30720: | unwritten          |           |
+| 27: | 557056.. |         587775: |        2467840.. | 2498559: |    30720: | unwritten          |           |
+| 28: | 587776.. |         618495: |        2498560.. | 2529279: |    30720: | unwritten          |           |
+| 29: | 618496.. |         649215: |        2529280.. | 2559999: |    30720: | unwritten          |           |
+| 30: | 649216.. |         679935: |        2560000.. | 2590719: |    30720: | unwritten          |           |
+| 31: | 679936.. |         710655: |        2590720.. | 2621439: |    30720: | unwritten          |           |
+| 32: | 710656.. |         741375: |        2656256.. | 2686975: |    30720: | 2621440:           | unwritten |
+| 33: | 741376.. |         772095: |        2686976.. | 2717695: |    30720: | unwritten          |           |
+| 34: | 772096.. |         802815: |        2717696.. | 2748415: |    30720: | unwritten          |           |
+| 35: | 802816.. |         824319: |        2748416.. | 2769919: |    21504: | last,unwritten,eof |           |
+/swapfile: 12 extents found
+#+end_example
+
+#+begin_src shell :dir /sudo:: :results output
+echo "resume_offset=1167360" >> /etc/default/grub
+#+end_src
+
+#+RESULTS:
+
+Generate new grub.cfg file
+#+begin_src shell :dir /sudo:: :results output
+grub-mkconfig -o /boot/grub/grub.cfg
+#+end_src
+
+#+RESULTS:
+
+**** Update mkinitcpio
+[[https://wiki.archlinux.org/index.php/mkinitcpio][mkinitcpio]] is a bash script to generate initial space where various kernel
+modules are loaded before init takes over. (also handles things like
+encryption). Need to add the resume parameter to the startup hook here so that
+it's possible to resume from hibernation.
+
+#+begin_src shell :results output
+cat /etc/mkinitcpio.conf
+#+end_src
+
+#+RESULTS:
+#+begin_example
+# vim:set ft=sh
+# MODULES
+# The following modules are loaded before any boot hooks are
+# run.  Advanced users may wish to specify all system modules
+# in this array.  For instance:
+#     MODULES=(piix ide_disk reiserfs)
+MODULES=""
+
+# BINARIES
+# This setting includes any additional binaries a given user may
+# wish into the CPIO image.  This is run last, so it may be used to
+# override the actual binaries included by a given hook
+# BINARIES are dependency parsed, so you may safely ignore libraries
+BINARIES=()
+
+# FILES
+# This setting is similar to BINARIES above, however, files are added
+# as-is and are not parsed in any way.  This is useful for config files.
+FILES=""
+
+# HOOKS
+# This is the most important setting in this file.  The HOOKS control the
+# modules and scripts added to the image, and what happens at boot time.
+# Order is important, and it is recommended that you do not change the
+# order in which HOOKS are added.  Run 'mkinitcpio -H <hook name>' for
+# help on a given hook.
+# 'base' is _required_ unless you know precisely what you are doing.
+# 'udev' is _required_ in order to automatically load modules
+# 'filesystems' is _required_ unless you specify your fs modules in MODULES
+# Examples:
+##   This setup specifies all modules in the MODULES setting above.
+##   No raid, lvm2, or encrypted root is needed.
+#    HOOKS=(base)
+#
+##   This setup will autodetect all modules for your system and should
+##   work as a sane default
+#    HOOKS=(base udev autodetect block filesystems)
+#
+##   This setup will generate a 'full' image which supports most systems.
+##   No autodetection is done.
+#    HOOKS=(base udev block filesystems)
+#
+##   This setup assembles a pata mdadm array with an encrypted root FS.
+##   Note: See 'mkinitcpio -H mdadm' for more information on raid devices.
+#    HOOKS=(base udev block mdadm encrypt filesystems)
+#
+##   This setup loads an lvm2 volume group on a usb device.
+#    HOOKS=(base udev block lvm2 filesystems)
+#
+##   NOTE: If you have /usr on a separate partition, you MUST include the
+#    usr, fsck and shutdown hooks.
+HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
+
+# COMPRESSION
+# Use this to compress the initramfs image. By default, gzip compression
+# is used. Use 'cat' to create an uncompressed image.
+#COMPRESSION="gzip"
+#COMPRESSION="bzip2"
+#COMPRESSION="lzma"
+#COMPRESSION="xz"
+#COMPRESSION="lzop"
+#COMPRESSION="lz4"
+
+# COMPRESSION_OPTIONS
+# Additional options for the compressor
+#COMPRESSION_OPTIONS=()
+#+end_example
+
+We need to update the hooks list currently in the above conf to include ~resume~
+#+begin_src shell :results output :dir /sudo::
+# HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
+sed -i '/^HOOKS=/ c\
+HOOKS="base udev resume autodetect modconf block keyboard keymap filesystems"
+' /etc/mkinitcpio.conf
+#+end_src
+
+Generate the boot image. The ~-p~ option can be used to specify which preset to
+generate an initramfs for. The ~-P~ option can be used to generate an initramf for
+all presets in the =/etc/mkinitcpio.d/= directory. Since I only have one preset
+file in there, I used ~-P~
+#+begin_src shell :dir /sudo:: :results output
+mkinitcpio -P
+#+end_src
+
+#+RESULTS:
+#+begin_example
+==> Building image from preset: /etc/mkinitcpio.d/linux419.preset: 'default'
+  -> -k /boot/vmlinuz-4.19-x86_64 -c /etc/mkinitcpio.conf -g /boot/initramfs-4.19-x86_64.img
+==> Starting build: 4.19.32-1-MANJARO
+  -> Running build hook: [base]
+  -> Running build hook: [udev]
+  -> Running build hook: [resume]
+  -> Running build hook: [autodetect]
+  -> Running build hook: [modconf]
+  -> Running build hook: [block]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [keymap]
+  -> Running build hook: [filesystems]
+==> Generating module dependencies
+==> Creating gzip-compressed initcpio image: /boot/initramfs-4.19-x86_64.img
+==> Image generation successful
+==> Building image from preset: /etc/mkinitcpio.d/linux419.preset: 'fallback'
+  -> -k /boot/vmlinuz-4.19-x86_64 -c /etc/mkinitcpio.conf -g /boot/initramfs-4.19-x86_64-fallback.img -S autodetect
+==> Starting build: 4.19.32-1-MANJARO
+  -> Running build hook: [base]
+  -> Running build hook: [udev]
+  -> Running build hook: [resume]
+  -> Running build hook: [modconf]
+  -> Running build hook: [block]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [keymap]
+  -> Running build hook: [filesystems]
+==> Generating module dependencies
+==> Creating gzip-compressed initcpio image: /boot/initramfs-4.19-x86_64-fallback.img
+==> Image generation successful
+#+end_example
+
+**** Systemd handle
+I also use systemd as a base for things like this. In the
+=/etc/systemd/logind.conf= file we could set the following options:
+#+begin_src shell
+HandleLidSwitch=hibernate
+IdleAction=hibernate
+IdleActionSec=30min
+#+end_src
+
 * Plans
 ** DONE better lock screen
 CLOSED: [2019-02-09 Sat 10:56]
