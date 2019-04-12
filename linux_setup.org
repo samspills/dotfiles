@@ -1258,42 +1258,6 @@ rofi.combi_hide_mode_prefix: TRUE
 rofi.case-sensitive: false
 #+end_src
 
-**** Rofi-Pass
-:PROPERTIES:
-:ID:       b0316724-c866-447e-9ec5-f9c74e4b9bde
-:END:
-
-My configuration for ~rofi-pass~ is written to =/home/sam/.config/rofi-pass/config=
-#+begin_src shell :tangle "~/.config/rofi-pass/config"
-URL_field='url'
-USERNAME_field='user'
-AUTOTYPE_field='autotype'
-EDITOR='ec'
-auto_enter='true'
-default_user='srpillsworth@gmail.com'
-#+end_src
-
-These are the default keybindings for rofi-pass. I haven't changed anything, I'm
-just including them here for easy reference
-#+begin_src shell :tangle "~/.config/rofi-pass/config"
-autotype="Alt+1"
-type_user="Alt+2"
-type_pass="Alt+3"
-open_url="Alt+4"
-copy_name="Alt+u"
-copy_url="Alt+l"
-copy_pass="Alt+p"
-show="Alt+o"
-copy_entry="Alt+2"
-type_entry="Alt+1"
-copy_menu="Alt+c"
-action_menu="Alt+a"
-type_menu="Alt+t"
-help="Alt+h"
-switch="Alt+x"
-insert_pass="Alt+n"
-#+end_src
-
 ** applications
 *** dropbox
 :PROPERTIES:
@@ -1865,6 +1829,42 @@ printjs() {
     js | sed 's,//.*$,,' | tr '\n' ' '
 }
 echo "jseval -q $(printjs)" >> "$QUTE_FIFO"
+#+end_src
+
+*** rofi-pass
+:PROPERTIES:
+:ID:       b0316724-c866-447e-9ec5-f9c74e4b9bde
+:END:
+
+My configuration for ~rofi-pass~ is written to =/home/sam/.config/rofi-pass/config=
+#+begin_src shell :tangle "~/.config/rofi-pass/config"
+URL_field='url'
+USERNAME_field='user'
+AUTOTYPE_field='autotype'
+EDITOR='ec'
+auto_enter='true'
+default_user='srpillsworth@gmail.com'
+#+end_src
+
+These are the default keybindings for rofi-pass. I haven't changed anything, I'm
+just including them here for easy reference
+#+begin_src shell :tangle "~/.config/rofi-pass/config"
+autotype="Alt+1"
+type_user="Alt+2"
+type_pass="Alt+3"
+open_url="Alt+4"
+copy_name="Alt+u"
+copy_url="Alt+l"
+copy_pass="Alt+p"
+show="Alt+o"
+copy_entry="Alt+2"
+type_entry="Alt+1"
+copy_menu="Alt+c"
+action_menu="Alt+a"
+type_menu="Alt+t"
+help="Alt+h"
+switch="Alt+x"
+insert_pass="Alt+n"
 #+end_src
 
 ** services
