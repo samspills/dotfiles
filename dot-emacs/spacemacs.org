@@ -6,6 +6,9 @@
 #+end_src
 
 * Spacemacs Setup
+:PROPERTIES:
+:ID:       7d9a6134-4622-42c7-b2ee-4d68b9bc00ff
+:END:
 This is my attempt to convert my garbage monster mess of a =.spacemacs= file into
 something that a human can read and understand.
 
@@ -476,10 +479,10 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
                   "* %^{prompt}\n%U\n%?"))
    (add-to-list 'org-capture-templates
                 `("w" "org-protocol" entry (file+olp+datetree "~/Dropbox/life/journal.org")
-                  "* %a :website:toread: \n%U\n%:initial\n"))
-   ;; (add-to-list 'org-capture-templates
-   ;;              `("T" "Personal Task" entry (file+olp+datetree "~/Dropbox/life/journal.org")
-   ;;                "* TODO %?"))
+                  "* %a :website:toread: \n%U\n%:initial" :immediate-finish))
+   (add-to-list 'org-capture-templates
+                `("b" "brain" entry (function org-brain-goto-end)
+                  "* %i%?" :empty-lines 1))
    (add-to-list 'org-capture-templates
                 `("P" "Personal Event" entry (file "~/Dropbox/life/sam-cal.org")
                   "* %^{Description} \n %^T \n %^{Notes}"))
@@ -490,7 +493,16 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
                 `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
                   "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
 #+END_SRC
+
+I've also been experimenting with using org-brain. In order for org-brain to
+pick up heading entries, they need to have an ID.
+#+begin_src emacs-lisp
+(add-hook 'org-capture-prepare-finalize-hook 'org-id-get-create)
+#+end_src
 ***** org-protocol
+:PROPERTIES:
+:ID:       a6b55267-86d7-4024-82cc-f4b3ba337e09
+:END:
 In order to define system wide capture commands, we need org-protocol. I think
 these packages are incompatible with use-package in some way (or I just wasn't
 setting them up correctly). With use-package I found I had to manually compile
