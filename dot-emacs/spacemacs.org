@@ -564,6 +564,16 @@ This is for promping for refile targets when doing captures."
       (goto-char pos)
       (goto-char (org-end-of-subtree)))))
 #+END_SRC
+***** org-web-tools
+[[https://github.com/alphapapa/org-web-tools][org-web-tools]] is (another) amazing alphapapa org-mode package. This is like the
+org-protocol html work he did but on steroids. I think I'm going to switch to
+this package, although I'll have to figure out how to call it from a capture
+template/call a capture template on the linux command line.
+
+To start we need to actually use the package
+#+begin_src emacs-lisp
+(use-package org-web-tools)
+#+end_src
 **** Tasks and Agenda
 Define more than the usual sequence of org-mode =TODO= states. Honestly, I think I
 only use the first sequence, and this could probably be simplified.
