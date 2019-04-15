@@ -44,7 +44,8 @@ values."
      emacs-lisp
      git
     (org :variables
-          org-want-todo-bindings t)
+          org-want-todo-bindings t
+          org-brain-path "~/Dropbox/life")
     (shell :variables
            shell-default-shell 'eshell)
     syntax-checking
