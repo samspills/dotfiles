@@ -71,7 +71,7 @@ extra/xorg-xclipboard
 
 I use a bash script to handle the installation and fetching of packages (either
 through pacman or by cloning git repositories).
-#+begin_src shell :tangle "manjaro_setup.sh" :shebang "#!/usr/bin/env bash"
+#+begin_src shell :tangle "manjaro_setup.sh" :shebang #!/usr/bin/env/bash
 sudo pacman -Syyu
 sudo pacman -Syu --noconfirm $(cat packages.txt | awk '{print $1}')
 sudo pacman -Rs $(pacman -Qdtq)
@@ -1063,7 +1063,7 @@ volume master {
 
 I like the lockscreen style described in [[https://github.com/brunodles/i3wm-conf][brunodles i3 config]], so I have stolen it.
 
-#+begin_src shell :tangle "~/bin/i3lock-extra" :shebang "#!/usr/bin/env bash"
+#+begin_src shell :tangle "~/bin/i3lock-extra" :shebang #!/usr/bin/env/bash
 cfg_tmpdir="/run/user/$UID/i3lock-extra"
 cfg_lockfile="$cfg_tmpdir/locked"
 cfg_pixelize_scale='10'
@@ -1319,7 +1319,7 @@ chmod +x /home/sam/.local/bin/org-protocol-capture-html.sh
 
 Finally we need a way to trigger capture from qutebrowser. I am using a [[https://www.reddit.com/r/emacs/comments/9ze1ln/capture_orgmode_bookmarks_from_qutebrowser_with/ea98mm2][script I
 found on reddit]].
-#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/org-capture" :shebang "#!/usr/bin/env bash"
+#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/org-capture" :shebang #!/usr/bin/env/bash
 readonly CAPTURE_SCRIPT=~/.local/bin/org-protocol-capture-html.sh
 
 # if we start with hints, delete title and selected text and use capture
@@ -1441,7 +1441,7 @@ config.bind('<ctrl+k>', 'spawn --userscript ~/.config/qutebrowser/userscripts/pa
 
 **** userscripts
 :PROPERTIES:
-:header-args:shell: :shebang "#!/usr/bin/env bash"
+:header-args:shell: :shebang #!/usr/bin/env/bash
 :END:
 ***** Password Fill
 :PROPERTIES:
@@ -1451,7 +1451,7 @@ I'm not sure if this is still necessary? Now that I've switching to a linux
 setup, I have a global keybinding to bring up the password menu, and it will
 also auto-type. Still, I'll keep this around just in case.
 
-#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/password_fill" :shebang "#!/usr/bin/env bash"
+#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/password_fill" :shebang #!/usr/bin/env/bash
 help() {
     blink=$'\e[1;31m' reset=$'\e[0m'
 cat <<EOF
