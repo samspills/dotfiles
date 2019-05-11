@@ -1,6 +1,5 @@
 * Linux Machine Config
 :PROPERTIES:
-:header-args:shell:  :tangle-mode (identity #o755)
 :header-args: :mkdirp yes
 :END:
 I am attempting to setup a linux machine using an entirely literate config,
@@ -71,7 +70,7 @@ extra/xorg-xclipboard
 
 I use a bash script to handle the installation and fetching of packages (either
 through pacman or by cloning git repositories).
-#+begin_src shell :tangle "manjaro_setup.sh" :shebang #!/usr/bin/env/bash
+#+begin_src shell :tangle "manjaro_setup.sh" :shebang "#!/usr/bin/zsh"
 sudo pacman -Syyu
 sudo pacman -Syu --noconfirm $(cat packages.txt | awk '{print $1}')
 sudo pacman -Rs $(pacman -Qdtq)
@@ -540,7 +539,6 @@ URxvt.keysym.C-S-Down: perl:font-size:decglobal
 URxvt.keysym.C-c: perl:clipboard:copy
 URxvt.keysym.C-v: perl:clipboard:paste
 #+end_src
-
 ** i3
 *** Configuration
 :PROPERTIES:
@@ -1062,8 +1060,7 @@ volume master {
 :END:
 
 I like the lockscreen style described in [[https://github.com/brunodles/i3wm-conf][brunodles i3 config]], so I have stolen it.
-
-#+begin_src shell :tangle "~/bin/i3lock-extra" :shebang #!/usr/bin/env/bash
+#+begin_src shell :tangle "~/bin/i3lock-extra" :shebang "#!/usr/bin/zsh"
 cfg_tmpdir="/run/user/$UID/i3lock-extra"
 cfg_lockfile="$cfg_tmpdir/locked"
 cfg_pixelize_scale='10'
@@ -1199,7 +1196,7 @@ exec --no-startup-id xrdb -merge $HOME/.Xresources
 
 Now we can install i3, and some of the utilities that my i3 setup relies on.
 These are rxvt, and scrot.
-#+begin_src shell :dir "/sudo::" :cache no :results output
+#+begin_src shell  :cache no :results output
 #+end_src
 
 #+RESULTS:
@@ -1299,7 +1296,7 @@ MimeType=x-scheme-handler/org-protocol;
 #+end_src
 
 Update the desktop database:
-#+begin_src shell :dir "/sudo::" :results output
+#+begin_src shell :results output
 sudo update-desktop-database /home/sam/.local/share/applications
 #+end_src
 
@@ -1319,7 +1316,7 @@ chmod +x /home/sam/.local/bin/org-protocol-capture-html.sh
 
 Finally we need a way to trigger capture from qutebrowser. I am using a [[https://www.reddit.com/r/emacs/comments/9ze1ln/capture_orgmode_bookmarks_from_qutebrowser_with/ea98mm2][script I
 found on reddit]].
-#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/org-capture" :shebang #!/usr/bin/env/bash
+#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/org-capture" :shebang "#!/usr/bin/zsh"
 readonly CAPTURE_SCRIPT=~/.local/bin/org-protocol-capture-html.sh
 
 # if we start with hints, delete title and selected text and use capture
@@ -1441,7 +1438,7 @@ config.bind('<ctrl+k>', 'spawn --userscript ~/.config/qutebrowser/userscripts/pa
 
 **** userscripts
 :PROPERTIES:
-:header-args:shell: :shebang #!/usr/bin/env/bash
+:header-args:shell: :shebang "#!/usr/bin/zsh"
 :END:
 ***** Password Fill
 :PROPERTIES:
@@ -1451,7 +1448,7 @@ I'm not sure if this is still necessary? Now that I've switching to a linux
 setup, I have a global keybinding to bring up the password menu, and it will
 also auto-type. Still, I'll keep this around just in case.
 
-#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/password_fill" :shebang #!/usr/bin/env/bash
+#+begin_src shell :tangle "~/.config/qutebrowser/userscripts/password_fill"
 help() {
     blink=$'\e[1;31m' reset=$'\e[0m'
 cat <<EOF
@@ -2000,7 +1997,7 @@ seconds of visible screen before the lock kicks in. According to
 [[https://wiki.archlinux.org/index.php/Power_management#Sleep_hooks][the arch wiki page about sleep hooks]] adding a post-exec sleep should fix it, but
 so far that doesn't seem to be the case for me.
 
-#+begin_src systemd :tangle "/sudo::/etc/systemd/system/screen-lock.service"
+#+begin_src systemd :tangle no
 [Unit]
 Description=Lock screen upon suspend
 Before=suspend.target
@@ -2037,7 +2034,7 @@ I'm following the instructions from [[http://blog.programmableproduction.com/201
 **** Create swapfile
 ~fallocate~ to create swapfile. Memory to allocate should be about 2/5 of RAM, or
 the recommended value in =/sys/power/image_size=. For me this is ~3220M.
-#+begin_src shell :results output :dir /sudo::
+#+begin_src shell :results output
 fallocate -l 3220M /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
@@ -2066,7 +2063,7 @@ cat /etc/fstab
 : UUID=96c4371f-8f39-4328-9420-830aefcad969 /              ext4    defaults,noatime 0 1
 
 Update =/etc/fstab=:
-#+begin_src shell :dir /sudo::
+#+begin_src shell
 echo "/swapfile none swap defaults 0 0" >> /etc/fstab
 #+end_src
 
@@ -2137,7 +2134,7 @@ entry from ~/etc/fstab~ with moint point ~/~ and a type of ~ext4~)
 
 ~resume_offset~ defines the point on the drive (defined above) where the swapfile
 begins.
-#+begin_src shell :dir /sudo:: :results output
+#+begin_src shell  :results output
 sudo filefrag -v /swapfile
 #+end_src
 
@@ -2186,7 +2183,7 @@ File size of /swapfile is 3376414720 (824320 blocks of 4096 bytes)
 #+end_example
 
 Both parameters are added to the ~GRUB_CMDLINE_LINUX~ parameter
-#+begin_src shell :results output :dir /sudo::
+#+begin_src shell :results output
 # HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
 sed -i '/^GRUB_CMDLINE_LINUX=/ c\
 GRUB_CMDLINE_LINUX="resume=UUID=96c4371f-8f39-4328-9420-830aefcad969 resume_offset=1167360"
@@ -2196,7 +2193,7 @@ GRUB_CMDLINE_LINUX="resume=UUID=96c4371f-8f39-4328-9420-830aefcad969 resume_offs
 #+RESULTS:
 
 Generate new grub.cfg file
-#+begin_src shell :dir /sudo:: :results output
+#+begin_src shell  :results output
 grub-mkconfig -o /boot/grub/grub.cfg
 #+end_src
 
@@ -2283,7 +2280,7 @@ HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
 #+end_example
 
 We need to update the hooks list currently in the above conf to include ~resume~
-#+begin_src shell :results output :dir /sudo::
+#+begin_src shell :results output
 # HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
 sed -i '/^HOOKS=/ c\
 HOOKS="base udev autodetect modconf block keyboard keymap filesystems resume"
@@ -2296,7 +2293,7 @@ Generate the boot image. The ~-p~ option can be used to specify which preset to
 generate an initramfs for. The ~-P~ option can be used to generate an initramf for
 all presets in the =/etc/mkinitcpio.d/= directory. Since I only have one preset
 file in there, I used ~-P~
-#+begin_src shell :dir /sudo:: :results output
+#+begin_src shell  :results output
 mkinitcpio -P
 #+end_src
 
