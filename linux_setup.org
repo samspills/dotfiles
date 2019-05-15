@@ -1206,13 +1206,13 @@ i3lock -t -i /tmp/lockbackground.png
 sleep 1
 exit 0
 #+END_SRC
-*** /home/sam/bin/i3exit-sam
+*** i3exit-sam
 :PROPERTIES:
 :ID:       f9c1cf95-fdd9-4150-844f-3c33ef308e91
 :END:
 There is an ~i3exit~ script available in ~/usr/bin/i3exit~ but it uses blurlock
 and I'd rather use my own locking function.
-#+BEGIN_SRC shell :tangle "~/bin//home/sam/bin/i3exit-sam" :shebang "#!/bin/bash"
+#+BEGIN_SRC shell :tangle "/home/sam/bin/i3exit-sam" :shebang "#!/bin/bash"
 # with openrc use loginctl
 [[ $(cat /proc/1/comm) == "systemd" ]] && logind=systemctl || logind=loginctl
 lockimg=$1
@@ -1231,10 +1231,7 @@ case "$exitarg" in
         dm-tool switch-to-greeter
         ;;
     suspend)
-        $lock && $logind suspend
-        ;;
-    hibernate)
-        $lock && $logind hibernate
+        $lock && $logind suspend-then-hibernate
         ;;
     reboot)
         $logind reboot
@@ -1244,7 +1241,7 @@ case "$exitarg" in
         ;;
     *)
         echo "== ! i3exit: missing or invalid argument ! =="
-        echo "Try again with: lock | logout | switch_user | suspend | hibernate | reboot | shutdown"
+        echo "Try again with: lock | logout | switch_user | suspend | reboot | shutdown"
         exit 2
 esac
 exit 0
@@ -2419,7 +2416,8 @@ CLOSED: [2019-02-16 Sat 14:33]
 CLOSED: [2019-02-09 Sat 10:56]
 - State "DONE"       from "TODO"       [2019-02-09 Sat 10:56]
 - try using i3
-** TODO i3 gaps
+** DONE i3 gaps
+- State "DONE"       from "TODO"       [2019-05-11 Sat 14:19]
 ** TODO polybar
 ** CANCELLED weechat + weeslack + weemacs
 CLOSED: [2019-03-14 Thu 18:23]
