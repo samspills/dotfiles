@@ -274,7 +274,6 @@ antigen use oh-my-zsh
 
 antigen bundle colored-man-pages
 antigen bundle colorize
-antigen bundle virtualenvwrapper
 antigen bundle pip
 antigen bundle python
 
@@ -284,6 +283,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-history-substring-search
 antigen bundle command-not-found
 antigen bundle srijanshetty/zsh-pip-completion
+antigen bundle gimbo/venv-lite.zsh
 
 antigen theme denysdovhan/spaceship-prompt
 
@@ -315,26 +315,6 @@ function cowfig() {figlet "$*" | cowsay -n}
 function cpcowfig() {figlet "$*" | cowsay -n | pbcopy}
 function agp() {ag --py $*}
 function gitsync() {rsync -t $(git diff --name-only) --relative $1}
-function luigiui() {open -a "Google Chrome" $(plumb --host dev-magnezone-$1-1.rubikloudcorp.com status $2 | jq -r '.owner_public_ip' | awk ' {print "http://" $0 ":8082"} ')}
-function jn() {open -a "Google Chrome" "http://localhost:$1/tree?"}
-function jigh() {jig --host dev-configapi.rubikloudcorp.com $*}
-function plumbh() {plumb --host dev-magnezone.rubikloudcorp.com $*}
-function plumbh-log() {plumbh log $1 stdout > log && vim log}
-
-# Rubikloud Functions
-function lithium-jupyter() {scp spillsworth@lithium:/home/spillsworth/.run/current_kernel.json . && jupyter console --existing ./current_kernel.json --ssh lithium}
-function saws() {aws ec2 ${1}-instances --instance-ids i-01a4312b35d89399c  --region eu-west-1}
-function s3fstoken() {
-    aws-vault exec --no-session --assume-role-ttl 12h ${1:-default} -- python -c 'import os; print("""s3 = s3fs.S3FileSystem(key="{}", secret="{}", token="{}")""".format(os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("AWS_SESSION_TOKEN")))'
-}
-function s3atoken() {
-    aws-vault exec --no-session --assume-role-ttl 12h ${1:-default} -- python -c 'import os; print("""
-hadoop_conf.set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider")
-hadoop_conf.set("fs.s3a.access.key", "{}")
-hadoop_conf.set("fs.s3a.secret.key", "{}")
-hadoop_conf.set("fs.s3a.session.token", "{}")
-""".format(os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("AWS_SESSION_TOKEN")))'
-}
 #+end_src
 
 An extraction function I took from the bashrc in manjaro:
@@ -360,6 +340,10 @@ function ex () {
   fi
 }
 #+end_src
+
+#+BEGIN_SRC shell :tangle "~/.zshrc"
+function setup_venv() { pip install --user pytest flake8 pandas matplotlib isort importmagic epc}
+#+END_SRC
 **** Exports and aliases
 :PROPERTIES:
 :ID:       424bc62d-1633-4633-8e9b-82f47767e150
@@ -557,7 +541,7 @@ for easy updating. These are either things I think I might want to change
 set $mod Mod4
 set $term --no-startup-id urxvt
 set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icons -display-combi ""
-set $pass --no-startup-id ~/bin/rofi-pass -display-pass "sam"
+set $pass --no-startup-id rofi -modi 1pass:rofi-1pass -show 1pass
 set $barcmd i3status
 set $lockimage ~/dotfiles/lock.png
 #+end_src
