@@ -1,13 +1,8 @@
-* Linux Machine Config
+* Mac Machine Config
 :PROPERTIES:
 :header-args: :mkdirp yes
 :END:
-I am attempting to setup a linux machine using an entirely literate config,
-manage through org-mode files. My goal is to have several org files, with code
-that is tangled to the appropriate locations.
-
-This is still very much a work in progress.
-
+This is the mac version of my manjaro config.
 ** Git Config
 :PROPERTIES:
 :ID:       22443b22-e1b4-4e8d-9228-4908aeeccad4
