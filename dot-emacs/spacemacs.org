@@ -244,6 +244,24 @@ heading level in all agenda files.
 
 #+END_SRC
 
+Generally I take notes into a journal file, and sometimes I like to refile them
+into a project file/location. This is good, but I like to leave myself a trail
+of breadcrumbs when I refile.
+
+#+begin_src emacs-lisp
+(defun org-refile--insert-link ( &rest _ )
+  (unless (string-suffix-p "inbox.org" buffer-file-name)
+    (org-back-to-heading)
+    (let* ((refile-region-marker (point-marker))
+           (source-link (org-store-link nil)))
+      (org-insert-heading)
+      (insert source-link)
+      (goto-char refile-region-marker))))
+(advice-add 'org-refile
+            :before
+            #'org-refile--insert-link)
+#+end_src
+
 I also like to refile captured or done tasks to a datetree.
 #+begin_src emacs-lisp
 (defun sam/org-refile-to-datetree (&optional file)
@@ -295,6 +313,58 @@ searching in the future.
 ))
 #+end_src
 
+**** Archiving
+There are two changes I make to the archiving setup in org-mode. First, I change
+the default archiving location so that the archive files are hidden. Second, I
+update the ~org-archive-subtree~ function so that the original file hierarchy is
+replicated in the archive file. The advice macro I just took from [[https://github.com/daviderestivo/emacs-config/blob/0d1d8f76a72f0310676f9197f5bbcbc9fdd97c23/lisp/org-archive-subtree.el][the emacs
+config of Davide Restivo]]. Notice the last line, where the defined advice
+function is activated. This is important.
+#+BEGIN_SRC emacs-lisp
+(setq org-archive-location ".%s_archive::")
+(defadvice org-archive-subtree (around fix-hierarchy activate)
+  (let* ((fix-archive-p (and (not current-prefix-arg)
+                             (not (use-region-p))))
+         (afile  (car (org-archive--compute-location
+                       (or (org-entry-get nil "ARCHIVE" 'inherit) org-archive-location))))
+         (buffer (or (find-buffer-visiting afile) (find-file-noselect afile))))
+    ad-do-it
+    (when fix-archive-p
+      (with-current-buffer buffer
+        (goto-char (point-max))
+        (while (org-up-heading-safe))
+        (let* ((olpath (org-entry-get (point) "ARCHIVE_OLPATH"))
+               (path (and olpath (split-string olpath "/")))
+               (level 1)
+               tree-text)
+          (when olpath
+            (org-mark-subtree)
+            (setq tree-text (buffer-substring (region-beginning) (region-end)))
+            (let (this-command) (org-cut-subtree))
+            (goto-char (point-min))
+            (save-restriction
+              (widen)
+              (-each path
+                (lambda (heading)
+                  (if (re-search-forward
+                       (rx-to-string
+                        `(: bol (repeat ,level "*") (1+ " ") ,heading)) nil t)
+                      (org-narrow-to-subtree)
+                    (goto-char (point-max))
+                    (unless (looking-at "^")
+                      (insert "\n"))
+                    (insert (make-string level ?*)
+                            " "
+                            heading
+                            "\n"))
+                  (cl-incf level)))
+              (widen)
+              (org-end-of-subtree t t)
+              (org-paste-subtree level tree-text))))))))
+(ad-activate 'org-archive-subtree)
+#+END_SRC
+**** Refiling
+
 *** Keybindings
 I add my most used org functions under my personal keymap so that they're always available
 #+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-keybindings
@@ -336,14 +406,15 @@ be working right now though and needs to be investigated.)
 (setq org-todo-keyword-faces
       '(
         ("TODO" :foreground "#ce537a" :weight bold)
-        ("DEADLINE" :foreground "#ce537a" :weight bold)
-        ("NEXT" :foreground "#bc6ec5" :weight bold)
+        ("[ ]" :foreground "#ce537a" :weight bold)
         ("STARTED" :foreground "#bc6ec5" :weight bold)
+        ("[-]" :foreground "#bc6ec5" :weight bold)
         ("DONE" :foreground "#2aa1ae" :weight bold)
-        ("HOLD" :foreground "#4f97d7" :weight bold)
-        ("WAITING" :foreground "#4f97d7" :weight bold)
-        ("CANCELLED" :foreground "#2d9574" :weight bold)
-        ("MEETING" :foreground "#5d4d7a" :weight bold)
+        ("[X]" :foreground "#2aa1ae" :weight bold)
+        ("CANCELLED" :foreground "#2aa1ae" :weight bold)
+        ("SOMEDAY" :foreground "#4f97d7" :weight bold)
+        ("BLOCKED" :foreground "#2d9574" :weight bold)
+        ("[?]" :foreground "#2d9574" :weight bold)
         ))
 #+END_SRC
 
@@ -459,39 +530,20 @@ Setup some org capture templates. (TODO don't hardcode the file paths)
 (use-package org-capture
   :ensure nil
   :config
-  ;; (add-to-list 'org-capture-templates
-  ;;               `("t" "Work Task" entry (file+headline "~/Dropbox/life/rubikloud.org" "Projects")
-  ;;                 "* TODO %^{prompt} :inbox: \n%?"))
-  (add-to-list 'org-capture-templates
-               `("t" "Task" entry (file "~/Dropbox/life/inbox.org")
-                 "* TODO %?\n SCHEDULED: %t"))
-   (add-to-list 'org-capture-templates
-                `("i" "Interruption" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
-                  "* %^{prompt}\n%U\n%?" :clock-in t :clock-resume t))
-   (add-to-list 'org-capture-templates
-                `("n" "Task Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
-                  "* %^{prompt} %^G \n%T\n%K\n%?"))
-   (add-to-list 'org-capture-templates
-                `("r" "Reference" entry (file+headline "~/Dropbox/life/rubikloud.org" "Reference")
-                  "* %^{prompt}\n%U\n%?"))
-   (add-to-list 'org-capture-templates
-                `("j" "Journal" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
-                  "* %^{prompt}\n%U\n%?"))
-   (add-to-list 'org-capture-templates
-                `("w" "org-protocol" entry (file+olp+datetree "~/Dropbox/life/journal.org")
-                  "* %a :website:toread: \n%U\n%:initial" :immediate-finish))
-   (add-to-list 'org-capture-templates
-                `("b" "brain" entry (function org-brain-goto-end)
-                  "* %i%?" :empty-lines 1))
-   (add-to-list 'org-capture-templates
-                `("P" "Personal Event" entry (file "~/Dropbox/life/sam-cal.org")
-                  "* %^{Description} \n %^T \n %^{Notes}"))
-   (add-to-list 'org-capture-templates
-                `("J" "Personal Journal" entry (file+olp+datetree "~/Dropbox/life/journal.org")
-                  "* %^{prompt}\n%U\n%?"))
-   (add-to-list 'org-capture-templates
-                `("f" "Future Note" entry (file+olp+datetree "~/Dropbox/life/rubikloud.org")
-                  "* %^{prompt} \n%t\n%?" :time-prompt :clock-in t :clock-resume t)))
+  (setq org-capture-templates
+        '(("t" "task" entry (file "~/Dropbox/life/inbox.org")
+           "* TODO %^{prompt} %^G \n SCHEDULED: %t" :immediate-finish t)
+          ("n" "note" entry (file+olp+datetree "~/Dropbox/life/journal.org")
+           "* %^{heading} %^G \n%^U\n%?" :clock-in t :clock-resume t)
+          ("e" "event" entry (file+olp+datetree "~/Dropbox/life/journal.org")
+           "* %^{event title} \n%^T\n%?" :clock-in t :clock-resume t)
+          ("c" "clock note" entry (clock)
+           "* %^{prompt} \n%^U\n%?")
+          ("b" "brain" entry (function org-brain-goto-end)
+           "* %i%?" :empty-lines 1)
+          ("p" "org-protocol" entry (file+olp+datetree "~/Dropbox/life/journal.org")
+           "* %a :website:toread: \n%U\n%:initial" :immediate-finish t)
+          )))
 #+END_SRC
 
 I've also been experimenting with using org-brain. In order for org-brain to
@@ -578,9 +630,9 @@ To start we need to actually use the package
 Define more than the usual sequence of org-mode =TODO= states. Honestly, I think I
 only use the first sequence, and this could probably be simplified.
 #+BEGIN_SRC emacs-lisp :tangle no :noweb-ref org-mode-config
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "DEADLINE(D)" "|" "DONE(d!)")
-              (sequence "HOLD(h!)" "WAITING(w@/!)" "|" "CANCELLED(c@/!)" "MEETING(m)"))))
+(setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "|" "DONE(d!)")
+                          (sequence "[ ](T)" "[-](S)" "[?](B)" "|" "[X](D)")
+                          (sequence "BLOCKED(b!)" "SOMEDAY(l)" "|" "CANCELLED(c!)")))
 #+END_SRC
 
 Set up my =org-agenda=. First, customize a bunch of variables to control what will
@@ -639,7 +691,7 @@ I want my work events to be pulled in from google calendar and shown in my org-a
   (org-gcal-client-id (auth-source-pass-get "client" "org/org-gcal.el"))
   (org-gcal-client-secret (auth-source-pass-get 'secret "org/org-gcal.el"))
   :config
-  (setq org-gcal-file-alist '(("samantha.pillsworth@rubikloud.com" .  "~/Dropbox/life/rubikloud_cal.org")
+  (setq org-gcal-file-alist '(("samantha.pillsworth@shopify.com" .  "~/Dropbox/life/shopify-cal.org")
                               ("srpillsworth@gmail.com" . "~/Dropbox/life/sam-cal.org"))
         ))
 #+END_SRC
@@ -659,7 +711,7 @@ I have found to be most helpful so far.
   (defun sam/clock-in-started ()
     (when (not (and (boundp 'org-capture-mode) org-capture-mode))
       (cond
-       ((and (member (org-get-todo-state) (list "TODO" "NEXT")))
+       ((and (member (org-get-todo-state) (list "TODO" "BLOCKED" "SOMEDAY")))
         (org-todo "STARTED"))))
     )
 
@@ -1009,7 +1061,7 @@ the previously linked blog post.
 ;;   (projectile-project-search-path '("~/rubikloud"))
 ;; )
 #+END_SRC
-**** Slack
+*** Slack
 I use slack to talk to everyone now. Rubikloud uses slack, I have two different
 slacks for two different friend groups, and I have a slack team for my family.
 
