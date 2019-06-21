@@ -1163,7 +1163,9 @@ necessary though.
 (setq tramp-default-method "ssh")
 #+END_SRC
 * Future Improvements
-** TODO org-refile include link to original file+parent
+** DONE org-refile include link to original file+parent
+CLOSED: [2019-06-20 Thu 20:51]
+- State "DONE"       from "TODO"       [2019-06-20 Thu 20:51]
 ** CANCELLED capture template expansion link to clocked task should use ID property instead of file+heading path
 CLOSED: [2019-03-14 Thu 18:25]
 - State "CANCELLED"  from "DONE"       [2019-03-14 Thu 18:25] \\
@@ -1172,8 +1174,12 @@ CLOSED: [2019-03-14 Thu 18:25]
 - State "DONE"       from "TODO"       [2019-03-14 Thu 18:25]
 ** TODO function to find all headings that link to particular task
 ** TODO org-super-agenda instead of org custom agenda block
-** TODO regex in tags hierarchy to point all SEG_xxxx tags to manifold tag
-** TODO rethink current clocking strategy
+** CANCELLED regex in tags hierarchy to point all SEG_xxxx tags to manifold tag
+CLOSED: [2019-06-20 Thu 20:51]
+- State "CANCELLED"  from "TODO"       [2019-06-20 Thu 20:51]
+** DONE rethink current clocking strategy
+CLOSED: [2019-06-20 Thu 20:51]
+- State "DONE"       from "TODO"       [2019-06-20 Thu 20:51]
 This is less about my actual clocking commands and more about how I think about
 org-clocking. There are settings that I could fiddle with to make clocking less
 manual and a little more helpful. Before I can start investigating a new setup
