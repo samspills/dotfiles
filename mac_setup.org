@@ -13,70 +13,88 @@ Set up my user name and email address for git.
   email = srpillsworth@gmail.com
   name = Sam Pillsworth
 #+end_src
-** GPG agent configuration
-:PROPERTIES:
-:ID:       ff9df46b-bcf7-40e8-bbd1-edb3030df298
-:END:
-I keep my password store encrypted, and I don't want to have to type my master
-key every time I need to access a password. I also don't want to store my master
-key in any sort of a keychain, partly because I'm paranoid but also partly
-because that seems like it would take effort to set up.
-
-Instead I setup a longer cache time for my gpg-agent.
-
-#+begin_src shell :tangle "~/.gnupg/gpg-agent.conf"
-allow-emacs-pinentry
-allow-loopback-pinentry
-max-cache-ttl 10800
-default-cache-ttl 10800
-log-file /var/log/gpg-agent.log
-pinentry-program /usr/bin/pinentry
-#+end_src
-** Package Installation and Minimal Setup
+** Homebrew and Package Installation
 :PROPERTIES:
 :ID:       8b53258b-b348-4001-8782-971aac6402d7
 :END:
-In order to get my literate config files onto a new machine and run them, I'll
-need git and emacs at least. So I figure why not handle package installs before
-we get into the org-mode stuff.
 
-I keep the packages I want to install in =packages.txt=:
-
-#+begin_src text :tangle "packages.txt"
-community/flameshot
-community/light
-community/pandoc
-community/pass
-community/powerline
-community/qutebrowser
-community/rofi
-community/the_silver_searcher
-community/tmux
-community/xcape
-extra/emacs
-extra/pa-applet
-extra/pavucontrol
-extra/pulseaudio
-extra/pulseaudio-bluetooth
-extra/python-pip
-extra/xclip
-extra/xorg-xclipboard
+Install homebrew first
+#+begin_src shell
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 #+end_src
 
-I use a bash script to handle the installation and fetching of packages (either
-through pacman or by cloning git repositories).
+Everything to install can be listed in a ~Brewfile~
+#+begin_src text :tangle "Brewfile"
+tap "d12frosted/emacs-plus"
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "homebrew/core"
+tap "homebrew/services"
+tap "osx-cross/avr"
+tap "px4/px4"
+# Search tool like grep, but optimized for programmers
+brew "ag"
+# Spell checker with better logic than ispell
+brew "aspell"
+# Tool for generating GNU Standards-compliant Makefiles
+brew "automake"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Configurable talking characters in ASCII art
+brew "cowsay"
+# Message bus system, providing inter-application communication
+brew "dbus"
+# Banner-like program prints strings as ASCII art
+brew "figlet"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GNU compiler collection
+brew "gcc"
+# Interpreted, interactive, object-oriented programming language
+brew "python"
+# Source code tag system
+brew "global"
+# GNU Pretty Good Privacy (PGP) package
+brew "gnupg"
+# Manage compile and link flags for libraries
+brew "pkg-config"
+# Generic library support script
+brew "libtool"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# Improved top (interactive process viewer)
+brew "htop"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# International domain name library (IDNA2008, Punycode and TR46)
+brew "libidn2"
+# Draw UML diagrams
+brew "plantuml"
+# Show ps output as a tree
+brew "pstree"
+# Python bindings for v5 of Qt
+brew "pyqt"
+# Send macOS User Notifications from the command-line
+brew "terminal-notifier"
+# Code-search similar to ack
+brew "the_silver_searcher"
+# Internet file retriever
+brew "wget"
+# GNU Emacs text editor
+brew "d12frosted/emacs-plus/emacs-plus"
+# GNU compiler collection for AVR 8-bit and 32-bit Microcontrollers
+brew "osx-cross/avr/avr-gcc"
+# GNU Embedded Toolchain for ARM
+brew "px4/px4/gcc-arm-none-eabi"
+cask "font-iosevka"
+#+end_src
+
+I use a bash script to handle the installation and fetching of packages by
+running ~brew bundle~ and also cloning git repositories.
 #+begin_src shell :tangle "manjaro_setup.sh" :shebang "#!/usr/bin/zsh"
-sudo pacman -Syyu
-sudo pacman -Syu --noconfirm $(cat packages.txt | awk '{print $1}')
-sudo pacman -Rs $(pacman -Qdtq)
-
-if [ ! -d ~/.password-store ]; then
-    echo "setting up password-store"
-    git clone git@gitlab.com:samspills/passwords ~/.password-store
-    pass init --path=~/.password-store Sam Pillsworth
-    pass git init
-fi
-
 if [ ! -f ~/.antigen.zsh ]; then
     echo "fetching antigen"
     curl -L git.io/antigen > ~/.antigen.zsh
@@ -98,24 +116,8 @@ if [ ! "$SHELL" = "$(which zsh)" ]; then
     chsh -s $(which zsh)
 fi
 
-if [ ! -d ~/.etc/rofi-pass ]; then
-    echo "fetching rofi-pass"
-    git clone git@github.com:carnager/rofi-pass.git ~/.etc/rofi-pass
-    ln -s ~/.etc/rofi-pass/rofi-pass ~/bin/rofi-pass
-    ln -s ~/.etc/rofi-pass/addpass ~/bin/addpass
-fi
+brew bundle ~/Brewfile
 #+end_src
-
-#+NAME: A note about what installs belong here and which don't
-#+begin_comment
-The above package list and script installs what I consider necessary for a
-minimally functional copy of my setup. Pandoc and rofi for example aren't
-necessary for i3 or emacs to work. But they are an important part of my flow.
-My goal for this particular section is that that it should the minimal installs
-necessary for _functional day-to-day_ work. It is my goal to be able to restart my
-system from this section, finish the work week, and then I can address other
-requirements as necessary.
-#+end_comment
 
 *** fzf
 I use [[https://github.com/junegunn/fzf][fzf]] for shell history + completion. Completion of file names, configured
@@ -125,128 +127,6 @@ triggered with ~**~.
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 cd ~/.fzf/
 ./install
-#+end_src
-
-#+RESULTS:
-#+begin_example
-Downloading bin/fzf ...
-  - Already exists
-  - Checking fzf executable ... 0.17.5
-
-Generate /home/sam/.fzf.bash ... OK
-Generate /home/sam/.fzf.zsh ... OK
-
-Update /home/sam/.bashrc:
-  - [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-    - Already exists: line #1
-
-Update /home/sam/.zshrc:
-  - [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-    - Already exists: line #76
-
-Finished. Restart your shell or reload config file.
-   source ~/.bashrc  # bash
-   source ~/.zshrc   # zsh
-
-Use uninstall script to remove fzf.
-
-For more information, see: https://github.com/junegunn/fzf
-#+end_example
-
-** X11 (and other things that start with X)
-*** xinitrc
-:PROPERTIES:
-:ID:       c02ec5f1-ea87-40b2-a353-6e088285d8a9
-:END:
-A very minimal xinitrc to load up my ~.Xresources~ before executing i3. Also I use
-a noweb variable to include any other lines before i3 is executed.
-#+begin_src shell :tangle "~/.xinitrc" :noweb yes
-[[ -f ~/.Xresources ]] && xrdb -merge "${HOME}/.Xresources"
-<<xinitrc-pre-i3>>
-exec i3
-#+end_src
-*** .Xresources (some but not all)
-:PROPERTIES:
-:ID:       b24a26b9-8f57-48c5-8fd4-588833966455
-:END:
-I used [[https://github.com/auduchinok/base16-builder][base16-builder]] to generate an ~.Xresources~ template for the spacemacs dark theme.
-#+begin_src shell
-! Base16 Spacemacs
-! Scheme: Nasser Alshammari (https://github.com/nashamri/spacemacs-theme)
-
-#define base00 #1f2022
-#define base01 #282828
-#define base02 #444155
-#define base03 #585858
-#define base04 #b8b8b8
-#define base05 #a3a3a3
-#define base06 #e8e8e8
-#define base07 #f8f8f8
-#define base08 #f2241f
-#define base09 #ffa500
-#define base0A #b1951d
-#define base0B #67b11d
-#define base0C #2d9574
-#define base0D #4f97d7
-#define base0E #a31db1
-#define base0F #b03060
-
-*foreground:   base05
-*background:   base00
-*cursorColor:  base05
-
-*color0:       base00
-*color1:       base08
-*color2:       base0B
-*color3:       base0A
-*color4:       base0D
-*color5:       base0E
-*color6:       base0C
-*color7:       base05
-
-*color8:       base03
-*color9:       base08
-*color10:      base0B
-*color11:      base0A
-*color12:      base0D
-*color13:      base0E
-*color14:      base0C
-*color15:      base07
-
-! Note: colors beyond 15 might not be loaded (e.g., xterm, urxvt),
-! use 'shell' template to set these if necessary
-*color16:      base09
-*color17:      base0F
-*color18:      base01
-*color19:      base02
-*color20:      base04
-*color21:      base06
-#+end_src
-
-Some other default ~.Xresources~ settings. Enable unicode, save very many lines,
-and then set some Xft settings as well. Full disclosure, I don't actually know
-what all the Xft settings are for.
-#+begin_src shell :tangle "~/.Xresources"
-*utf8:                  1
-*saveLines:             999999
-#+end_src
-
-What is an ~Xft~ setting? I have no idea
-#+begin_src shell :tangle "~/.Xresources"
-!-- Xft settings -- !
-Xft.dpi:        144
-Xft.rgba:       rgb
-Xft.autohint:   0
-Xft.lcdfilter:  lcddefault
-Xft.hintstyle:  hintslight
-Xft.hinting:    1
-Xft.antialias:  1
-#+end_src
-
-Cursor settins.
-#+begin_src shell :tangle "~/.Xresources"
-Xcursor.theme: xcursor-breeze
-Xcursor.size:                     0
 #+end_src
 ** Shell
 *** zsh
@@ -518,788 +398,6 @@ URxvt.keysym.C-S-Down: perl:font-size:decglobal
 URxvt.keysym.C-c: perl:clipboard:copy
 URxvt.keysym.C-v: perl:clipboard:paste
 #+end_src
-** i3
-*** Configuration
-:PROPERTIES:
-:ID:       705e0a62-fe76-4269-bd44-5a7ee7d62f80
-:END:
-**** Set variables
-:PROPERTIES:
-:ID:       392bea2b-c4cb-4c01-9877-693ca6a50fe5
-:END:
-
-I'm setting some variables first to keep them in an easy-to-find place,
-for easy updating. These are either things I think I might want to change
-(~$mod~), or commands that will be executed that I might want to update frequently.
-
-#+begin_src shell :tangle "~/.config/i3/config"
-set $mod Mod4
-set $term --no-startup-id urxvt
-set $menu --no-startup-id rofi -combi-mode "window#drun#run" -show combi -modi combi -show-icons -display-combi ""
-set $pass --no-startup-id rofi -modi 1pass:rofi-1pass -show 1pass
-set $barcmd i3status
-set $lockimage ~/dotfiles/lock.png
-#+end_src
-
-**** Beautify
-:PROPERTIES:
-:ID:       e8ecd02b-b952-4f4f-8ff4-6e64891d3267
-:END:
-The beautifying part of my i3 configuration: font settings, borders, colours,
-generally making things pretty.
-
-I like to use the [[https://github.com/be5invis/iosevka][Iosevka]] font for everything.
-#+begin_src shell :tangle "~/.config/i3/config"
-
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
-
-font pango: Iosevka 8
-#+end_src
-
-Border settings
-#+begin_src shell :tangle "~/.config/i3/config"
-new_window pixel 1
-new_float normal
-
-hide_edge_borders none
-
-bindsym $mod+u border none
-bindsym $mod+y border pixel 1
-bindsym $mod+n border normal
-#+end_src
-
-***** Autoname Workspaces
-:PROPERTIES:
-:ID:       76b3a932-ac4d-4d0a-91ea-6df9e6749960
-:END:
-
-There is a [[https://github.com/justbuchanan/i3scripts/blob/master/autoname_workspaces.py][cute script]] that will replace windowspace numbers with icons showing
-the running programs in each space. I forked it and replaced the fontawesome
-icons + list of applications with nerd font icons and my own applications (the
-original script didn't have emacs which is largely what led me down this rabbit
-hole of spending hours and hours to pick out reasonable icons for each application).
-#+begin_src shell
-git clone git@github.com:samspills/i3scripts ~/.etc/i3scripts
-chmod +x ~/.etc/i3scripts/autoname_workspaces.py
-#+end_src
-
-#+RESULTS:
-
-Install the dependencies:
-#+begin_src shell
-pip install --user i3ipc
-#+end_src
-
-#+RESULTS:
-| Collecting   | i3ipc                                                                                                                               |                   |              |              |          |      |        |        |
-| Downloading  | https://files.pythonhosted.org/packages/83/9a/c44f96403a34dddf4359bb56f9564df77c78a7b444fa83a6a5330a514290/i3ipc-1.6.0.tar.gz       |                   |              |              |          |      |        |        |
-| Collecting   | enum-compat                                                                                                                         | (from             | i3ipc)       |              |          |      |        |        |
-| Downloading  | https://files.pythonhosted.org/packages/95/6e/26bdcba28b66126f66cf3e4cd03bcd63f7ae330d29ee68b1f6b623550bfa/enum-compat-0.0.2.tar.gz |                   |              |              |          |      |        |        |
-| Installing   | collected                                                                                                                           | packages:         | enum-compat, | i3ipc        |          |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | started  |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | finished | with | status | 'done' |
-| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | started  |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | finished | with | status | 'done' |
-| Successfully | installed                                                                                                                           | enum-compat-0.0.2 | i3ipc-1.6.0  |              |          |      |        |        |
-
-And add to the i3 config
-#+begin_src shell :tangle "~/.config/i3/config"
-exec_always --no-startup-id ~/.etc/i3scripts/autoname_workspaces.py &
-#+end_src
-**** Functionality
-This section contains little snippets to provide a certain functionality or
-behaviour in i3.
-***** Auto focus to urgent window
-:PROPERTIES:
-:ID:       5541cb47-3f37-4a7e-9166-f3ac16276943
-:END:
-If a workspace has an urgent window, then I want to switch to that workspace
-automatically. I use the running emacsclient (in GUI mode) as my editor and if
-the terminal triggers an edit (through git or pass for example) then this
-sitting causes the focus to automatically switch to emacs. Very nice.
-
-#+begin_src shell :tangle "~/.config/i3/config"
-for_window [urgent=latest] focus
-#+end_src
-***** Function of caps lock key
-:PROPERTIES:
-:ID:       7a4e750d-d49a-4603-9749-f058cf16aeb9
-:END:
-Remap the caps lock key to another control key, and have act as the escape key
-when tapped.
-#+begin_src shell :tangle "~/.config/i3/config"
-exec_always --no-startup-id setxkbmap -option ctrl:nocaps
-exec_always --no-startup-id xcape -e 'Control_L=Escape'
-#+end_src
-***** Resizing windows
-:PROPERTIES:
-:ID:       776669d9-4d9b-4dbb-8273-49ce91cd0659
-:END:
-#+begin_src shell :tangle "~/.config/i3/config"
-# resize window (you can also use the mouse for that)
-mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
-
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym $left       resize shrink width 10 px or 10 ppt
-        bindsym $down       resize grow height 10 px or 10 ppt
-        bindsym $up         resize shrink height 10 px or 10 ppt
-        bindsym $right      resize grow width 10 px or 10 ppt
-
-        # same bindings, but for the arrow keys
-        bindsym Left        resize shrink width 10 px or 10 ppt
-        bindsym Down        resize grow height 10 px or 10 ppt
-        bindsym Up          resize shrink height 10 px or 10 ppt
-        bindsym Right       resize grow width 10 px or 10 ppt
-
-        # back to normal: Enter or Escape or $mod+r
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
-}
-
-bindsym $mod+r mode "resize"
-#+end_src
-***** System mode
-:PROPERTIES:
-:ID:       754f4cd0-1c75-4663-be43-d9371cb141cc
-:END:
-#+begin_src shell :tangle "~/.config/i3/config"
-# Set shut down, restart and locking features
-bindsym $mod+0 mode "$mode_system"
-set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (r)eboot, (Shift+s)hutdown
-mode "$mode_system" {
-    bindsym l exec --no-startup-id /home/sam/bin/i3exit-sam ~/dotfiles/lock.png lock, mode "default"
-    bindsym s exec --no-startup-id /home/sam/bin/i3exit-sam $lockimage suspend, mode "default"
-    bindsym u exec --no-startup-id /home/sam/bin/i3exit-sam $lockimage switch_user, mode "default"
-    bindsym e exec --no-startup-id /home/sam/bin/i3exit-sam $lockimage logout, mode "default"
-    bindsym r exec --no-startup-id /home/sam/bin/i3exit-sam $lockimage reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id /home/sam/bin/i3exit-sam $lockimage shutdown, mode "default"
-
-    # exit system mode: "Enter" or "Escape"
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-
-#+end_src
-***** Auto-start applications
-:PROPERTIES:
-:ID:       9d914941-e87e-434b-b875-480697a4c2c7
-:END:
-#+begin_src shell :tangle "~/.config/i3/config"
-# Autostart applications
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec --no-startup-id nitrogen --restore; sleep 1; compton -b
-# exec --no-startup-id manjaro-hello
-exec --no-startup-id nm-applet
-exec --no-startup-id xfce4-power-manager
-exec --no-startup-id pamac-tray
-exec --no-startup-id clipit
-exec --no-startup-id blueman-applet
-# exec_always --no-startup-id sbxkb
-exec --no-startup-id start_conky_maia
-# exec --no-startup-id start_conky_green
-exec --no-startup-id xautolock -time 10 -locker $(/home/sam/bin/i3exit-sam $lockimage lock)
-exec_always --no-startup-id fix_xcursor
-#+end_src
-**** Keybindings
-:PROPERTIES:
-:ID:       01df5ea3-4821-4c01-b828-2b21d532eaa2
-:END:
-To start, I'm just stealing the whole configuration setup by Jess Frazelle, and
-can be [[https://github.com/jessfraz/dotfiles/blob/master/.i3/config][found here]]
-#+begin_src shell :tangle "~/.config/i3/config"
-# Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
-
-# start a terminal
-bindsym $mod+Return exec $term
-
-# start dmenu
-bindsym $mod+d exec $menu
-
-# pass menu
-bindsym $mod+p exec $pass
-
-# kill focused window
-bindsym $mod+Shift+q kill
-
-# change focus
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
-
-# move to monitor
-bindsym $mod+Ctrl+Left move workspace to output left
-bindsym $mod+Ctrl+Right move workspace to output right
-
-# alternatively, you can use the cursor keys:
-# bindsym $mod+Left focus left
-# bindsym $mod+Down focus down
-# bindsym $mod+Up focus up
-# bindsym $mod+Right focus right
-
-# move focused window
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
-
-# workspace back and forth (with/without active container)
-workspace_auto_back_and_forth yes
-bindsym $mod+b workspace back_and_forth
-bindsym $mod+Shift+b move container to workspace back_and_forth; workspace back_and_forth
-
-# split orientation
-bindsym $mod+bar split h;exec notify-send 'tile horizontally'
-bindsym $mod+minus split v;exec notify-send 'tile vertically'
-bindsym $mod+q split toggle
-
-# enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
-
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
-
-# toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
-
-# change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
-
-# focus the parent container
-bindsym $mod+a focus parent
-
-# move the currently focused window to the scratchpad
-bindsym $mod+Shift+BackSpace move scratchpad
-
-# Show the next scratchpad window or hide the focused scratchpad window.
-# If there are multiple scratchpad windows, this command cycles through them.
-bindsym $mod+BackSpace scratchpad show
-
-# switch to workspace
-bindsym $mod+1 workspace number 1
-bindsym $mod+2 workspace number 2
-bindsym $mod+3 workspace number 3
-bindsym $mod+4 workspace number 4
-bindsym $mod+5 workspace number 5
-bindsym $mod+6 workspace number 6
-bindsym $mod+7 workspace number 7
-bindsym $mod+8 workspace number 8
-bindsym $mod+9 workspace number 9
-
-# move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace number 1
-bindsym $mod+Shift+2 move container to workspace number 2
-bindsym $mod+Shift+3 move container to workspace number 3
-bindsym $mod+Shift+4 move container to workspace number 4
-bindsym $mod+Shift+5 move container to workspace number 5
-bindsym $mod+Shift+6 move container to workspace number 6
-bindsym $mod+Shift+7 move container to workspace number 7
-bindsym $mod+Shift+8 move container to workspace number 8
-bindsym $mod+Shift+9 move container to workspace number 9
-
-# audio controls
-bindsym XF86AudioRaiseVolume exec amixer set Master 5%+ #increase sound volume
-bindsym XF86AudioLowerVolume exec amixer set Master 5%- #decrease sound volume
-bindsym XF86AudioMute exec amixer set Master +1 toggle # mute sound
-bindsym $mod+XF86AudioMute exec amixer set Capture toggle # mute mic
-
-# screen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
-
-# Screenshots
-# bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
-bindsym $Print --release exec --no-startup-id flameshot gui -p "${HOME}/Pictures/Screenshots"
-
-# reload the configuration file
-bindsym $mod+Shift+c reload
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
-
-set_from_resource $term_background background
-set_from_resource $term_foreground foreground
-set_from_resource $term_color0     color0
-set_from_resource $term_color1     color1
-set_from_resource $term_color2     color2
-set_from_resource $term_color3     color3
-set_from_resource $term_color4     color4
-set_from_resource $term_color5     color5
-set_from_resource $term_color6     color6
-set_from_resource $term_color7     color7
-set_from_resource $term_color8     color8
-set_from_resource $term_color9     color9
-set_from_resource $term_color10    color10
-set_from_resource $term_color11    color11
-set_from_resource $term_color12    color12
-set_from_resource $term_color13    color13
-set_from_resource $term_color14    color14
-set_from_resource $term_color15    color15
-
-# Start i3bar to display a workspace bar (plus the system information i3status if available)
-bar {
-  i3bar_command i3bar
-  status_command i3status --config "~/.config/i3/status.conf"
-  position bottom
-
-## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-#	tray_output primary
-#	tray_output eDP1
-
-  bindsym button4 nop
-  bindsym button5 nop
-  font xft:Iosevka 10
-  strip_workspace_numbers yes
-
-    colors {
-        background #222D31
-        statusline #F9FAF9
-        separator  #454947
-
-#                      border  backgr. text
-        focused_workspace  #F9FAF9 #16a085 #292F34
-        active_workspace   #595B5B #353836 #FDF6E3
-        inactive_workspace #595B5B #222D31 #EEE8D5
-        binding_mode       #16a085 #2C2C2C #F9FAF9
-        urgent_workspace   #16a085 #FDF6E3 #E5201D
-    }
-}
-
-# hide/unhide i3status bar
-bindsym $mod+m bar mode toggle
-
-# Theme colors
-# class                   border  backgr. text    indic.   child_border
-  client.focused          #556064 #556064 #80FFF9 #FDF6E3
-  client.focused_inactive #2F3D44 #2F3D44 #1ABC9C #454948
-  client.unfocused        #2F3D44 #2F3D44 #1ABC9C #454948
-  client.urgent           #CB4B16 #FDF6E3 #1ABC9C #268BD2
-  client.placeholder      #000000 #0c0c0c #ffffff #000000
-
-  client.background       #2B2C2B
-
-#############################
-### settings for i3-gaps: ###
-#############################
-
-# Set inner/outer gaps
-gaps inner 14
-gaps outer -2
-
-# Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
-# gaps inner|outer current|all set|plus|minus <px>
-# gaps inner all set 10
-# gaps outer all plus 5
-
-# Smart gaps (gaps used if only more than one container on the workspace)
-smart_gaps on
-
-# Smart borders (draw borders around container only if it is not the only container on this workspace)
-# on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
-smart_borders on
-
-# Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or 0 (remove gaps for current workspace). If you also press Shift with these keys, the change will be global for all workspaces.
-set $mode_gaps Gaps: (o) outer, (i) inner
-set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-bindsym $mod+Shift+g mode "$mode_gaps"
-
-mode "$mode_gaps" {
-        bindsym o      mode "$mode_gaps_outer"
-        bindsym i      mode "$mode_gaps_inner"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-mode "$mode_gaps_inner" {
-        bindsym plus  gaps inner current plus 5
-        bindsym minus gaps inner current minus 5
-        bindsym 0     gaps inner current set 0
-
-        bindsym Shift+plus  gaps inner all plus 5
-        bindsym Shift+minus gaps inner all minus 5
-        bindsym Shift+0     gaps inner all set 0
-
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-mode "$mode_gaps_outer" {
-        bindsym plus  gaps outer current plus 5
-        bindsym minus gaps outer current minus 5
-        bindsym 0     gaps outer current set 0
-
-        bindsym Shift+plus  gaps outer all plus 5
-        bindsym Shift+minus gaps outer all minus 5
-        bindsym Shift+0     gaps outer all set 0
-
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-#+end_src
-*** i3status
-:PROPERTIES:
-:ID:       142e8f79-6f81-478b-934a-cec4551fd865
-:END:
-#+begin_src shell :tangle "~/.config/i3/status.conf"
-# i3status configuration file.
-# see "man i3status" for documentation.
-
-# It is important that this file is edited as UTF-8.
-# The following line should contain a sharp s:
-# ß
-# If the above line is not correctly displayed, fix your editor first!
-
-general {
-        colors = true
-        interval = 5
-        color_good = "#2AA198"
-        color_bad = "#586E75"
-        color_degraded = "#DC322F"
-}
-
-order += "cpu_usage"
-# order += "load"
-order += "disk /"
-# order += "disk /home"
-order += "wireless _first_"
-#order += "ethernet _first_"
-order += "volume master"
-order += "battery all"
-# order += "load"
-order += "tztime local"
-# order += "ipv6"
-
-cpu_usage {
-        format = " cpu  %usage "
-}
-
-load {
-        format = " load %1min "
-        # max_threshold = 0.3
-}
-
-disk "/" {
-        # format = " hdd %avail "
-        format = " ⛁ %avail "
-}
-
-ethernet _first_ {
-# if you use %speed, i3status requires root privileges
-        format_up = " lan: %ip %speed "
-        format_down = " no lan "
-}
-
-battery all {
-        # format = "%status %percentage %remaining %emptytime"
-        format = " %status %percentage"
-        format_down = "No battery"
-        last_full_capacity = true
-        integer_battery_capacity = true
-        # status_chr = ""
-        status_chr = "⚡"
-        # status_bat = "bat"
-        # status_bat = "☉"
-        status_bat = ""
-        # status_unk = "?"
-        status_unk = ""
-        # status_full = ""
-        status_full = "☻"
-        low_threshold = 15
-        threshold_type = time
-}
-
-tztime local {
-        # format = "%Y-%m-%d %H:%M:%S"
-        format = " %d.%m. %H:%M "
-}
-
-volume master {
-  format = "♪: %volume"
-  format_muted = "♪: muted (%volume)"
-  device = "default"
-  mixer = "Master"
-  mixer_idx = 0
-}
-
-#+end_src
-*** i3lock
-:PROPERTIES:
-:ID:       e2bee763-884e-431f-b299-de1bf739163c
-:END:
-
-I like the lockscreen style described in [[https://github.com/brunodles/i3wm-conf][brunodles i3 config]], so I have stolen it.
-#+begin_src shell :tangle "~/bin/i3lock-extra" :shebang "#!/usr/bin/zsh"
-cfg_tmpdir="/run/user/$UID/i3lock-extra"
-cfg_lockfile="$cfg_tmpdir/locked"
-cfg_pixelize_scale='10'
-
-err() { echo "$*" >&1; }
-
-usage() {
-  while read; do printf '%s\n' "$REPLY"; done <<- EOF
-    Usage: i3lock-extra <-m mode> [args]
-    Flags:
-           --mode|-m <mode>    # Lock mode.
-           --tmpdir|-d <path>  # Directory to store temporary files in. This should not be accessible by other users!
-           --pixelize-scape|-p # For the pixelize mode only. Sets the number by which the image is resized down and
-                                 back up to achieve the pixelize effect. For example, 4 means that it will be resized
-                                 to 1/4 of the original and blown back up.
-    Modes:
-           rnd <dir>           # Use a random image from a dir.
-           blur [img]          # Take a screenshot, blur it out. If provided, add an image on top.
-           pixelize [img]      # Same as the above, but pixelize the image instead.
-           img <img>           # Use the provided image.
-EOF
-}
-
-random() {
-  images_dir=$1
-
-  images=( "$images_dir"/* )
-  images_c="${#images[*]}"
-  image_r=$(( RANDOM % images_c ))
-  image="${images[$image_r]}"
-
-  printf '%s' "$image"
-}
-
-deskshot() {
-  declare scale_down scale_up
-  declare dist_mode=$1; shift
-
-  case "$dist_mode" in
-    blur) scrot -e "convert -gaussian-blur 4x8 \$f ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png";;
-    pixelize)
-      scale_down=$(( 100/cfg_pixelize_scale ))
-      scale_up=$(( ( 100/cfg_pixelize_scale ) * cfg_pixelize_scale * cfg_pixelize_scale ))
-
-      scrot -e "convert \$f -scale "$scale_down"% -scale "$scale_up"% ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png"
-    ;;
-  esac
-
-  if [[ "$1" ]]; then
-    convert -gravity center -composite -matte "${cfg_tmpdir}/lockbg.png" "$1" "${cfg_tmpdir}/lockbg.png"
-  fi
-
-  image="${cfg_tmpdir}/lockbg.png"
-  printf '%s' "$image"
-}
-
-lock() {
-  >"$cfg_lockfile"
-  i3lock -n -t -i "$image"
-}
-
-cleanup() {
-  rm -f "$cfg_lockfile";
-}
-
-main() {
-  umask 0077 # All files and dirs created should only be accessible by the user.
-
-  while (( $# )); do
-    case "$1" in
-      --help|-h) usage; return 0;;
-      --mode|-m) mode=$2; shift;;
-      --tmpdir|-d) cfg_tmpdir=$2; shift;;
-      --umask|-u) umask $2; shift;;
-      --pixelize-scale|-p) cfg_pixelize_scale=$2; shift;;
-
-      --) shift; break;;
-      -*)
-        err "Unknown key: $1"
-        usage
-        return 1
-      ;;
-
-      ,*) break;;
-    esac
-    shift
-  done
-
-  if ! [[ -d "$cfg_tmpdir" ]]; then
-    mkdir -p "$cfg_tmpdir" || {
-      return 1
-    }
-  fi
-
-  case "${mode:-img}" in
-    blur|pixelize) image=$( deskshot "$mode" "$1" );;
-
-    rnd)
-      (( $# )) || { usage; return 1; }
-      image=$( random "$1" )
-    ;;
-
-    img)
-      (( $# )) || { usage; return 1; }
-      image="$1"
-    ;;
-
-    ,*) usage; return 1;;
-  esac
-
-  trap cleanup INT TERM EXIT
-
-  until lock; do
-    true
-  done
-}
-main "$@"
-
-# sleep 1 adds a small delay to prevent possible race conditions with suspend
-sleep 1
-
-exit 0
-#+end_src
-
-~i3lock-extra~ is nice, but it's not working nicely with suspend/hibernate. I'm
-strugging to debug the issue so I'm going to simplify my lock script way down
-but keeping the same look.
-#+BEGIN_SRC shell :tangle "~/bin/i3lock-sam" :shebang "#!/bin/bash"
-centrelock=$1
-
-# take screenshot
-import -window root /tmp/screenshot.png
-
-# pixelize it
-convert -scale 10% -scale 1000% /tmp/screenshot.png /tmp/lockbackground.png
-rm /tmp/screenshot.png
-
-if [[ "$centrelock" ]]; then
-    convert -gravity center -composite -matte /tmp/lockbackground.png "$centrelock" /tmp/lockbackground.png
-fi
-
-i3lock -t -i /tmp/lockbackground.png
-sleep 1
-exit 0
-#+END_SRC
-*** i3exit-sam
-:PROPERTIES:
-:ID:       f9c1cf95-fdd9-4150-844f-3c33ef308e91
-:END:
-There is an ~i3exit~ script available in ~/usr/bin/i3exit~ but it uses blurlock
-and I'd rather use my own locking function.
-#+BEGIN_SRC shell :tangle "/home/sam/bin/i3exit-sam" :shebang "#!/bin/bash"
-# with openrc use loginctl
-[[ $(cat /proc/1/comm) == "systemd" ]] && logind=systemctl || logind=loginctl
-lockimg=$1
-exitarg=$2
-
-lock="/home/sam/bin/i3lock-sam $1"
-
-case "$exitarg" in
-    lock)
-        $lock
-        ;;
-    logout)
-        i3-msg exit
-        ;;
-    switch_user)
-        dm-tool switch-to-greeter
-        ;;
-    suspend)
-        $lock && $logind suspend-then-hibernate
-        ;;
-    reboot)
-        $logind reboot
-        ;;
-    shutdown)
-        $logind poweroff
-        ;;
-    *)
-        echo "== ! i3exit: missing or invalid argument ! =="
-        echo "Try again with: lock | logout | switch_user | suspend | reboot | shutdown"
-        exit 2
-esac
-exit 0
-#+END_SRC
-*** fin
-:PROPERTIES:
-:ID:       0d5acb35-2fed-4d52-9dd6-a5621c1dd97f
-:END:
-This section contains any lines that must be executed at the end of the i3
-config.
-
-#+begin_src shell :tangle "~/.config/i3/config"
-# run the merge for good colors
-exec --no-startup-id xrdb -merge $HOME/.Xresources
-#+end_src
-** rofi
-*** Installation
-
-Now we can install i3, and some of the utilities that my i3 setup relies on.
-These are rxvt, and scrot.
-#+begin_src shell  :cache no :results output
-#+end_src
-
-#+RESULTS:
-#+begin_example
-Reading package lists... 0%Reading package lists... 100%Reading package lists... Done
-Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree       
-Reading state information... 0%Reading state information... 0%Reading state information... Done
-The following package was automatically installed and is no longer required:
-  libllvm6.0
-Use 'sudo apt autoremove' to remove it.
-The following additional packages will be installed:
-  libxcb-ewmh2
-The following NEW packages will be installed:
-  libxcb-ewmh2 rofi
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Need to get 180 kB of archives.
-After this operation, 632 kB of additional disk space will be used.
-[33m0% [Working][0m            Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 libxcb-ewmh2 amd64 0.4.1-1ubuntu1 [16.6 kB]
-[33m1% [1 libxcb-ewmh2 2,615 B/16.6 kB 16%][0m[33m                                       17% [Working][0m             Get:2 http://archive.ubuntu.com/ubuntu bionic/universe amd64 rofi amd64 1.5.0-1 [163 kB]
-[33m19% [2 rofi 2,613 B/163 kB 2%][0m[33m                              100% [Working][0m              Fetched 180 kB in 1s (266 kB/s)
-Selecting previously unselected package libxcb-ewmh2:amd64.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 255922 files and directories currently installed.)
-Preparing to unpack .../libxcb-ewmh2_0.4.1-1ubuntu1_amd64.deb ...
-Unpacking libxcb-ewmh2:amd64 (0.4.1-1ubuntu1) ...
-Selecting previously unselected package rofi.
-Preparing to unpack .../rofi_1.5.0-1_amd64.deb ...
-Unpacking rofi (1.5.0-1) ...
-Setting up libxcb-ewmh2:amd64 (0.4.1-1ubuntu1) ...
-Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
-Setting up rofi (1.5.0-1) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
-#+end_example
-:ID: 6e941630-220d-404d-91af-0cfd516dfdb1
-*** Configuration
-:PROPERTIES:
-:ID:       64a8ed9b-9c8b-48b6-9ac9-0dbbc9f72d5b
-:END:
-
-Visual settings for Rofi. Sets up the colour theme (solarized for now, need to
-figure out something spacemacs-dark complimentary later), and also sets the font
-and separator styles.
-#+begin_src shell :tangle "~/.Xresources"
-! -- ROFI Color theme -- !
-rofi.color-enabled: true
-rofi.color-window: #002b37, #002b37, #003642
-rofi.color-normal: #002b37, #819396, #002b37, #003642, #819396
-rofi.color-active: #002b37, #008ed4, #002b37, #003642, #008ed4
-rofi.color-urgent: #002b37, #da4281, #002b37, #003642, #da4281
-
-rofi.separator-style:                solid
-rofi.font: Iosevka Nerd Font Complete Mono 10
-rofi.combi_hide_mode_prefix: TRUE
-#+end_src
-
-#+begin_src shell :tangle "~/.Xresources"
-rofi.case-sensitive: false
-#+end_src
-
 ** applications
 *** dropbox
 :PROPERTIES:
@@ -1995,71 +1093,6 @@ More youtube related blocked hosts that weren't covered by the original list.
 #+begin_src shell :tangle "~/.config/qutebrowser/blockedHosts"
 0.0.0.0 yt3.ggpht.com
 #+end_src
-*** rofi-pass
-:PROPERTIES:
-:ID:       b0316724-c866-447e-9ec5-f9c74e4b9bde
-:END:
-
-My configuration for ~rofi-pass~ is written to =/home/sam/.config/rofi-pass/config=
-#+begin_src shell :tangle "~/.config/rofi-pass/config"
-URL_field='url'
-USERNAME_field='user'
-AUTOTYPE_field='autotype'
-EDITOR='ec'
-auto_enter='true'
-default_user='srpillsworth@gmail.com'
-#+end_src
-
-These are the default keybindings for rofi-pass. I haven't changed anything, I'm
-just including them here for easy reference
-#+begin_src shell :tangle "~/.config/rofi-pass/config"
-autotype="Alt+1"
-type_user="Alt+2"
-type_pass="Alt+3"
-open_url="Alt+4"
-copy_name="Alt+u"
-copy_url="Alt+l"
-copy_pass="Alt+p"
-show="Alt+o"
-copy_entry="Alt+2"
-type_entry="Alt+1"
-copy_menu="Alt+c"
-action_menu="Alt+a"
-type_menu="Alt+t"
-help="Alt+h"
-switch="Alt+x"
-insert_pass="Alt+n"
-#+end_src
-
-** services
-*** screen-lock.service
-:PROPERTIES:
-:ID:       af9615f4-ed4e-4719-9935-4af1b44fd172
-:END:
-To lock the screen after suspend. There is a still a delay here that I can't
-figure out. Triggering suspend is fine, but when laptop wakes up there's a few
-seconds of visible screen before the lock kicks in. According to
-[[https://wiki.archlinux.org/index.php/Power_management#Sleep_hooks][the arch wiki page about sleep hooks]] adding a post-exec sleep should fix it, but
-so far that doesn't seem to be the case for me.
-
-#+begin_src systemd :tangle no
-[Unit]
-Description=Lock screen upon suspend
-Before=suspend.target
-
-[Service]
-User=sam
-Type=forking
-Environment=DISPLAY=:0
-ExecStart=/home/sam/bin/i3lock-extra -p 10 -m pixelize /home/sam/dotfiles/lock.png
-ExecStartPost=/usr/bin/sleep 1
-
-[Install]
-WantedBy=suspend.target
-#+end_src
-
-#+RESULTS:
-
 * Notes
 ** Hibernation
 Currently dell xps has no swap partition/file setup, which prevents me from
