@@ -819,8 +819,8 @@ bindsym XF86AudioMute exec amixer set Master +1 toggle # mute sound
 bindsym $mod+XF86AudioMute exec amixer set Capture toggle # mute mic
 
 # screen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec xbacklight + 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight - 5 # decrease screen brightness
 
 # Screenshots
 # bindsym --release Print exec import "${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png"
