@@ -1,0 +1,1 @@
+/Users/sam/.doom.d
