@@ -567,8 +567,8 @@ Using require doesn't necessitate a manual compile.
 
 To nicely capture entire webpages as an org-mode hierarchy, we need [[https://github.com/alphapapa/org-protocol-capture-html][org-protocol-capture-html]].
 #+begin_src emacs-lisp
-(require 'org-protocol-capture-html "~/projects/org-protocol-capture-html/org-protocol-capture-html.el")
-(setq org-protocol-capture-html-pandoc-no-wrap-option "--wrap=auto")
+;; (require 'org-protocol-capture-html "~/projects/org-protocol-capture-html/org-protocol-capture-html.el")
+;; (setq org-protocol-capture-html-pandoc-no-wrap-option "--wrap=auto")
 #+end_src
 
 ***** org-mac-link
@@ -837,25 +837,15 @@ the resulting files will be automatically kept up to date.
   (add-hook 'run-at-end 'only-in-org-mode))
 #+end_src
 
+#+RESULTS:
+: sam/org-auto-babel-tangle
+
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-init
 (add-hook 'org-mode-hook 'sam/org-auto-babel-tangle)
 #+end_src
 
-I add hooks to measure and report how long the tangling took.
-
-#+begin_src emacs-lisp
-(defun sam/babel-pre-tangle ()
-  (setq sam/pre-tangle-time (current-time)))
-(defun sam/babel-post-tangle ()
-  (message "org-babel-tangle took %s"
-           (format "%.2f seconds"
-                   (float-time (time-since sam/pre-tangle-time)))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-init
-(add-hook 'org-babel-pre-tangle-hook 'sam/babel-pre-tangle)
-(add-hook 'org-babel-post-tangle-hook 'sam/babel-post-tangle)
-#+end_src
+#+RESULTS:
+| sam/org-auto-babel-tangle | sam/org-mode-auto-fill | sam/no-hl-todo-in-org | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | spacemacs/org-setup-evil-surround | spacemacs/load-yasnippet | toc-org-enable | org-download-enable | org-bullets-mode | dotspacemacs//prettify-spacemacs-docs | spacemacs//org-babel-do-load-languages | spacemacs//evil-org-mode | org-eldoc-load | spacemacs//init-company-org-mode | company-mode |
 
 *** Org-jira
 My setup for org-jira has gotten a little bit complicated. I've added some

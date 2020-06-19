@@ -48,24 +48,26 @@ we get into the org-mode stuff.
 I keep the packages I want to install in =packages.txt=:
 
 #+begin_src text :tangle "packages.txt"
-community/flameshot
-community/light
-community/pandoc
-community/pass
-community/powerline
-community/qutebrowser
-community/rofi
-community/the_silver_searcher
-community/tmux
-community/xcape
-extra/emacs
-extra/pa-applet
-extra/pavucontrol
-extra/pulseaudio
-extra/pulseaudio-bluetooth
-extra/python-pip
-extra/xclip
-extra/xorg-xclipboard
+    community/flameshot
+    community/light
+    community/pandoc
+    community/pass
+    community/polybar
+    community/powerline
+    community/qutebrowser
+    community/rofi
+    community/the_silver_searcher
+    community/tmux
+    community/ttf-polybar-icons
+    community/xcape
+    extra/emacs
+    extra/pa-applet
+    extra/pavucontrol
+    extra/pulseaudio
+    extra/pulseaudio-bluetooth
+    extra/python-pip
+    extra/xclip
+    extra/xorg-xclipboard
 #+end_src
 
 I use a bash script to handle the installation and fetching of packages (either
@@ -585,7 +587,7 @@ icons + list of applications with nerd font icons and my own applications (the
 original script didn't have emacs which is largely what led me down this rabbit
 hole of spending hours and hours to pick out reasonable icons for each application).
 #+begin_src shell
-git clone git@github.com:samspills/i3scripts ~/.etc/i3scripts
+git clone https://github.com/samspills/i3scripts ~/.etc/i3scripts
 chmod +x ~/.etc/i3scripts/autoname_workspaces.py
 #+end_src
 
@@ -597,16 +599,16 @@ pip install --user i3ipc
 #+end_src
 
 #+RESULTS:
-| Collecting   | i3ipc                                                                                                                               |                   |              |              |          |      |        |        |
-| Downloading  | https://files.pythonhosted.org/packages/83/9a/c44f96403a34dddf4359bb56f9564df77c78a7b444fa83a6a5330a514290/i3ipc-1.6.0.tar.gz       |                   |              |              |          |      |        |        |
-| Collecting   | enum-compat                                                                                                                         | (from             | i3ipc)       |              |          |      |        |        |
-| Downloading  | https://files.pythonhosted.org/packages/95/6e/26bdcba28b66126f66cf3e4cd03bcd63f7ae330d29ee68b1f6b623550bfa/enum-compat-0.0.2.tar.gz |                   |              |              |          |      |        |        |
-| Installing   | collected                                                                                                                           | packages:         | enum-compat, | i3ipc        |          |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | started  |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | enum-compat: | finished | with | status | 'done' |
-| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | started  |      |        |        |
-| Running      | setup.py                                                                                                                            | install           | for          | i3ipc:       | finished | with | status | 'done' |
-| Successfully | installed                                                                                                                           | enum-compat-0.0.2 | i3ipc-1.6.0  |              |          |      |        |        |
+| Collecting   | i3ipc                                                                                                                                   |                   |              |              |                                  |       |                     |          |
+| Downloading  | https://files.pythonhosted.org/packages/9c/6b/ee11c0d21c80d80cdb0bb8f1c54360a2ea1fdcddced9c6552649969977d2/i3ipc-2.1.1-py3-none-any.whl |                   |              |              |                                  |       |                     |          |
+| Collecting   | enum-compat                                                                                                                             | (from             | i3ipc)       |              |                                  |       |                     |          |
+| Downloading  | https://files.pythonhosted.org/packages/95/6e/26bdcba28b66126f66cf3e4cd03bcd63f7ae330d29ee68b1f6b623550bfa/enum-compat-0.0.2.tar.gz     |                   |              |              |                                  |       |                     |          |
+| Requirement  | already                                                                                                                                 | satisfied:        | python-xlib  | in           | /usr/lib/python3.7/site-packages | (from | i3ipc)              | (0.24)   |
+| Requirement  | already                                                                                                                                 | satisfied:        | six>=1.10.0  | in           | /usr/lib/python3.7/site-packages | (from | python-xlib->i3ipc) | (1.12.0) |
+| Installing   | collected                                                                                                                               | packages:         | enum-compat, | i3ipc        |                                  |       |                     |          |
+| Running      | setup.py                                                                                                                                | install           | for          | enum-compat: | started                          |       |                     |          |
+| Running      | setup.py                                                                                                                                | install           | for          | enum-compat: | finished                         | with  | status              | 'done'   |
+| Successfully | installed                                                                                                                               | enum-compat-0.0.2 | i3ipc-2.1.1  |              |                                  |       |                     |          |
 
 And add to the i3 config
 #+begin_src shell :tangle "~/.config/i3/config"
@@ -697,20 +699,22 @@ mode "$mode_system" {
 :ID:       9d914941-e87e-434b-b875-480697a4c2c7
 :END:
 #+begin_src shell :tangle "~/.config/i3/config"
-# Autostart applications
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec --no-startup-id nitrogen --restore; sleep 1; compton -b
-# exec --no-startup-id manjaro-hello
-exec --no-startup-id nm-applet
-exec --no-startup-id xfce4-power-manager
-exec --no-startup-id pamac-tray
-exec --no-startup-id clipit
-exec --no-startup-id blueman-applet
-# exec_always --no-startup-id sbxkb
-exec --no-startup-id start_conky_maia
-# exec --no-startup-id start_conky_green
-exec --no-startup-id xautolock -time 10 -locker $(/home/sam/bin/i3exit-sam $lockimage lock)
-exec_always --no-startup-id fix_xcursor
+    # Autostart applications
+    exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+    exec --no-startup-id nitrogen --restore; sleep 1; compton -b
+    # exec --no-startup-id manjaro-hello
+    exec --no-startup-id nm-applet
+    exec --no-startup-id xfce4-power-manager
+    exec --no-startup-id pamac-tray
+    exec --no-startup-id clipit
+    exec --no-startup-id blueman-applet
+    exec --no-startup-id nitrogen --set-zoom-fill --random $HOME/Pictures/desktop_backgrounds
+    # exec_always --no-startup-id sbxkb
+    # exec --no-startup-id start_conky_maia
+    # exec --no-startup-id start_conky_green
+    exec --no-startup-id xautolock -time 10 -locker $(/home/sam/bin/i3exit-sam $lockimage lock)
+    exec_always --no-startup-id fix_xcursor
+    exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 #+end_src
 **** Keybindings
 :PROPERTIES:
@@ -853,36 +857,36 @@ set_from_resource $term_color14    color14
 set_from_resource $term_color15    color15
 
 # Start i3bar to display a workspace bar (plus the system information i3status if available)
-bar {
-  i3bar_command i3bar
-  status_command i3status --config "~/.config/i3/status.conf"
-  position bottom
+# bar {
+#   i3bar_command i3bar
+#   status_command i3status --config "~/.config/i3/status.conf"
+#   position bottom
 
-## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-#	tray_output primary
-#	tray_output eDP1
+# ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+# #	tray_output primary
+# #	tray_output eDP1
 
-  bindsym button4 nop
-  bindsym button5 nop
-  font xft:Iosevka 10
-  strip_workspace_numbers yes
+#   bindsym button4 nop
+#   bindsym button5 nop
+#   font xft:Iosevka 10
+#   strip_workspace_numbers yes
 
-    colors {
-        background #222D31
-        statusline #F9FAF9
-        separator  #454947
+#     colors {
+#         background #222D31
+#         statusline #F9FAF9
+#         separator  #454947
 
-#                      border  backgr. text
-        focused_workspace  #F9FAF9 #16a085 #292F34
-        active_workspace   #595B5B #353836 #FDF6E3
-        inactive_workspace #595B5B #222D31 #EEE8D5
-        binding_mode       #16a085 #2C2C2C #F9FAF9
-        urgent_workspace   #16a085 #FDF6E3 #E5201D
-    }
-}
+# #                      border  backgr. text
+#         focused_workspace  #F9FAF9 #16a085 #292F34
+#         active_workspace   #595B5B #353836 #FDF6E3
+#         inactive_workspace #595B5B #222D31 #EEE8D5
+#         binding_mode       #16a085 #2C2C2C #F9FAF9
+#         urgent_workspace   #16a085 #FDF6E3 #E5201D
+#     }
+# }
 
 # hide/unhide i3status bar
-bindsym $mod+m bar mode toggle
+# bindsym $mod+m bar mode toggle
 
 # Theme colors
 # class                   border  backgr. text    indic.   child_border
@@ -1197,38 +1201,38 @@ exit 0
 There is an ~i3exit~ script available in ~/usr/bin/i3exit~ but it uses blurlock
 and I'd rather use my own locking function.
 #+BEGIN_SRC shell :tangle "/home/sam/bin/i3exit-sam" :shebang "#!/bin/bash"
-# with openrc use loginctl
-[[ $(cat /proc/1/comm) == "systemd" ]] && logind=systemctl || logind=loginctl
-lockimg=$1
-exitarg=$2
+  # with openrc use loginctl
+  [[ $(cat /proc/1/comm) == "systemd" ]] && logind=systemctl || logind=loginctl
+  lockimg=$1
+  exitarg=$2
 
-lock="/home/sam/bin/i3lock-sam $1"
+  lock="/home/sam/bin/i3lock-sam $1"
 
-case "$exitarg" in
-    lock)
-        $lock
-        ;;
-    logout)
-        i3-msg exit
-        ;;
-    switch_user)
-        dm-tool switch-to-greeter
-        ;;
-    suspend)
-        $lock && $logind suspend-then-hibernate
-        ;;
-    reboot)
-        $logind reboot
-        ;;
-    shutdown)
-        $logind poweroff
-        ;;
-    *)
-        echo "== ! i3exit: missing or invalid argument ! =="
-        echo "Try again with: lock | logout | switch_user | suspend | reboot | shutdown"
-        exit 2
-esac
-exit 0
+  case "$exitarg" in
+      lock)
+          $lock
+          ;;
+      logout)
+          i3-msg exit
+          ;;
+      switch_user)
+          dm-tool switch-to-greeter
+          ;;
+      suspend)
+          $lock && $logind suspend-then-hibernate
+          ;;
+      reboot)
+          $logind reboot
+          ;;
+      shutdown)
+          $logind poweroff
+          ;;
+      ,*)
+          echo "== ! i3exit: missing or invalid argument ! =="
+          echo "Try again with: lock | logout | switch_user | suspend | reboot | shutdown"
+          exit 2
+  esac
+  exit 0
 #+END_SRC
 *** fin
 :PROPERTIES:
@@ -1316,6 +1320,8 @@ First install the dropbox via the command line for the 64 bit linux arch.
 #+begin_src shell
 cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 #+end_src
+
+#+RESULTS:
 
 Run ~dropboxd~ and login for the first sync to happen.
 #+begin_src shell

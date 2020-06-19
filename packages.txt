@@ -1,18 +1,20 @@
-community/flameshot
-community/light
-community/pandoc
-community/pass
-community/powerline
-community/qutebrowser
-community/rofi
-community/the_silver_searcher
-community/tmux
-community/xcape
-extra/emacs
-extra/pa-applet
-extra/pavucontrol
-extra/pulseaudio
-extra/pulseaudio-bluetooth
-extra/python-pip
-extra/xclip
-extra/xorg-xclipboard
+    community/flameshot
+    community/light
+    community/pandoc
+    community/pass
+    community/polybar
+    community/powerline
+    community/qutebrowser
+    community/rofi
+    community/the_silver_searcher
+    community/tmux
+    community/ttf-polybar-icons
+    community/xcape
+    extra/emacs
+    extra/pa-applet
+    extra/pavucontrol
+    extra/pulseaudio
+    extra/pulseaudio-bluetooth
+    extra/python-pip
+    extra/xclip
+    extra/xorg-xclipboard
