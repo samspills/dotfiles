@@ -1,65 +1,85 @@
-tap "d12frosted/emacs-plus"
+tap "coursier/formulas"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/cask-fonts"
+tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
-tap "osx-cross/avr"
-tap "px4/px4"
-# Search tool like grep, but optimized for programmers
-brew "ag"
-# Spell checker with better logic than ispell
-brew "aspell"
-# Tool for generating GNU Standards-compliant Makefiles
+tap "olafurpg/scalafmt"
+tap "railwaycat/emacsmacport"
+tap "scalacenter/bloop"
+tap "shopify/shopify"
+brew "antigen"
 brew "automake"
-# GNU File, Shell, and Text utilities
+brew "snappy"
+brew "base64"
+brew "openssl@1.1"
+brew "sqlite"
+brew "python@3.9", link: false
+brew "python@3.8"
+brew "cmake"
 brew "coreutils"
-# Configurable talking characters in ASCII art
 brew "cowsay"
-# Message bus system, providing inter-application communication
-brew "dbus"
-# Banner-like program prints strings as ASCII art
-brew "figlet"
-# Command-line fuzzy finder written in Go
-brew "fzf"
-# GNU compiler collection
-brew "gcc"
-# Interpreted, interactive, object-oriented programming language
-brew "python"
-# Source code tag system
-brew "global"
-# GNU Pretty Good Privacy (PGP) package
-brew "gnupg"
-# Manage compile and link flags for libraries
-brew "pkg-config"
-# Generic library support script
+brew "dep"
+brew "docker"
+brew "fd"
 brew "libtool"
-# Graph visualization software from AT&T and Bell Labs
+brew "pkg-config"
+brew "ffmpeg"
+brew "gcc"
+brew "gdk-pixbuf"
+brew "gifski"
+brew "git"
+brew "gnuplot"
 brew "graphviz"
-# Improved top (interactive process viewer)
-brew "htop"
-# Tools and libraries to manipulate images in many formats
-brew "imagemagick"
-# Lightweight and flexible command-line JSON processor
+brew "ispell"
 brew "jq"
-# International domain name library (IDNA2008, Punycode and TR46)
-brew "libidn2"
-# Draw UML diagrams
-brew "plantuml"
-# Show ps output as a tree
-brew "pstree"
-# Python bindings for v5 of Qt
-brew "pyqt"
-# Send macOS User Notifications from the command-line
-brew "terminal-notifier"
-# Code-search similar to ack
+brew "kafkacat"
+brew "krb5"
+brew "kubernetes-cli"
+brew "libev"
+brew "libnotify"
+brew "libvterm"
+brew "libxml2"
+brew "libyaml"
+brew "mas"
+brew "maven"
+brew "md5sha1sum"
+brew "mysql", link: false
+brew "mysql-client"
+brew "mysql-client@5.7", link: true
+brew "pandoc"
+brew "parquet-tools"
+brew "poppler"
+brew "postgresql"
+brew "pyenv"
+brew "recode"
+brew "ripgrep"
+brew "ruby-install"
+brew "sbt"
+brew "scala@2.11", link: true
+brew "shadowenv"
+brew "shellcheck"
 brew "the_silver_searcher"
-# Internet file retriever
+brew "tldr"
 brew "wget"
-# GNU Emacs text editor
-brew "d12frosted/emacs-plus/emacs-plus"
-# GNU compiler collection for AVR 8-bit and 32-bit Microcontrollers
-brew "osx-cross/avr/avr-gcc"
-# GNU Embedded Toolchain for ARM
-brew "px4/px4/gcc-arm-none-eabi"
+brew "wordnet"
+brew "yamllint"
+brew "yarn"
+brew "yq"
+brew "zlib"
+brew "coursier/formulas/coursier"
+brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
+brew "scalacenter/bloop/bloop"
+brew "shopify/shopify/ejson"
+brew "shopify/shopify/libcidr-shopify"
+brew "shopify/shopify/nginx-shopify"
+brew "shopify/shopify/oauth-tunnel-client"
+brew "shopify/shopify/presto-jdbc"
+cask "adoptopenjdk8"
 cask "font-iosevka"
+cask "font-iosevka-nerd-font"
+cask "font-iosevka-slab"
+cask "google-cloud-sdk"
+cask "graphiql"
+cask "xquartz"
