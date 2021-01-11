@@ -41,6 +41,8 @@ values."
      markdown
      auto-completion
      better-defaults
+     ibuffer
+     dap
      emacs-lisp
      git
     (org :variables
@@ -49,22 +51,33 @@ values."
     (shell :variables
            shell-default-shell 'eshell)
     syntax-checking
-    ;; (lsp :variables
-    ;;      lsp-message-project-root-warning t
-    ;;      lsp-ui-doc-enable t
-    ;;      lsp-ui-doc-enable-eldoc t
-    ;;  )
-    plantuml
+    (plantuml :variables
+              plantuml-exec-mode 'jar)
     (python :variables
             python-test-runner 'pytest
             python-fill-column 100
             python-backend 'lsp
             )
+    (ruby :variables
+          ruby-backend 'lsp
+          ruby-enable-enh-ruby-mode t
+          ruby-version-manager 'chruby
+          ruby-test-runner 'minitest)
+    lsp
     sql
-    systemd
     treemacs
     csv
     javascript
+    (typescript :variables
+                typescript-fmt-on-save t
+                typescript-fmt-tool 'typescript-formatter
+                typescript-indent-level 2)
+    osx
+    (scala :variables
+           scala-backend 'scala-metals
+           scala-indent:use-javadoc-style t
+           scala-auto-insert-asterisk-in-comments t
+           scala-auto-start-backend t)
     )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -76,15 +89,17 @@ values."
                                       benchmark-init
                                       clocker
                                       company-lsp
+                                      ;;(dev :location (recipe :fetcher github :repo "Shopify/dev.el" :branch "master"))
                                       exec-path-from-shell
+                                      forge
                                       general
                                       (lsp-python-ms :location (recipe :fetcher github :repo "andrew-christianson/lsp-python-ms" :branch "master"))
                                       org-attach-screenshot
                                       org-gcal
-                                      org-jira
                                       (org-protocol-capture-html :location (recipe :fetcher github :repo "samspills/org-protocol-capture-html" :branch "samspills/python2-3-compatible"))
                                       pinentry
                                       rainbow-delimiters
+                                      (shadowenv :location (recipe :fetcher github :repo "Shopify/shadowenv.el" :branch "master"))
                                       (slack :location (recipe :fetcher github :repo "yuya373/emacs-slack" :branch "master"))
                                       spaceline-all-the-icons
                                       tracking
@@ -439,3 +454,17 @@ you should place your code here."
   (setq custom-file "~/dotfiles/dot-emacs/custom.el")
   (package-initialize)
   (org-babel-load-file "~/dotfiles/dot-emacs/spacemacs.org"))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill tracking toc-org tagedit systemd sql-indent spaceline-all-the-icons smeargle slim-mode slack emojify circe websocket shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe restart-emacs rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin plantuml-mode pip-requirements pinentry persp-mode pcre2el paradox orgit org-protocol-capture-html org-present org-pomodoro org-mime org-jira org-gcal alert request-deferred deferred log4e gntp org-download org-bullets org-attach-screenshot open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc magit-gitflow magit-popup macrostep lsp-python-ms lorem-ipsum livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide hydra lv hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md general fuzzy flycheck-pos-tip pos-tip flycheck flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit transient git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emmet-mode elisp-slime-nav dumb-jump diminish define-word cython-mode csv-mode company-web web-completion-data company-tern tern company-statistics company-lsp lsp-mode markdown-mode spinner ht dash-functional company-anaconda company column-enforce-mode coffee-mode clocker spaceline projectile pkg-info epl powerline clean-aindent-mode chruby bundler inf-ruby bind-map bind-key benchmark-init auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup doom-themes))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

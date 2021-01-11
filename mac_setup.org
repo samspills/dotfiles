@@ -451,8 +451,8 @@ to pandoc first.
 Download the org-protocol capture script (currently downloading from my own fork
 until updated to python 3 section get merged in).
 #+begin_src shell :results output
-wget --output-document="/home/sam/.local/bin/org-protocol-capture-html.sh" https://raw.githubusercontent.com/samspills/org-protocol-capture-html/samspills/python2-3-compatible/org-protocol-capture-html.sh
-chmod +x /home/sam/.local/bin/org-protocol-capture-html.sh
+wget --output-document="/Users/sam/.local/bin/org-protocol-capture-html.sh" https://raw.githubusercontent.com/samspills/org-protocol-capture-html/samspills/python2-3-compatible/org-protocol-capture-html.sh
+chmod +x /Users/sam/.local/bin/org-protocol-capture-html.sh
 #+end_src
 
 #+RESULTS:

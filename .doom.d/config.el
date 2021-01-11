@@ -86,6 +86,7 @@
       org-journal-date-prefix "#+TITLE: "
       org-journal-dir "~/Dropbox/life/braindump/dailies/"
       org-journal-date-format "%A, %d %B %Y"
+      org-journal-file-format "%Y%m%d.org"
       org-journal-enable-agenda-integration t
       ;;; org-roam
       org-roam-directory "~/Dropbox/life/braindump"
